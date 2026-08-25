@@ -575,6 +575,112 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .swipe-container::-webkit-scrollbar { display:none; }
 .swipe-page { scroll-snap-align:start; min-width:100%; }
 
+/* ===== Recycle Bin ===== */
+.rb-item { margin:0 12px 10px; background:var(--card-bg); border-radius:var(--r-sm); padding:12px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.rb-item .rbi-top { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.rb-item .rbi-type-tag { font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; flex-shrink:0; }
+.rb-item .rbi-type-tag.student { background:var(--blue-light); color:var(--blue-dark); }
+.rb-item .rbi-type-tag.course { background:var(--purple-light); color:var(--purple-dark); }
+.rb-item .rbi-type-tag.homework { background:var(--pink-light); color:var(--pink-dark); }
+.rb-item .rbi-name { font-size:14px; font-weight:700; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.rb-item .rbi-meta { font-size:11px; color:var(--text-sub); margin-bottom:8px; }
+.rb-item .rbi-actions { display:flex; gap:6px; }
+.rb-item .rbi-actions button { flex:1; padding:7px 0; border-radius:8px; border:1px solid var(--border); background:transparent; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; }
+.rb-item .rbi-actions button.restore { background:var(--purple); color:#fff; border-color:transparent; }
+.rb-item .rbi-actions button.delete { color:var(--pink-dark); border-color:var(--pink); background:var(--pink-light); }
+.rb-item .rbi-actions button:active { transform:scale(0.95); }
+.rb-empty { text-align:center; padding:60px 20px; }
+.rb-empty svg { width:80px; height:80px; color:var(--purple-light); margin-bottom:12px; }
+.rb-empty .rbe-text { font-size:14px; color:var(--text-light); }
+.rb-empty .rbe-hint { font-size:11px; color:var(--text-light); margin-top:4px; }
+
+/* ===== Curriculum / 课程大纲 ===== */
+.curriculum-header { padding:0 12px 10px; }
+.curriculum-progress { background:var(--card-bg); border-radius:var(--r-sm); padding:12px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.curriculum-progress .cp-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.curriculum-progress .cp-label { font-size:12px; font-weight:600; color:var(--text-sub); }
+.curriculum-progress .cp-val { font-size:14px; font-weight:800; color:var(--purple-dark); }
+.curriculum-progress .cp-bar { height:8px; background:rgba(155,127,217,0.1); border-radius:4px; overflow:hidden; }
+.curriculum-progress .cp-fill { height:100%; border-radius:4px; background:linear-gradient(to right,var(--purple),var(--blue)); transition:width .3s; }
+.curr-list { padding:0 12px; }
+.curr-item { background:var(--card-bg); border-radius:var(--r-sm); padding:12px; margin-bottom:8px; box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer; transition:all .2s; }
+.curr-item:active { transform:scale(0.98); }
+.curr-item .ci-head { display:flex; align-items:center; gap:10px; }
+.curr-item .ci-order { width:32px; height:32px; border-radius:10px; background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff; font-size:14px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.curr-item.taught .ci-order { background:linear-gradient(135deg,#4CAF50,#8BC34A); }
+.curr-item .ci-info { flex:1; min-width:0; }
+.curr-item .ci-title { font-size:14px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.curr-item .ci-status { font-size:10px; font-weight:700; padding:2px 8px; border-radius:6px; flex-shrink:0; }
+.curr-item .ci-status.planned { background:var(--blue-light); color:var(--blue-dark); }
+.curr-item .ci-status.taught { background:#E8F5E9; color:#2E7D32; }
+.curr-item .ci-detail { display:none; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.curr-item.expanded .ci-detail { display:block; }
+.curr-item .cid-section { margin-bottom:8px; }
+.curr-item .cid-label { font-size:11px; font-weight:600; color:var(--text-sub); margin-bottom:3px; display:flex; align-items:center; gap:4px; }
+.curr-item .cid-content { font-size:12px; color:var(--text-main); line-height:1.5; white-space:pre-wrap; }
+.curr-item .ci-actions { display:flex; gap:6px; margin-top:10px; padding-top:10px; border-top:1px dashed var(--border); }
+.curr-item .ci-actions button { flex:1; padding:7px 0; border-radius:8px; border:1px solid var(--border); background:transparent; font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; color:var(--text-sub); }
+.curr-item .ci-actions button:active { transform:scale(0.95); }
+.curr-item .ci-actions button.primary { background:var(--purple); color:#fff; border-color:transparent; }
+.curr-item .ci-actions button.success { background:#E8F5E9; color:#2E7D32; border-color:transparent; }
+.curr-item .ci-actions button.danger { color:var(--pink-dark); border-color:var(--pink); background:var(--pink-light); }
+
+/* ===== Class Records / 课堂记录 ===== */
+.cr-list { padding:0 12px; }
+.cr-item { background:var(--card-bg); border-radius:var(--r-sm); padding:12px; margin-bottom:8px; box-shadow:var(--shadow); border:1px solid var(--border); cursor:pointer; }
+.cr-item:active { transform:scale(0.98); }
+.cr-item .cri-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.cr-item .cri-class-tag { font-size:11px; font-weight:700; padding:2px 8px; border-radius:6px; }
+.cr-item .cri-class-tag.scratch_basic, .cr-item .cri-class-tag.scratch_adv { background:var(--pink-light); color:var(--pink-dark); }
+.cr-item .cri-class-tag.python_basic, .cr-item .cri-class-tag.python_adv { background:#E8F5E9; color:#2E7D32; }
+.cr-item .cri-class-tag.cpp_basic, .cr-item .cri-class-tag.cpp_adv { background:var(--purple-light); color:var(--purple-dark); }
+.cr-item .cri-date { font-size:11px; color:var(--text-sub); }
+.cr-item .cri-title { font-size:14px; font-weight:700; margin-bottom:4px; }
+.cr-item .cri-content { font-size:12px; color:var(--text-sub); display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; line-height:1.4; }
+.cr-item .cri-meta { display:flex; gap:10px; margin-top:8px; font-size:10px; color:var(--text-light); }
+
+/* Performance levels */
+.perf-selector { display:flex; gap:4px; margin-bottom:8px; }
+.perf-option { flex:1; text-align:center; padding:6px 4px; border-radius:8px; font-size:11px; font-weight:600; border:1px solid var(--border); cursor:pointer; transition:all .2s; white-space:nowrap; }
+.perf-option:active { transform:scale(0.93); }
+.perf-option.excellent { background:#E8F5E9; color:#2E7D32; border-color:transparent; }
+.perf-option.good { background:var(--blue-light); color:var(--blue-dark); border-color:transparent; }
+.perf-option.normal { background:var(--purple-light); color:var(--purple-dark); border-color:transparent; }
+.perf-option.struggling { background:var(--pink-light); color:var(--pink-dark); border-color:transparent; }
+.perf-option.selected { box-shadow:0 0 0 2px var(--purple); }
+
+.student-note-card { background:rgba(155,127,217,0.05); border-radius:10px; padding:10px; margin-bottom:8px; border:1px solid var(--border); }
+.student-note-card .snc-head { display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.student-note-card .snc-avatar { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,var(--purple),var(--blue)); color:#fff; font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.student-note-card .snc-name { font-size:13px; font-weight:600; flex:1; }
+.student-note-card .snc-perf { font-size:10px; font-weight:700; padding:2px 6px; border-radius:6px; }
+.student-note-card .snc-perf.excellent { background:#E8F5E9; color:#2E7D32; }
+.student-note-card .snc-perf.good { background:var(--blue-light); color:var(--blue-dark); }
+.student-note-card .snc-perf.normal { background:var(--purple-light); color:var(--purple-dark); }
+.student-note-card .snc-perf.struggling { background:var(--pink-light); color:var(--pink-dark); }
+.quick-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:6px; }
+.quick-tag { font-size:10px; padding:3px 8px; border-radius:6px; background:var(--purple-light); color:var(--purple-dark); cursor:pointer; border:1px solid transparent; }
+.quick-tag:active { transform:scale(0.93); }
+
+/* 学员详情课堂记录 */
+.sd-cr-item { padding:8px; background:var(--bg-start); border-radius:8px; margin-bottom:6px; font-size:12px; }
+.sd-cr-item .sdcr-date { font-weight:600; color:var(--purple-dark); }
+.sd-cr-item .sdcr-title { color:var(--text-main); margin-top:2px; font-weight:600; }
+.sd-cr-item .sdcr-text { color:var(--text-sub); margin-top:2px; font-size:11px; line-height:1.4; }
+.sd-cr-item .sdcr-perf { display:inline-block; font-size:10px; font-weight:700; padding:1px 6px; border-radius:5px; margin-right:4px; }
+.sd-cr-item .sdcr-perf.excellent { background:#E8F5E9; color:#2E7D32; }
+.sd-cr-item .sdcr-perf.good { background:var(--blue-light); color:var(--blue-dark); }
+.sd-cr-item .sdcr-perf.normal { background:var(--purple-light); color:var(--purple-dark); }
+.sd-cr-item .sdcr-perf.struggling { background:var(--pink-light); color:var(--pink-dark); }
+
+/* 排课详情中的课堂记录入口 */
+.dm-classrecord-banner { display:flex; align-items:center; gap:8px; padding:10px 12px; border-radius:10px; background:var(--purple-light); border:1px dashed var(--purple); color:var(--purple-dark); font-size:13px; font-weight:600; margin-bottom:10px; cursor:pointer; }
+.dm-classrecord-banner:active { transform:scale(0.98); }
+.dm-classrecord-banner .dmb-note { font-weight:400; font-size:12px; color:var(--purple); }
+
+/* 课程大纲关联选择 */
+.curr-link-select { width:100%; padding:8px 12px; border-radius:8px; border:1px dashed var(--border); background:rgba(255,255,255,0.6); font-size:12px; color:var(--text-sub); }
+
 </style>
 </head>
 <body>
@@ -880,6 +986,22 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <div class="mc-label">数据管理</div>
           <div class="mc-desc">导出·导入·清空</div>
         </div>
+
+        <div class="more-card" onclick="showSubPage('curriculum')">
+          <div class="mc-icon" style="background:linear-gradient(135deg,#9B7FD9,#4FC3F7)"><svg><use href="#i-book"/></svg></div>
+          <div class="mc-label">课程大纲</div>
+          <div class="mc-desc">备课·进度·教案</div>
+        </div>
+        <div class="more-card" onclick="showSubPage('classRecords')">
+          <div class="mc-icon" style="background:linear-gradient(135deg,#FF85A2,#9B7FD9)"><svg><use href="#i-clipboard"/></svg></div>
+          <div class="mc-label">课堂记录</div>
+          <div class="mc-desc">学员表现·点评</div>
+        </div>
+        <div class="more-card" onclick="showSubPage('recycleBin')">
+          <div class="mc-icon" style="background:linear-gradient(135deg,#9CA3AF,#6B7280)"><svg><use href="#i-trash"/></svg></div>
+          <div class="mc-label">回收站</div>
+          <div class="mc-desc">误删恢复·30天</div>
+        </div>
         <div class="more-card" onclick="showSubPage('ws-settings')">
           <div class="mc-icon" style="background:linear-gradient(135deg,#FF7043,#F4511E)"><svg><use href="#i-sliders"/></svg></div>
           <div class="mc-label">工作台设置</div>
@@ -1044,6 +1166,52 @@ input:focus,select:focus,textarea:focus { outline:none; }
         </div>
         <button class="btn btn-primary btn-block" onclick="saveWsSettings()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存设置</button>
       </div>
+
+    <!-- Sub: Recycle Bin -->
+    <div class="sub-page" id="sub-recycleBin">
+      <div class="sub-back" onclick="backToMore()"><svg class="icon-sm"><use href="#i-back"/></svg> 返回</div>
+      <div class="sec-title"><span class="pixel-deco"></span>回收站</div>
+      <div style="padding:0 12px 8px;font-size:11px;color:var(--text-sub)">删除的学员、课程、作业会保留30天，可随时恢复。超期将自动永久删除。</div>
+      <div id="recycle-bin-list"></div>
+    </div>
+
+    <!-- Sub: Curriculum -->
+    <div class="sub-page" id="sub-curriculum">
+      <div class="sub-back" onclick="backToMore()"><svg class="icon-sm"><use href="#i-back"/></svg> 返回</div>
+      <div class="sec-title"><span class="pixel-deco"></span>课程大纲与备课</div>
+      <div class="tab-bar" id="curr-class-tabs">
+        <div class="tab-item active" data-class="scratch_basic" onclick="filterCurrClass(this,'scratch_basic')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch初级</div>
+        <div class="tab-item" data-class="scratch_adv" onclick="filterCurrClass(this,'scratch_adv')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch进阶</div>
+        <div class="tab-item" data-class="python_basic" onclick="filterCurrClass(this,'python_basic')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python基础</div>
+        <div class="tab-item" data-class="python_adv" onclick="filterCurrClass(this,'python_adv')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python进阶</div>
+        <div class="tab-item" data-class="cpp_basic" onclick="filterCurrClass(this,'cpp_basic')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++基础</div>
+        <div class="tab-item" data-class="cpp_adv" onclick="filterCurrClass(this,'cpp_adv')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++进阶</div>
+      </div>
+      <div class="curriculum-header">
+        <div class="curriculum-progress">
+          <div class="cp-top"><span class="cp-label">教学进度</span><span class="cp-val" id="curr-progress-val">0/0</span></div>
+          <div class="cp-bar"><div class="cp-fill" id="curr-progress-bar" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="curr-list" id="curr-list"></div>
+      <button class="fab" style="display:flex;position:fixed;bottom:calc(80px + var(--safe-b));right:16px;z-index:55" onclick="openCurriculumModal()"><svg class="icon"><use href="#i-plus"/></svg></button>
+    </div>
+
+    <!-- Sub: Class Records -->
+    <div class="sub-page" id="sub-classRecords">
+      <div class="sub-back" onclick="backToMore()"><svg class="icon-sm"><use href="#i-back"/></svg> 返回</div>
+      <div class="sec-title"><span class="pixel-deco"></span>课堂记录</div>
+      <div class="tab-bar" id="cr-class-tabs">
+        <div class="tab-item active" data-class="all" onclick="filterCrClass(this,'all')">全部班级</div>
+        <div class="tab-item" data-class="scratch_basic" onclick="filterCrClass(this,'scratch_basic')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch初级</div>
+        <div class="tab-item" data-class="scratch_adv" onclick="filterCrClass(this,'scratch_adv')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch进阶</div>
+        <div class="tab-item" data-class="python_basic" onclick="filterCrClass(this,'python_basic')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python基础</div>
+        <div class="tab-item" data-class="python_adv" onclick="filterCrClass(this,'python_adv')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python进阶</div>
+        <div class="tab-item" data-class="cpp_basic" onclick="filterCrClass(this,'cpp_basic')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++基础</div>
+        <div class="tab-item" data-class="cpp_adv" onclick="filterCrClass(this,'cpp_adv')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++进阶</div>
+      </div>
+      <div class="cr-list" id="cr-list"></div>
+    </div>
     </div>
   </div>
 </div>
@@ -1454,6 +1622,115 @@ input:focus,select:focus,textarea:focus { outline:none; }
   </div>
 </div>
 
+
+<!-- Curriculum Edit Modal -->
+<div class="modal-overlay" id="modal-curriculum">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-curriculum')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="curr-modal-title">新增课程大纲</div>
+    <input type="hidden" id="curr-edit-id">
+    <div class="form-group">
+      <label class="form-label">班级</label>
+      <select class="form-select" id="curr-class">
+        <option value="scratch_basic">Scratch初级班</option>
+        <option value="scratch_adv">Scratch进阶班</option>
+        <option value="python_basic">Python基础班</option>
+        <option value="python_adv">Python进阶班</option>
+        <option value="cpp_basic">C++基础班</option>
+        <option value="cpp_adv">C++进阶班</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">课程序号</label>
+        <input type="number" class="form-input" id="curr-order" min="1" value="1">
+      </div>
+      <div class="form-group">
+        <label class="form-label">状态</label>
+        <select class="form-select" id="curr-status">
+          <option value="planned">未教</option>
+          <option value="taught">已教</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">课程标题</label>
+      <input type="text" class="form-input" id="curr-title" placeholder="如：第1课 认识Scratch">
+    </div>
+    <div class="form-group">
+      <label class="form-label">教学内容</label>
+      <textarea class="form-textarea" id="curr-content" rows="3" placeholder="本节课主要教学内容..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">重点</label>
+      <textarea class="form-textarea" id="curr-keyPoints" rows="2" placeholder="本节课重点知识..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">难点</label>
+      <textarea class="form-textarea" id="curr-difficulties" rows="2" placeholder="本节课难点..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">配套作业建议</label>
+      <textarea class="form-textarea" id="curr-homework" rows="2" placeholder="课后作业建议..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">参考资料</label>
+      <textarea class="form-textarea" id="curr-materials" rows="2" placeholder="参考资料、拓展阅读..."></textarea>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveCurriculum()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存课程</button>
+  </div>
+</div>
+
+<!-- Class Record Edit Modal -->
+<div class="modal-overlay" id="modal-classrecord">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-classrecord')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="cr-modal-title">课堂记录</div>
+    <input type="hidden" id="cr-edit-id">
+    <input type="hidden" id="cr-course-id">
+    <div class="form-group">
+      <label class="form-label">班级</label>
+      <select class="form-select" id="cr-class" onchange="refreshCrStudentList()">
+        <option value="scratch_basic">Scratch初级班</option>
+        <option value="scratch_adv">Scratch进阶班</option>
+        <option value="python_basic">Python基础班</option>
+        <option value="python_adv">Python进阶班</option>
+        <option value="cpp_basic">C++基础班</option>
+        <option value="cpp_adv">C++进阶班</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">上课日期</label>
+        <input type="date" class="form-input" id="cr-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">关联课程大纲</label>
+        <select class="form-select" id="cr-curriculum">
+          <option value="">不关联</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">本节课内容摘要</label>
+      <input type="text" class="form-input" id="cr-content" placeholder="简要描述本节课内容">
+    </div>
+    <div class="form-group">
+      <label class="form-label">整体课堂情况备注</label>
+      <textarea class="form-textarea" id="cr-overallNote" rows="2" placeholder="整体课堂氛围、进度、问题等..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">学员表现记录</label>
+      <div style="font-size:11px;color:var(--text-sub);margin-bottom:6px">为每位学员选择表现等级，填写亮点与问题</div>
+      <div id="cr-student-notes" style="max-height:35vh;overflow-y:auto;padding-right:4px"></div>
+    </div>
+    <button class="btn btn-primary btn-block" onclick="saveClassRecord()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存记录</button>
+    <button id="cr-delete-btn" class="btn btn-block btn-sm" style="margin-top:8px;background:var(--pink-light);color:var(--pink-dark);display:none" onclick="deleteClassRecordFromModal()"><svg class="icon-sm"><use href="#i-trash"/></svg> 删除此记录</button>
+  </div>
+</div>
+
 <!-- ===== Toast ===== -->
 <div class="toast" id="toast"></div>
 
@@ -1506,6 +1783,7 @@ function loadData() {
   try {
     migrateCppData();
     migrateContentLib();
+    cleanupOldRecycleBin();
   } catch(e) {
     console.error('数据迁移失败，已兜底跳过：', e);
   }
@@ -1515,7 +1793,7 @@ function loadData() {
 function ensureDBShape() {
   let changed = false;
   if (!DB || typeof DB !== 'object' || Array.isArray(DB)) { DB = {}; changed = true; }
-  const arrFields = ['courses','students','homework','snippets','templates','todos','achievements','reports','holidays'];
+  const arrFields = ['courses','students','homework','snippets','templates','todos','achievements','reports','holidays','recycleBin','curriculums','classRecords'];
   arrFields.forEach(f => {
     if (!Array.isArray(DB[f])) { DB[f] = []; changed = true; }
   });
@@ -1564,6 +1842,9 @@ function migrateContentLib() {
     if (!DB.settings.hoursPerLesson) { DB.settings.hoursPerLesson = 2; changed = true; }
   }
   if (DB.resources) { delete DB.resources; changed = true; }
+  if (!DB.recycleBin) { DB.recycleBin = []; changed = true; }
+  if (!DB.curriculums) { DB.curriculums = []; changed = true; }
+  if (!DB.classRecords) { DB.classRecords = []; changed = true; }
   if (changed) saveData();
 }
 
@@ -1827,6 +2108,167 @@ function initSampleData() {
     { id:'a4', studentName:'小智', title:'猜数游戏(控制台)', subject:'cpp', date:'2026-08-20' }
   ];
 
+  // 示例课程大纲
+  DB.curriculums = [
+    // Scratch初级
+    { id:'cu1', classId:'scratch_basic', order:1, title:'第1课 认识Scratch与角色移动', status:'taught',
+      content:'介绍Scratch编程界面，学习角色、舞台、积木区的概念，掌握移动、旋转等基本运动积木。',
+      keyPoints:'角色移动积木、坐标概念、绿旗事件',
+      difficulties:'理解x/y坐标系统',
+      homework:'完成角色来回移动的小动画',
+      materials:'Scratch官方入门教程' },
+    { id:'cu2', classId:'scratch_basic', order:2, title:'第2课 造型切换与对话', status:'taught',
+      content:'学习造型切换，使用"说"和"思考"积木实现角色对话，制作简单的故事情景。',
+      keyPoints:'造型切换、对话积木、等待积木',
+      difficulties:'多角色对话的顺序控制',
+      homework:'制作一个双角色对话故事',
+      materials:'造型素材包' },
+    { id:'cu3', classId:'scratch_basic', order:3, title:'第3课 循环与重复执行', status:'taught',
+      content:'学习"重复执行"和"重复执行多少次"积木，理解循环的概念，制作星空动画等效果。',
+      keyPoints:'循环积木、克隆基础、随机数',
+      difficulties:'循环嵌套的理解',
+      homework:'制作星空动画或烟花效果',
+      materials:'' },
+    { id:'cu4', classId:'scratch_basic', order:4, title:'第4课 条件判断与碰撞检测', status:'planned',
+      content:'学习"如果...那么"积木，掌握碰撞侦测，制作简单的接物游戏。',
+      keyPoints:'条件判断、碰到侦测、颜色侦测',
+      difficulties:'多条件组合判断',
+      homework:'制作接苹果小游戏',
+      materials:'' },
+    { id:'cu5', classId:'scratch_basic', order:5, title:'第5课 变量与计分系统', status:'planned',
+      content:'学习变量的概念，创建得分、生命值等变量，实现游戏计分系统。',
+      keyPoints:'变量创建、变量增减、变量显示',
+      difficulties:'理解变量的作用域',
+      homework:'为接苹果游戏添加计分功能',
+      materials:'' },
+    // Scratch进阶
+    { id:'cu6', classId:'scratch_adv', order:1, title:'第1课 克隆体技术与敌人生成', status:'taught',
+      content:'深入学习克隆技术，掌握克隆体启动、删除，实现敌人自动生成系统。',
+      keyPoints:'克隆积木、克隆体识别、私有变量',
+      difficulties:'克隆体与本体的区别',
+      homework:'制作飞机大战的敌人系统',
+      materials:'' },
+    { id:'cu7', classId:'scratch_adv', order:2, title:'第2课 广播消息与多场景协作', status:'taught',
+      content:'学习广播与接收消息机制，实现多角色、多场景之间的协作与通信。',
+      keyPoints:'广播积木、消息传递、场景切换',
+      difficulties:'复杂的消息流转设计',
+      homework:'制作游戏开始/结束场景',
+      materials:'' },
+    { id:'cu8', classId:'scratch_adv', order:3, title:'第3课 弹球游戏综合项目', status:'planned',
+      content:'综合运用所学知识，制作完整的弹球打砖块游戏。',
+      keyPoints:'项目整合、游戏逻辑、关卡设计',
+      difficulties:'复杂游戏逻辑调试',
+      homework:'完成弹球游戏并添加创意',
+      materials:'' },
+    // Python基础
+    { id:'cu9', classId:'python_basic', order:1, title:'第1课 Python初体验与print输出', status:'taught',
+      content:'认识Python语言，学习print输出函数，了解变量和基本数据类型。',
+      keyPoints:'print函数、变量定义、字符串',
+      difficulties:'理解变量的概念',
+      homework:'用print打印自我介绍',
+      materials:'Python安装指南' },
+    { id:'cu10', classId:'python_basic', order:2, title:'第2课 input输入与类型转换', status:'taught',
+      content:'学习input输入函数，掌握数据类型转换，制作简单的交互程序。',
+      keyPoints:'input函数、int/float转换、字符串拼接',
+      difficulties:'类型转换的理解',
+      homework:'制作BMI计算器',
+      materials:'' },
+    { id:'cu11', classId:'python_basic', order:3, title:'第3课 if条件判断', status:'taught',
+      content:'学习if/elif/else条件判断语句，掌握比较运算符和逻辑运算符。',
+      keyPoints:'if语句、比较运算符、逻辑运算符',
+      difficulties:'多分支条件的设计',
+      homework:'制作成绩等级判定程序',
+      materials:'' },
+    { id:'cu12', classId:'python_basic', order:4, title:'第4课 for循环与range', status:'planned',
+      content:'学习for循环和range函数，掌握循环累加、循环嵌套等用法。',
+      keyPoints:'for循环、range函数、累加器模式',
+      difficulties:'循环嵌套的理解',
+      homework:'打印九九乘法表',
+      materials:'' },
+    // Python进阶
+    { id:'cu13', classId:'python_adv', order:1, title:'第1课 列表高级操作', status:'taught',
+      content:'深入学习列表的各种操作方法，包括切片、推导式、常用内置方法等。',
+      keyPoints:'列表切片、列表推导式、sort/sorted',
+      difficulties:'列表推导式的灵活运用',
+      homework:'完成列表操作练习题',
+      materials:'' },
+    { id:'cu14', classId:'python_adv', order:2, title:'第2课 函数定义与参数', status:'taught',
+      content:'学习自定义函数，掌握参数传递、返回值、作用域等概念。',
+      keyPoints:'def定义函数、参数、return返回值',
+      difficulties:'理解函数的作用域',
+      homework:'封装常用功能为函数',
+      materials:'' },
+    { id:'cu15', classId:'python_adv', order:3, title:'第3课 面向对象编程入门', status:'planned',
+      content:'学习类与对象的概念，掌握属性、方法、构造函数等面向对象基础。',
+      keyPoints:'class定义、__init__构造函数、self关键字',
+      difficulties:'理解面向对象思想',
+      homework:'设计学生类并实例化',
+      materials:'' },
+    // C++基础
+    { id:'cu16', classId:'cpp_basic', order:1, title:'第1课 C++入门与cout输出', status:'taught',
+      content:'认识C++语言，了解程序结构，学习cout输出和变量定义。',
+      keyPoints:'程序结构、cout、变量、数据类型',
+      difficulties:'理解编译型语言特点',
+      homework:'编写第一个C++程序',
+      materials:'Dev-C++安装包' },
+    { id:'cu17', classId:'cpp_basic', order:2, title:'第2课 cin输入与运算', status:'taught',
+      content:'学习cin输入函数，掌握算术运算符和赋值运算符。',
+      keyPoints:'cin、算术运算符、类型转换',
+      difficulties:'整数除法与浮点除法',
+      homework:'制作简单计算器',
+      materials:'' },
+    { id:'cu18', classId:'cpp_basic', order:3, title:'第3课 if/else条件判断', status:'planned',
+      content:'学习if/else条件判断，掌握比较运算符和逻辑运算符。',
+      keyPoints:'if/else、switch、三目运算符',
+      difficulties:'复杂条件的组合',
+      homework:'制作成绩等级程序',
+      materials:'' },
+    // C++进阶
+    { id:'cu19', classId:'cpp_adv', order:1, title:'第1课 数组与遍历', status:'taught',
+      content:'学习一维数组和二维数组，掌握数组的遍历、查找、排序等操作。',
+      keyPoints:'数组定义、数组遍历、查找算法',
+      difficulties:'数组下标与越界问题',
+      homework:'实现数组元素查找',
+      materials:'' },
+    { id:'cu20', classId:'cpp_adv', order:2, title:'第2课 for循环与数组排序', status:'taught',
+      content:'深入学习循环与数组的结合，掌握冒泡排序等基础算法。',
+      keyPoints:'循环嵌套、冒泡排序、选择排序',
+      difficulties:'排序算法的理解',
+      homework:'实现冒泡排序',
+      materials:'' },
+    { id:'cu21', classId:'cpp_adv', order:3, title:'第3课 函数与结构体', status:'planned',
+      content:'学习自定义函数和结构体，掌握函数的参数传递和返回值。',
+      keyPoints:'函数定义、struct结构体、值传递',
+      difficulties:'理解函数封装的意义',
+      homework:'封装排序函数',
+      materials:'' }
+  ];
+
+  // 示例课堂记录
+  DB.classRecords = [
+    {
+      id:'cr1', classId:'scratch_basic', courseId:'cu1', date:ymd(pastDay),
+      content:'第1课 认识Scratch与角色移动',
+      overallNote:'第一节课，孩子们都很兴奋。整体课堂氛围很好，大部分同学能跟上进度。小明和小华表现特别突出，很快就掌握了基本操作。小红稍微慢一点，但很认真。',
+      studentNotes: [
+        { studentId:'s1', performance:'excellent', highlights:'课堂参与积极，很快掌握移动积木', issues:'' },
+        { studentId:'s2', performance:'normal', highlights:'很认真', issues:'操作速度稍慢，需要多练习' },
+        { studentId:'s3', performance:'excellent', highlights:'逻辑清晰，有自己的创意想法', issues:'' }
+      ]
+    },
+    {
+      id:'cr2', classId:'python_basic', courseId:'cu9', date:ymd(pastDay),
+      content:'第1课 Python初体验',
+      overallNote:'第一节Python课，小龙基础不错接受很快。小芳需要多关注，有些跟不上。',
+      studentNotes: [
+        { studentId:'s6', performance:'good', highlights:'接受能力强，完成任务快', issues:'' },
+        { studentId:'s7', performance:'struggling', highlights:'态度认真', issues:'基础较弱，需要课后辅导' }
+      ]
+    }
+  ];
+
+  DB.recycleBin = [];
+
   saveData();
 }
 
@@ -1930,6 +2372,9 @@ function showSubPage(name) {
   if (name === 'snippets') renderSnippets2();
   if (name === 'reports') renderReports();
   if (name === 'ws-settings') openWsSettings();
+  if (name === 'recycleBin') renderRecycleBin();
+  if (name === 'curriculum') renderCurriculums();
+  if (name === 'classRecords') renderClassRecords();
 }
 
 function backToMore() {
@@ -2105,6 +2550,7 @@ function renderScheduleList() {
         <div class="si-actions">
           ${c.status === 'pending' ? `<button class="primary" onclick="markCourseDone('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-check"/></use></svg> 标记完成</button>` : `<button onclick="markCourseDone('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-refresh"/></use></svg> 撤销</button>`}
           <button onclick="openAttendance('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-people"/></use></svg> 考勤</button>
+          <button onclick="openClassRecordByCourse('${c.id}')" style="background:var(--purple-light);color:var(--purple-dark);border-color:transparent"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-clipboard"/></use></svg> 记录</button>
           <button class="si-del" onclick="deleteCourse('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-trash"/></use></svg> 删除</button>
         </div>
       </div>` });
@@ -2243,6 +2689,7 @@ function renderDayModal() {
         <div class="si-actions">
           ${c.status === 'pending' ? `<button class="primary" onclick="markCourseDone('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-check"/></use></svg> 完成</button>` : `<button onclick="markCourseDone('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-refresh"/></use></svg> 撤销</button>`}
           <button onclick="openAttendance('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-people"/></use></svg> 考勤</button>
+          <button onclick="event.stopPropagation();closeModal('modal-day');openClassRecordByCourse('${c.id}')" style="background:var(--purple-light);color:var(--purple-dark);border-color:transparent"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-clipboard"/></use></svg> 记录</button>
           <button class="si-del" onclick="deleteCourse('${c.id}')"><svg class="icon-sm" style="width:14px;height:14px"><use href="#i-trash"/></use></svg> 删除</button>
         </div>
       </div>`;
@@ -2294,7 +2741,7 @@ function deleteCourse(id) {
   const presentCount = Object.values(att).filter(v => v === 'present' || v === 'late').length;
   const msg = presentCount > 0
     ? `这节课已有 ${presentCount} 名学员考勤出勤，删除会自动退回已扣课时。确定删除？`
-    : '确定删除这节课吗？';
+    : '确定删除这节课吗？删除后可在回收站恢复。';
   if (!confirm(msg)) return;
   if (presentCount > 0) {
     const hpl = hoursPerLesson();
@@ -2305,11 +2752,12 @@ function deleteCourse(id) {
       }
     });
   }
+  moveToRecycleBin('course', c);
   DB.courses = DB.courses.filter(x => x.id !== id);
   saveData();
   renderSchedule();
   renderDayModal();
-  showToast(presentCount > 0 ? '已删除课程，出勤学员课时已退回' : '课程已删除', 'i-trash');
+  showToast(presentCount > 0 ? '课程已移入回收站，出勤学员课时已退回' : '课程已移入回收站', 'i-trash');
 }
 
 function markCourseDone(id) {
@@ -2538,6 +2986,10 @@ function showStudentDetail(id) {
     });
     html += `</div>`;
   }
+  
+  // 课堂记录
+  const crHtml = getStudentClassRecordsHtml(s.id);
+  if (crHtml) html += crHtml;
 
   html += `<div style="height:12px"></div>
     <button class="btn btn-primary btn-block btn-sm" onclick="openEditStudent('${s.id}')"><svg class="icon-sm"><use href="#i-edit"/></svg> 编辑学员资料</button>
@@ -2710,8 +3162,19 @@ function saveStudent() {
 }
 
 function deleteStudent(id) {
+  const s = DB.students.find(x => x.id === id);
+  if (!s) return;
   const rc = DB.reports.filter(r => r.studentId === id).length;
-  if (!confirm(`确定删除该学员？相关作业记录${rc ? `和 ${rc} 份成长报告` : ''}也会一并删除，此操作不可撤销。`)) return;
+  if (!confirm(`确定删除该学员？相关作业记录${rc ? `和 ${rc} 份成长报告` : ''}也会移入回收站，30天后自动清理。`)) return;
+  // 移入回收站
+  const studentData = JSON.parse(JSON.stringify(s));
+  const studentHomework = DB.homework.filter(h => h.studentId === id);
+  const studentReports = DB.reports.filter(r => r.studentId === id);
+  moveToRecycleBin('student', {
+    ...studentData,
+    _homework: studentHomework,
+    _reports: studentReports
+  });
   DB.students = DB.students.filter(s => s.id !== id);
   DB.homework = DB.homework.filter(h => h.studentId !== id);
   DB.reports = DB.reports.filter(r => r.studentId !== id);
@@ -2721,7 +3184,7 @@ function deleteStudent(id) {
   renderHomework();
   renderHome();
   closeModal('modal-student');
-  showToast('学员已删除');
+  showToast('学员已移入回收站');
 }
 
 // ===== 学员成长报告 =====
@@ -3531,18 +3994,19 @@ function deleteHomework(id) {
   const h = DB.homework.find(hw => hw.id === id);
   if (!h) return;
   const extra = h.status === 'excellent' ? '\n该作业是优秀作业：成就墙记录会一并删除，评优加的 20 积分也会扣回。' : '';
-  if (!confirm(`确定删除「${h.studentName}」的作业「${h.title}」？${extra}\n此操作不可撤销。`)) return;
+  if (!confirm(`确定删除「${h.studentName}」的作业「${h.title}」？${extra}\n删除后可在回收站30天内恢复。`)) return;
   // 评优作业联动：清成就墙 + 回退评优积分
   if (h.status === 'excellent') {
     DB.achievements = DB.achievements.filter(a => !(a.studentName === h.studentName && a.title === h.title));
     const s = DB.students.find(st => st.id === h.studentId);
     if (s) s.points = Math.max(0, s.points - 20);
   }
+  moveToRecycleBin('homework', h);
   DB.homework = DB.homework.filter(hw => hw.id !== id);
   saveData();
   renderHomework();
   renderHome();
-  showToast('作业已删除');
+  showToast('作业已移入回收站');
 }
 
 // ===== 按次批量删除作业（同标题+同布置日期+同科目为一组）=====
@@ -4191,6 +4655,696 @@ function saveCourse() {
   document.getElementById('course-note').value = '';
 }
 
+
+// ===== 回收站功能 =====
+const RECYCLE_DAYS = 30;
+
+function cleanupOldRecycleBin() {
+  if (!DB.recycleBin) return;
+  const now = Date.now();
+  const cutoff = now - RECYCLE_DAYS * 24 * 60 * 60 * 1000;
+  const before = DB.recycleBin.length;
+  DB.recycleBin = DB.recycleBin.filter(item => {
+    const deletedAt = new Date(item.deletedAt).getTime();
+    return deletedAt >= cutoff;
+  });
+  if (DB.recycleBin.length !== before) saveData();
+}
+
+function moveToRecycleBin(type, data) {
+  if (!DB.recycleBin) DB.recycleBin = [];
+  DB.recycleBin.push({
+    id: uid(),
+    type: type,
+    data: JSON.parse(JSON.stringify(data)),
+    deletedAt: new Date().toISOString()
+  });
+}
+
+function renderRecycleBin() {
+  const list = document.getElementById('recycle-bin-list');
+  if (!DB.recycleBin || DB.recycleBin.length === 0) {
+    list.innerHTML = `<div class="rb-empty">
+      <svg><use href="#i-trash"/></svg>
+      <div class="rbe-text">回收站是空的</div>
+      <div class="rbe-hint">删除的学员、课程、作业会出现在这里</div>
+    </div>`;
+    return;
+  }
+  
+  const sorted = [...DB.recycleBin].sort((a,b) => new Date(b.deletedAt) - new Date(a.deletedAt));
+  
+  let html = '';
+  sorted.forEach(item => {
+    let name = '';
+    let meta = '';
+    const typeLabel = { student:'学员', course:'课程', homework:'作业' }[item.type] || item.type;
+    const typeClass = item.type;
+    
+    if (item.type === 'student') {
+      name = item.data.name || '未知学员';
+      const cls = CLASS_INFO[item.data.class] || { name:'未知班级' };
+      meta = `${cls.name} · 删除于 ${fmtDate(new Date(item.deletedAt).toISOString().slice(0,10))}`;
+    } else if (item.type === 'course') {
+      name = item.data.title || '未命名课程';
+      const cls = CLASS_INFO[item.data.class] || { name:'未知班级' };
+      meta = `${cls.name} · ${item.data.date || ''} ${item.data.time || ''} · 删除于 ${fmtDate(new Date(item.deletedAt).toISOString().slice(0,10))}`;
+    } else if (item.type === 'homework') {
+      name = `${item.data.studentName || ''} - ${item.data.title || ''}`;
+      const subj = SUBJECT_INFO[item.data.subject] || { name:item.data.subject };
+      meta = `${subj.name}作业 · 删除于 ${fmtDate(new Date(item.deletedAt).toISOString().slice(0,10))}`;
+    }
+    
+    html += `<div class="rb-item">
+      <div class="rbi-top">
+        <span class="rbi-type-tag ${typeClass}">${typeLabel}</span>
+        <span class="rbi-name">${name}</span>
+      </div>
+      <div class="rbi-meta">${meta}</div>
+      <div class="rbi-actions">
+        <button class="restore" onclick="restoreFromRecycleBin('${item.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-refresh"/></svg> 恢复</button>
+        <button class="delete" onclick="permanentDelete('${item.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-trash"/></svg> 永久删除</button>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function restoreFromRecycleBin(id) {
+  const item = DB.recycleBin.find(r => r.id === id);
+  if (!item) return;
+  
+  if (item.type === 'student') {
+    const stuData = item.data;
+    // 检查是否有ID冲突
+    const existing = DB.students.find(s => s.id === stuData.id);
+    let newId = stuData.id;
+    if (existing) {
+      newId = uid();
+    }
+    const studentCopy = JSON.parse(JSON.stringify(stuData));
+    delete studentCopy._homework;
+    delete studentCopy._reports;
+    if (existing) studentCopy.id = newId;
+    DB.students.push(studentCopy);
+    // 恢复关联的作业
+    if (stuData._homework && Array.isArray(stuData._homework)) {
+      stuData._homework.forEach(h => {
+        if (existing) h.studentId = newId;
+        const hwExisting = DB.homework.find(x => x.id === h.id);
+        if (hwExisting) h.id = uid();
+        DB.homework.push(h);
+      });
+    }
+    // 恢复关联的报告
+    if (stuData._reports && Array.isArray(stuData._reports)) {
+      stuData._reports.forEach(r => {
+        if (existing) r.studentId = newId;
+        const rExisting = DB.reports.find(x => x.id === r.id);
+        if (rExisting) r.id = uid();
+        DB.reports.push(r);
+      });
+    }
+    showToast('学员及关联数据已恢复');
+  } else if (item.type === 'course') {
+    const existing = DB.courses.find(c => c.id === item.data.id);
+    if (existing) {
+      item.data.id = uid();
+    }
+    DB.courses.push(item.data);
+    showToast('课程已恢复');
+  } else if (item.type === 'homework') {
+    const existing = DB.homework.find(h => h.id === item.data.id);
+    if (existing) {
+      item.data.id = uid();
+    }
+    DB.homework.push(item.data);
+    // 如果是优秀作业，恢复成就墙
+    if (item.data.status === 'excellent') {
+      const achExisting = DB.achievements.find(a => a.studentName === item.data.studentName && a.title === item.data.title);
+      if (!achExisting) {
+        DB.achievements.push({
+          id: uid(),
+          studentName: item.data.studentName,
+          title: item.data.title,
+          subject: item.data.subject,
+          date: item.data.assignedDate || fmtLocalDate(new Date())
+        });
+        const s = DB.students.find(st => st.id === item.data.studentId);
+        if (s) s.points = (s.points || 0) + 20;
+      }
+    }
+    showToast('作业已恢复');
+  }
+  
+  DB.recycleBin = DB.recycleBin.filter(r => r.id !== id);
+  saveData();
+  renderRecycleBin();
+  renderStudents();
+  renderSchedule();
+  renderHomework();
+  renderHome();
+}
+
+function permanentDelete(id) {
+  const item = DB.recycleBin.find(r => r.id === id);
+  if (!item) return;
+  if (!confirm('确定要永久删除吗？此操作不可撤销！')) return;
+  DB.recycleBin = DB.recycleBin.filter(r => r.id !== id);
+  saveData();
+  renderRecycleBin();
+  showToast('已永久删除', 'i-trash');
+}
+
+// ===== 课程大纲功能 =====
+let currentCurrClass = 'scratch_basic';
+
+function filterCurrClass(el, cls) {
+  document.querySelectorAll('#curr-class-tabs .tab-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentCurrClass = cls;
+  renderCurriculums();
+}
+
+function renderCurriculums() {
+  const list = document.getElementById('curr-list');
+  const items = (DB.curriculums || []).filter(c => c.classId === currentCurrClass).sort((a,b) => a.order - b.order);
+  
+  const taught = items.filter(c => c.status === 'taught').length;
+  const total = items.length;
+  const pct = total > 0 ? Math.round(taught / total * 100) : 0;
+  
+  document.getElementById('curr-progress-val').textContent = `已教 ${taught} 节 / 共 ${total} 节`;
+  document.getElementById('curr-progress-bar').style.width = pct + '%';
+  
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="es-illust"><svg style="width:80px;height:80px;color:var(--purple-light)"><use href="#i-book"/></svg></div>
+      <div class="es-text">还没有课程大纲</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:4px">点击右下角 + 添加第一课</div>
+    </div>`;
+    return;
+  }
+  
+  let html = '';
+  items.forEach(c => {
+    const statusLabel = c.status === 'taught' ? '已教' : '未教';
+    html += `<div class="curr-item ${c.status}" onclick="toggleCurrExpand('${c.id}', this)">
+      <div class="ci-head">
+        <div class="ci-order">${c.order}</div>
+        <div class="ci-info">
+          <div class="ci-title">${c.title || '未命名课程'}</div>
+        </div>
+        <span class="ci-status ${c.status}">${statusLabel}</span>
+      </div>
+      <div class="ci-detail">
+        ${c.content ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> 教学内容</div><div class="cid-content">${escapeHtml(c.content)}</div></div>` : ''}
+        ${c.keyPoints ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px;color:#4CAF50"><use href="#i-star"/></svg> 重点</div><div class="cid-content">${escapeHtml(c.keyPoints)}</div></div>` : ''}
+        ${c.difficulties ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px;color:var(--pink)"><use href="#i-warn"/></svg> 难点</div><div class="cid-content">${escapeHtml(c.difficulties)}</div></div>` : ''}
+        ${c.homework ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-clipboard"/></svg> 配套作业</div><div class="cid-content">${escapeHtml(c.homework)}</div></div>` : ''}
+        ${c.materials ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-link"/></svg> 参考资料</div><div class="cid-content">${escapeHtml(c.materials)}</div></div>` : ''}
+        <div class="ci-actions" onclick="event.stopPropagation()">
+          <button class="primary" onclick="editCurriculum('${c.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-edit"/></svg> 编辑</button>
+          <button class="success" onclick="toggleCurrStatus('${c.id}')">${c.status === 'taught' ? '标记未教' : '标记已教'}</button>
+          <button class="danger" onclick="deleteCurriculum('${c.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-trash"/></svg> 删除</button>
+        </div>
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function toggleCurrExpand(id, el) {
+  el.classList.toggle('expanded');
+}
+
+function openCurriculumModal(curriculumId) {
+  document.getElementById('curr-edit-id').value = curriculumId || '';
+  document.getElementById('curr-modal-title').textContent = curriculumId ? '编辑课程大纲' : '新增课程大纲';
+  
+  if (curriculumId) {
+    const c = DB.curriculums.find(x => x.id === curriculumId);
+    if (c) {
+      document.getElementById('curr-class').value = c.classId;
+      document.getElementById('curr-order').value = c.order;
+      document.getElementById('curr-status').value = c.status;
+      document.getElementById('curr-title').value = c.title || '';
+      document.getElementById('curr-content').value = c.content || '';
+      document.getElementById('curr-keyPoints').value = c.keyPoints || '';
+      document.getElementById('curr-difficulties').value = c.difficulties || '';
+      document.getElementById('curr-homework').value = c.homework || '';
+      document.getElementById('curr-materials').value = c.materials || '';
+    }
+  } else {
+    document.getElementById('curr-class').value = currentCurrClass;
+    const items = (DB.curriculums || []).filter(c => c.classId === currentCurrClass);
+    document.getElementById('curr-order').value = items.length + 1;
+    document.getElementById('curr-status').value = 'planned';
+    document.getElementById('curr-title').value = '';
+    document.getElementById('curr-content').value = '';
+    document.getElementById('curr-keyPoints').value = '';
+    document.getElementById('curr-difficulties').value = '';
+    document.getElementById('curr-homework').value = '';
+    document.getElementById('curr-materials').value = '';
+  }
+  openModal('modal-curriculum');
+}
+
+function editCurriculum(id) {
+  openCurriculumModal(id);
+}
+
+function saveCurriculum() {
+  const id = document.getElementById('curr-edit-id').value;
+  const classId = document.getElementById('curr-class').value;
+  const order = parseInt(document.getElementById('curr-order').value) || 1;
+  const status = document.getElementById('curr-status').value;
+  const title = document.getElementById('curr-title').value.trim();
+  
+  if (!title) {
+    showToast('请输入课程标题', 'i-warn');
+    return;
+  }
+  
+  const data = {
+    classId: classId,
+    order: order,
+    title: title,
+    content: document.getElementById('curr-content').value.trim(),
+    keyPoints: document.getElementById('curr-keyPoints').value.trim(),
+    difficulties: document.getElementById('curr-difficulties').value.trim(),
+    homework: document.getElementById('curr-homework').value.trim(),
+    materials: document.getElementById('curr-materials').value.trim(),
+    status: status
+  };
+  
+  if (id) {
+    const c = DB.curriculums.find(x => x.id === id);
+    if (c) Object.assign(c, data);
+    showToast('课程已更新');
+  } else {
+    data.id = uid();
+    if (!DB.curriculums) DB.curriculums = [];
+    DB.curriculums.push(data);
+    showToast('课程已添加');
+  }
+  
+  saveData();
+  closeModal('modal-curriculum');
+  
+  // 如果班级变了，切换到对应班级
+  if (classId !== currentCurrClass) {
+    currentCurrClass = classId;
+    document.querySelectorAll('#curr-class-tabs .tab-item').forEach(t => {
+      t.classList.toggle('active', t.dataset.class === classId);
+    });
+  }
+  renderCurriculums();
+}
+
+function toggleCurrStatus(id) {
+  const c = DB.curriculums.find(x => x.id === id);
+  if (!c) return;
+  c.status = c.status === 'taught' ? 'planned' : 'taught';
+  saveData();
+  renderCurriculums();
+  showToast(c.status === 'taught' ? '已标记为已教' : '已标记为未教');
+}
+
+function deleteCurriculum(id) {
+  if (!confirm('确定删除这个课程大纲吗？此操作不可撤销。')) return;
+  DB.curriculums = DB.curriculums.filter(x => x.id !== id);
+  saveData();
+  renderCurriculums();
+  showToast('课程大纲已删除', 'i-trash');
+}
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ===== 课堂记录功能 =====
+let currentCrClass = 'all';
+let crEditingNotes = []; // 编辑中的学员表现记录
+
+const PERF_INFO = {
+  excellent: { label:'优秀', cls:'excellent' },
+  good: { label:'良好', cls:'good' },
+  normal: { label:'一般', cls:'normal' },
+  struggling: { label:'需加油', cls:'struggling' }
+};
+
+const QUICK_COMMENTS = [
+  '课堂参与积极',
+  '注意力需加强',
+  '动手能力强',
+  '逻辑思维清晰',
+  '需要多练习',
+  '进步很明显',
+  '作品有创意',
+  '代码规范好',
+  '回答问题主动',
+  '合作精神佳'
+];
+
+function filterCrClass(el, cls) {
+  document.querySelectorAll('#cr-class-tabs .tab-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentCrClass = cls;
+  renderClassRecords();
+}
+
+function renderClassRecords() {
+  const list = document.getElementById('cr-list');
+  let records = DB.classRecords || [];
+  
+  if (currentCrClass !== 'all') {
+    records = records.filter(r => r.classId === currentCrClass);
+  }
+  
+  records = records.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+  
+  if (records.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="es-illust"><svg style="width:80px;height:80px;color:var(--purple-light)"><use href="#i-clipboard"/></svg></div>
+      <div class="es-text">还没有课堂记录</div>
+      <div style="font-size:11px;color:var(--text-light);margin-top:4px">在排课详情中可以添加课堂记录</div>
+    </div>`;
+    return;
+  }
+  
+  let html = '';
+  records.forEach(r => {
+    const cls = CLASS_INFO[r.classId] || { name:'未知班级' };
+    const clsKey = r.classId;
+    const studentCount = (r.studentNotes || []).length;
+    const courseInfo = r.courseId ? (DB.curriculums || []).find(c => c.id === r.courseId) : null;
+    
+    html += `<div class="cr-item" onclick="editClassRecord('${r.id}')">
+      <div class="cri-top">
+        <span class="cri-class-tag ${clsKey}">${cls.short || cls.name}</span>
+        <span class="cri-date">${fmtDate(r.date)}</span>
+      </div>
+      <div class="cri-title">${escapeHtml(r.content || courseInfo?.title || '课堂记录')}</div>
+      <div class="cri-content">${escapeHtml(r.overallNote || '点击查看详情和学员表现...')}</div>
+      <div class="cri-meta">
+        <span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-people"/></svg> ${studentCount} 名学员</span>
+        ${courseInfo ? `<span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-book"/></svg> 第${courseInfo.order}课</span>` : ''}
+      </div>
+    </div>`;
+  });
+  list.innerHTML = html;
+}
+
+function openClassRecordByCourse(courseId) {
+  const c = DB.courses.find(x => x.id === courseId);
+  if (!c) return;
+  // 查找是否已有该课程的课堂记录
+  const existing = (DB.classRecords || []).find(r => r.courseId === courseId && r.date === c.date);
+  if (existing) {
+    editClassRecord(existing.id);
+  } else {
+    // 查找课程大纲关联
+    let currId = '';
+    const curr = (DB.curriculums || []).find(cu => cu.classId === c.class && cu.title === c.title);
+    if (curr) currId = curr.id;
+    openClassRecordModal(currId, c.class, c.date);
+    document.getElementById('cr-content').value = c.title || '';
+  }
+}
+
+function openClassRecordModal(courseId, classId, date) {
+  document.getElementById('cr-edit-id').value = '';
+  document.getElementById('cr-modal-title').textContent = '新增课堂记录';
+  document.getElementById('cr-delete-btn').style.display = 'none';
+  document.getElementById('cr-course-id').value = courseId || '';
+  
+  if (classId) {
+    document.getElementById('cr-class').value = classId;
+  }
+  if (date) {
+    document.getElementById('cr-date').value = date;
+  } else {
+    document.getElementById('cr-date').value = fmtLocalDate(new Date());
+  }
+  
+  document.getElementById('cr-content').value = '';
+  document.getElementById('cr-overallNote').value = '';
+  
+  // 填充课程大纲下拉
+  refreshCrCurriculumSelect();
+  
+  // 如果有关联课程，自动填入内容
+  if (courseId) {
+    const curr = (DB.curriculums || []).find(c => c.id === courseId);
+    if (curr) {
+      document.getElementById('cr-content').value = curr.title || '';
+      document.getElementById('cr-curriculum').value = courseId;
+    }
+  }
+  
+  refreshCrStudentList();
+  openModal('modal-classrecord');
+}
+
+function editClassRecord(id) {
+  const r = (DB.classRecords || []).find(x => x.id === id);
+  if (!r) return;
+  
+  document.getElementById('cr-edit-id').value = id;
+  document.getElementById('cr-modal-title').textContent = '编辑课堂记录';
+  document.getElementById('cr-delete-btn').style.display = 'block';
+  document.getElementById('cr-course-id').value = r.courseId || '';
+  document.getElementById('cr-class').value = r.classId;
+  document.getElementById('cr-date').value = r.date;
+  document.getElementById('cr-content').value = r.content || '';
+  document.getElementById('cr-overallNote').value = r.overallNote || '';
+  
+  refreshCrCurriculumSelect();
+  document.getElementById('cr-curriculum').value = r.courseId || '';
+  
+  crEditingNotes = JSON.parse(JSON.stringify(r.studentNotes || []));
+  renderCrStudentNotes();
+  openModal('modal-classrecord');
+}
+
+function refreshCrCurriculumSelect() {
+  const classId = document.getElementById('cr-class').value;
+  const select = document.getElementById('cr-curriculum');
+  const curriculums = (DB.curriculums || []).filter(c => c.classId === classId).sort((a,b) => a.order - b.order);
+  
+  let html = '<option value="">不关联</option>';
+  curriculums.forEach(c => {
+    html += `<option value="${c.id}">第${c.order}课 ${escapeHtml(c.title)}</option>`;
+  });
+  select.innerHTML = html;
+}
+
+function refreshCrStudentList() {
+  const classId = document.getElementById('cr-class').value;
+  const students = DB.students.filter(s => s.class === classId);
+  
+  // 保留已有记录
+  const existingMap = {};
+  crEditingNotes.forEach(n => { existingMap[n.studentId] = n; });
+  
+  crEditingNotes = students.map(s => {
+    if (existingMap[s.id]) return existingMap[s.id];
+    return { studentId: s.id, performance: 'normal', highlights: '', issues: '' };
+  });
+  
+  refreshCrCurriculumSelect();
+  renderCrStudentNotes();
+}
+
+function renderCrStudentNotes() {
+  const container = document.getElementById('cr-student-notes');
+  const students = DB.students.filter(s => s.class === document.getElementById('cr-class').value);
+  
+  let html = '';
+  crEditingNotes.forEach((note, idx) => {
+    const stu = students.find(s => s.id === note.studentId);
+    if (!stu) return;
+    const avatarColors = ['#FF85A2','#4FC3F7','#9B7FD9','#4CAF50','#FFA000','#F06292'];
+    const avatarColor = avatarColors[stu.name.charCodeAt(0) % avatarColors.length];
+    const perf = PERF_INFO[note.performance] || PERF_INFO.normal;
+    
+    html += `<div class="student-note-card">
+      <div class="snc-head">
+        <div class="snc-avatar" style="background:linear-gradient(135deg,${avatarColor},${avatarColor}dd)">${stu.name[0]}</div>
+        <div class="snc-name">${stu.name}</div>
+        <span class="snc-perf ${perf.cls}">${perf.label}</span>
+      </div>
+      <div class="perf-selector">
+        ${Object.entries(PERF_INFO).map(([key, info]) => 
+          `<div class="perf-option ${info.cls} ${note.performance===key?'selected':''}" onclick="setPerfLevel(${idx},'${key}',this)">${info.label}</div>`
+        ).join('')}
+      </div>
+      <div class="form-group" style="margin-bottom:6px">
+        <label class="form-label" style="font-size:11px">亮点</label>
+        <textarea class="form-textarea" rows="1" style="min-height:40px;font-size:12px" oninput="updateNoteField(${idx},'highlights',this.value)" placeholder="课堂亮点...">${escapeHtml(note.highlights || '')}</textarea>
+        <div class="quick-tags">
+          ${['课堂参与积极','动手能力强','逻辑思维清晰','作品有创意','进步很明显'].map(tag => 
+            `<span class="quick-tag" onclick="appendToNote(${idx},'highlights','${tag}')">${tag}</span>`
+          ).join('')}
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" style="font-size:11px">问题/建议</label>
+        <textarea class="form-textarea" rows="1" style="min-height:40px;font-size:12px" oninput="updateNoteField(${idx},'issues',this.value)" placeholder="需要改进的地方...">${escapeHtml(note.issues || '')}</textarea>
+        <div class="quick-tags">
+          ${['注意力需加强','需要多练习','代码规范待提升','回答问题不够主动'].map(tag => 
+            `<span class="quick-tag" onclick="appendToNote(${idx},'issues','${tag}')">${tag}</span>`
+          ).join('')}
+        </div>
+      </div>
+    </div>`;
+  });
+  
+  if (!html) {
+    html = '<div style="text-align:center;padding:20px;color:var(--text-light);font-size:12px">该班级暂无学员</div>';
+  }
+  
+  container.innerHTML = html;
+}
+
+function setPerfLevel(idx, level, el) {
+  crEditingNotes[idx].performance = level;
+  // 更新UI
+  const card = el.closest('.student-note-card');
+  card.querySelectorAll('.perf-option').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  const perfTag = card.querySelector('.snc-perf');
+  perfTag.className = 'snc-perf ' + PERF_INFO[level].cls;
+  perfTag.textContent = PERF_INFO[level].label;
+}
+
+function updateNoteField(idx, field, value) {
+  crEditingNotes[idx][field] = value;
+}
+
+function appendToNote(idx, field, text) {
+  const current = crEditingNotes[idx][field] || '';
+  if (current.includes(text)) return;
+  crEditingNotes[idx][field] = current ? current + '、' + text : text;
+  renderCrStudentNotes();
+}
+
+function saveClassRecord() {
+  const id = document.getElementById('cr-edit-id').value;
+  const classId = document.getElementById('cr-class').value;
+  const date = document.getElementById('cr-date').value;
+  const curriculumId = document.getElementById('cr-curriculum').value;
+  const content = document.getElementById('cr-content').value.trim();
+  const overallNote = document.getElementById('cr-overallNote').value.trim();
+  
+  if (!date) {
+    showToast('请选择上课日期', 'i-warn');
+    return;
+  }
+  
+  const data = {
+    classId: classId,
+    courseId: curriculumId || '',
+    date: date,
+    content: content,
+    overallNote: overallNote,
+    studentNotes: crEditingNotes.filter(n => n.highlights || n.issues || n.performance !== 'normal')
+  };
+  
+  if (!DB.classRecords) DB.classRecords = [];
+  
+  if (id) {
+    const r = DB.classRecords.find(x => x.id === id);
+    if (r) Object.assign(r, data);
+    showToast('课堂记录已更新');
+  } else {
+    data.id = uid();
+    DB.classRecords.push(data);
+    showToast('课堂记录已保存');
+  }
+  
+  saveData();
+  closeModal('modal-classrecord');
+  renderClassRecords();
+  renderStudents();
+}
+
+function deleteClassRecord(id) {
+  if (!confirm('确定删除这条课堂记录吗？')) return;
+  DB.classRecords = DB.classRecords.filter(x => x.id !== id);
+  saveData();
+  renderClassRecords();
+  renderStudents();
+  showToast('记录已删除', 'i-trash');
+}
+
+function deleteClassRecordFromModal() {
+  const id = document.getElementById('cr-edit-id').value;
+  if (!id) return;
+  if (!confirm('确定删除这条课堂记录吗？此操作不可撤销。')) return;
+  DB.classRecords = DB.classRecords.filter(x => x.id !== id);
+  saveData();
+  closeModal('modal-classrecord');
+  renderClassRecords();
+  renderStudents();
+  showToast('记录已删除', 'i-trash');
+}
+
+// 学员详情中的课堂记录
+function getStudentClassRecords(studentId) {
+  if (!DB.classRecords) return [];
+  const records = [];
+  DB.classRecords.forEach(r => {
+    const note = (r.studentNotes || []).find(n => n.studentId === studentId);
+    if (note) {
+      records.push({ ...r, studentNote: note });
+    }
+  });
+  return records.sort((a,b) => (b.date || '').localeCompare(a.date || ''));
+}
+
+// ===== 课程详情中课堂记录入口 =====
+// 在 renderDayModal 中添加课堂记录按钮
+const _originalRenderDayModal = window.renderDayModal;
+function enhancedRenderDayModal() {
+  // 先调用原函数
+  if (typeof _originalRenderDayModal === 'function') {
+    _originalRenderDayModal();
+  }
+  
+  // 检查是否有课程，为每个课程添加课堂记录入口
+  const items = document.querySelectorAll('#day-course-list .sched-item');
+  // 这个方法不太可靠，改用直接在渲染函数中注入的方式
+}
+
+// 学员详情中添加课堂记录tab的HTML注入
+function getStudentClassRecordsHtml(studentId) {
+  const records = getStudentClassRecords(studentId);
+  if (records.length === 0) return '';
+  
+  let html = `<div class="sd-section">
+    <div class="sd-section-title"><svg class="icon-sm" style="width:14px;height:14px;color:var(--blue)"><use href="#i-clipboard"/></use></svg> 课堂记录（${records.length}条）</div>`;
+  
+  records.forEach(r => {
+    const note = r.studentNote;
+    const perf = PERF_INFO[note.performance] || { label:'一般', cls:'normal' };
+    const courseInfo = r.courseId ? (DB.curriculums || []).find(c => c.id === r.courseId) : null;
+    
+    html += `<div class="sd-cr-item">
+      <span class="sdcr-date">${fmtDate(r.date)}</span>
+      <span class="sdcr-perf ${perf.cls}">${perf.label}</span>
+      <div class="sdcr-title">${escapeHtml(r.content || courseInfo?.title || '课堂记录')}</div>
+      ${note.highlights ? `<div class="sdcr-text">亮点：${escapeHtml(note.highlights)}</div>` : ''}
+      ${note.issues ? `<div class="sdcr-text">建议：${escapeHtml(note.issues)}</div>` : ''}
+    </div>`;
+  });
+  
+  html += `</div>`;
+  return html;
+}
+
 // ===== Export/Import =====
 function exportData() {
   const data = JSON.stringify(DB, null, 2);
@@ -4255,7 +5409,7 @@ function exportCSV() {
 function clearAllData() {
   if (!confirm('确定要清空所有数据吗？此操作不可撤销！\n\n建议先导出备份！')) return;
   if (!confirm('再次确认：真的要清空全部数据吗？')) return;
-  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'' } };
+  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'', hoursPerLesson:2 }, recycleBin:[], curriculums:[], classRecords:[] };
   saveData();
   showToast('数据已清空');
   setTimeout(() => location.reload(), 500);
