@@ -304,9 +304,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .sub-back { display:flex; align-items:center; gap:6px; padding:12px; font-size:14px; font-weight:700; cursor:pointer; color:var(--purple-dark); }
 
 /* ===== Course Library (课程资源目录) ===== */
-.cl-stats { display:flex; flex-wrap:wrap; gap:6px; padding:4px 12px 10px; }
-.cl-stat-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--text-sub); background:var(--card-bg); border:1px solid var(--border); padding:4px 10px; border-radius:12px; box-shadow:var(--shadow); }
-.cl-cat-summary { padding:0 12px 8px; font-size:11px; color:var(--text-light); }
+.cl-stats { display:flex; flex-wrap:wrap; gap:6px; padding:2px 12px 4px; }
+.cl-stat-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--text-sub); background:var(--card-bg); border:1px solid var(--border); padding:3px 9px; border-radius:12px; box-shadow:var(--shadow); }
+.cl-cat-summary { padding:2px 12px 4px; font-size:11px; color:var(--text-light); }
 .cl-list { padding:0 12px 90px; }
 .cl-series { background:var(--card-bg); border-radius:var(--r-sm); box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:8px; overflow:hidden; }
 .cl-series-head { display:flex; align-items:center; padding:12px; cursor:pointer; gap:8px; }
@@ -325,8 +325,8 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .cl-lesson .cl-lname { flex:1; }
 .cl-lesson.taught .cl-lname { text-decoration:line-through; opacity:0.7; }
 .cl-hl { background:#FFF59D; color:#F57F17; padding:0 3px; border-radius:3px; font-weight:700; }
-.cl-progress { margin:0 12px 8px; background:var(--card-bg); border-radius:var(--r-sm); padding:10px 12px; box-shadow:var(--shadow); border:1px solid var(--border); }
-.cl-progress-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.cl-progress { margin:0 12px 6px; background:var(--card-bg); border-radius:var(--r-sm); padding:7px 12px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.cl-progress-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:4px; }
 .cl-progress-label { font-size:12px; font-weight:600; color:var(--text-sub); }
 .cl-progress-val { font-size:14px; font-weight:800; color:var(--purple-dark); }
 .cl-progress-bar { height:8px; background:rgba(155,127,217,0.1); border-radius:4px; overflow:hidden; }
@@ -712,6 +712,50 @@ input:focus,select:focus,textarea:focus { outline:none; }
 /* 课程大纲关联选择 */
 .curr-link-select { width:100%; padding:8px 12px; border-radius:8px; border:1px dashed var(--border); background:rgba(255,255,255,0.6); font-size:12px; color:var(--text-sub); }
 
+/* ===== 考级大纲 (Exam Outline) ===== */
+.eo-tabs { display:flex; gap:6px; padding:6px 12px 8px; }
+.eo-tab { flex:1; text-align:center; padding:9px 0; border-radius:var(--r-sm); font-size:13px; font-weight:700; cursor:pointer; border:1px solid var(--border); background:rgba(255,255,255,0.6); color:var(--text-sub); transition:all .2s; display:flex; align-items:center; justify-content:center; gap:5px; }
+.eo-tab svg { width:16px; height:16px; }
+.eo-tab.active.scratch { background:linear-gradient(135deg,#FFE0B2,#FFCC80); color:#E65100; border-color:transparent; box-shadow:0 2px 10px rgba(255,152,0,.25); }
+.eo-tab.active.python { background:linear-gradient(135deg,#BBDEFB,#90CAF9); color:#0D47A1; border-color:transparent; box-shadow:0 2px 10px rgba(33,150,243,.25); }
+.eo-tab.active.cpp { background:linear-gradient(135deg,#E1BEE7,#CE93D8); color:#4A148C; border-color:transparent; box-shadow:0 2px 10px rgba(156,39,176,.25); }
+.eo-progress { margin:0 12px 8px; background:var(--card-bg); border-radius:var(--r-sm); padding:8px 12px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.eo-progress-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:5px; }
+.eo-progress-label { font-size:11px; font-weight:600; color:var(--text-sub); }
+.eo-progress-val { font-size:13px; font-weight:800; color:var(--purple-dark); }
+.eo-progress-bar { height:6px; background:rgba(155,127,217,0.1); border-radius:3px; overflow:hidden; }
+.eo-progress-fill { height:100%; border-radius:3px; background:linear-gradient(to right,var(--purple),var(--blue)); transition:width .3s; }
+.eo-list { padding:0 12px 90px; }
+.eo-level { border-radius:var(--r-sm); margin-bottom:8px; overflow:hidden; box-shadow:var(--shadow); border:1px solid var(--border); transition:all .2s; }
+.eo-level.learned { border-color:#4CAF50; }
+.eo-level-head { display:flex; align-items:center; padding:11px 12px; cursor:pointer; gap:10px; }
+.eo-level-num { width:34px; height:34px; border-radius:10px; color:#fff; font-size:13px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; line-height:1; }
+.eo-level.scratch .eo-level-num { background:linear-gradient(135deg,#FF9800,#F57C00); }
+.eo-level.python .eo-level-num { background:linear-gradient(135deg,#2196F3,#0D47A1); }
+.eo-level.cpp .eo-level-num { background:linear-gradient(135deg,#9C27B0,#4A148C); }
+.eo-level.learned .eo-level-num { background:linear-gradient(135deg,#4CAF50,#2E7D32); }
+.eo-level-info { flex:1; min-width:0; }
+.eo-level-title { font-size:13px; font-weight:700; }
+.eo-level-meta { font-size:10px; color:var(--text-sub); margin-top:1px; display:flex; gap:6px; align-items:center; flex-wrap:wrap; }
+.eo-stage-tag { font-size:9px; font-weight:700; padding:1px 6px; border-radius:5px; }
+.eo-stage-tag.puji { background:#FFF3E0; color:#E65100; }
+.eo-stage-tag.tigao { background:#E3F2FD; color:#0D47A1; }
+.eo-stage-tag.xuanba { background:#F3E5F5; color:#4A148C; }
+.eo-level-chevron { transition:transform .25s; color:var(--text-light); flex-shrink:0; }
+.eo-level.open .eo-level-chevron { transform:rotate(90deg); }
+.eo-level-check { width:20px; height:20px; border-radius:50%; border:2px solid var(--purple); flex-shrink:0; display:flex; align-items:center; justify-content:center; cursor:pointer; }
+.eo-level.learned .eo-level-check { background:#4CAF50; border-color:#4CAF50; }
+.eo-level-check svg { width:12px; height:12px; color:#fff; }
+.eo-level-body { display:none; padding:0 12px 12px; animation:fadeIn .2s; }
+.eo-level.open .eo-level-body { display:block; }
+.eo-goal { font-size:11px; color:var(--text-sub); background:rgba(155,127,217,0.06); border-radius:8px; padding:8px 10px; margin-bottom:8px; line-height:1.5; }
+.eo-goal b { color:var(--purple-dark); }
+.eo-block { background:rgba(255,255,255,0.7); border-radius:8px; padding:8px 10px; margin-bottom:5px; border:1px solid var(--border); }
+.eo-block-head { display:flex; align-items:center; gap:6px; margin-bottom:3px; }
+.eo-block-no { width:18px; height:18px; border-radius:5px; background:var(--purple-light); color:var(--purple-dark); font-size:10px; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.eo-block-name { font-size:12px; font-weight:700; color:var(--text-main); }
+.eo-block-points { font-size:11px; color:var(--text-sub); line-height:1.5; padding-left:24px; }
+
 </style>
 </head>
 <body>
@@ -1018,15 +1062,15 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <div class="mc-desc">导出·导入·清空</div>
         </div>
 
-        <div class="more-card" onclick="showSubPage('curriculum')">
+        <div class="more-card" onclick="showSubPage('examOutline')">
           <div class="mc-icon" style="background:linear-gradient(135deg,#9B7FD9,#4FC3F7)"><svg><use href="#i-book"/></svg></div>
-          <div class="mc-label">课程大纲</div>
-          <div class="mc-desc">备课·进度·教案</div>
+          <div class="mc-label">考级大纲</div>
+          <div class="mc-desc">Scratch·Python·C++</div>
         </div>
         <div class="more-card" onclick="switchPage('course-lib')">
           <div class="mc-icon" style="background:linear-gradient(135deg,#26C6DA,#42A5F5)"><svg><use href="#i-folder"/></svg></div>
           <div class="mc-label">课程资源</div>
-          <div class="mc-desc">Scratch·Python目录</div>
+          <div class="mc-desc">Scratch·Python·C++目录</div>
         </div>
         <div class="more-card" onclick="showSubPage('classRecords')">
           <div class="mc-icon" style="background:linear-gradient(135deg,#FF85A2,#9B7FD9)"><svg><use href="#i-clipboard"/></svg></div>
@@ -1211,26 +1255,20 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <div id="recycle-bin-list"></div>
     </div>
 
-    <!-- Sub: Curriculum -->
-    <div class="sub-page" id="sub-curriculum">
+    <!-- Sub: 考级大纲 -->
+    <div class="sub-page" id="sub-examOutline">
       <div class="sub-back" onclick="backToMore()"><svg class="icon-sm"><use href="#i-back"/></svg> 返回</div>
-      <div class="sec-title"><span class="pixel-deco"></span>课程大纲与备课</div>
-      <div class="tab-bar" id="curr-class-tabs">
-        <div class="tab-item active" data-class="scratch_basic" onclick="filterCurrClass(this,'scratch_basic')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch初级</div>
-        <div class="tab-item" data-class="scratch_adv" onclick="filterCurrClass(this,'scratch_adv')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch进阶</div>
-        <div class="tab-item" data-class="python_basic" onclick="filterCurrClass(this,'python_basic')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python基础</div>
-        <div class="tab-item" data-class="python_adv" onclick="filterCurrClass(this,'python_adv')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python进阶</div>
-        <div class="tab-item" data-class="cpp_basic" onclick="filterCurrClass(this,'cpp_basic')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++基础</div>
-        <div class="tab-item" data-class="cpp_adv" onclick="filterCurrClass(this,'cpp_adv')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++进阶</div>
+      <div class="sec-title"><span class="pixel-deco"></span>考级大纲</div>
+      <div class="eo-tabs" id="eo-subj-tabs">
+        <div class="eo-tab active scratch" onclick="setExamSubj(this,'scratch')"><svg class="ci-scratch"><use href="#i-cat"/></svg>Scratch</div>
+        <div class="eo-tab python" onclick="setExamSubj(this,'python')"><svg style="color:#4CAF50"><use href="#i-snake"/></svg>Python</div>
+        <div class="eo-tab cpp" onclick="setExamSubj(this,'cpp')"><svg class="ci-cpp"><use href="#i-cpp"/></svg>C++</div>
       </div>
-      <div class="curriculum-header">
-        <div class="curriculum-progress">
-          <div class="cp-top"><span class="cp-label">教学进度</span><span class="cp-val" id="curr-progress-val">0/0</span></div>
-          <div class="cp-bar"><div class="cp-fill" id="curr-progress-bar" style="width:0%"></div></div>
-        </div>
+      <div class="eo-progress">
+        <div class="eo-progress-top"><span class="eo-progress-label">已学等级进度</span><span class="eo-progress-val" id="eo-progress-val">0/0</span></div>
+        <div class="eo-progress-bar"><div class="eo-progress-fill" id="eo-progress-bar" style="width:0%"></div></div>
       </div>
-      <div class="curr-list" id="curr-list"></div>
-      <button class="fab" style="display:flex;position:fixed;bottom:calc(80px + var(--safe-b));right:16px;z-index:55" onclick="openCurriculumModal()"><svg class="icon"><use href="#i-plus"/></svg></button>
+      <div class="eo-list" id="eo-list"></div>
     </div>
 
     <!-- Sub: Class Records -->
@@ -1255,17 +1293,18 @@ input:focus,select:focus,textarea:focus { outline:none; }
   <!-- ===== Page: 课程资源 ===== -->
   <div class="page" id="page-course-lib">
     <div class="sub-back" onclick="switchPage('more')"><svg class="icon-sm"><use href="#i-back"/></svg> 返回更多</div>
-    <div class="sec-title"><span class="pixel-deco"></span>课程资源目录</div>
+    <div class="sec-title" style="padding:6px 12px 4px"><span class="pixel-deco"></span>课程资源目录</div>
     <div class="cl-stats" id="cl-stats"></div>
-    <div class="tab-bar" id="cl-subj-tabs">
+    <div class="tab-bar" id="cl-subj-tabs" style="padding:4px 12px">
       <div class="tab-item active" data-subj="scratch" onclick="setCatalogSubj(this,'scratch')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch</div>
       <div class="tab-item" data-subj="python" onclick="setCatalogSubj(this,'python')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python</div>
+      <div class="tab-item" data-subj="cpp" onclick="setCatalogSubj(this,'cpp')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++</div>
     </div>
-    <div class="tab-bar" id="cl-cat-tabs" style="padding-top:0"></div>
-    <div class="search-bar">
+    <div class="tab-bar" id="cl-cat-tabs" style="padding:0 12px 4px"></div>
+    <div class="search-bar" style="padding:2px 12px 4px">
       <div class="search-wrap">
         <svg><use href="#i-search"/></svg>
-        <input type="text" class="search-input" id="cl-search" placeholder="搜索课程系列或课程名..." oninput="renderCourseLib()">
+        <input type="text" class="search-input" id="cl-search" style="padding:8px 14px 8px 38px" placeholder="搜索课程系列或课程名..." oninput="renderCourseLib()">
       </div>
     </div>
     <div id="cl-progress" class="cl-progress"></div>
@@ -1335,6 +1374,7 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <option value="">不指定</option>
         <option value="scratch">Scratch</option>
         <option value="python">Python</option>
+        <option value="cpp">C++</option>
       </select>
     </div>
     <div class="form-group" id="course-cat-wrap" style="display:none">
@@ -1705,65 +1745,6 @@ input:focus,select:focus,textarea:focus { outline:none; }
 </div>
 
 
-<!-- Curriculum Edit Modal -->
-<div class="modal-overlay" id="modal-curriculum">
-  <div class="modal" style="position:relative">
-    <button class="modal-close" onclick="closeModal('modal-curriculum')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="curr-modal-title">新增课程大纲</div>
-    <input type="hidden" id="curr-edit-id">
-    <div class="form-group">
-      <label class="form-label">班级</label>
-      <select class="form-select" id="curr-class">
-        <option value="scratch_basic">Scratch初级班</option>
-        <option value="scratch_adv">Scratch进阶班</option>
-        <option value="python_basic">Python基础班</option>
-        <option value="python_adv">Python进阶班</option>
-        <option value="cpp_basic">C++基础班</option>
-        <option value="cpp_adv">C++进阶班</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">课程序号</label>
-        <input type="number" class="form-input" id="curr-order" min="1" value="1">
-      </div>
-      <div class="form-group">
-        <label class="form-label">状态</label>
-        <select class="form-select" id="curr-status">
-          <option value="planned">未教</option>
-          <option value="taught">已教</option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">课程标题</label>
-      <input type="text" class="form-input" id="curr-title" placeholder="如：第1课 认识Scratch">
-    </div>
-    <div class="form-group">
-      <label class="form-label">教学内容</label>
-      <textarea class="form-textarea" id="curr-content" rows="3" placeholder="本节课主要教学内容..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">重点</label>
-      <textarea class="form-textarea" id="curr-keyPoints" rows="2" placeholder="本节课重点知识..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">难点</label>
-      <textarea class="form-textarea" id="curr-difficulties" rows="2" placeholder="本节课难点..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">配套作业建议</label>
-      <textarea class="form-textarea" id="curr-homework" rows="2" placeholder="课后作业建议..."></textarea>
-    </div>
-    <div class="form-group">
-      <label class="form-label">参考资料</label>
-      <textarea class="form-textarea" id="curr-materials" rows="2" placeholder="参考资料、拓展阅读..."></textarea>
-    </div>
-    <button class="btn btn-primary btn-block" onclick="saveCurriculum()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存课程</button>
-  </div>
-</div>
-
 <!-- Class Record Edit Modal -->
 <div class="modal-overlay" id="modal-classrecord">
   <div class="modal" style="position:relative">
@@ -1982,6 +1963,316 @@ const COURSE_CATALOG = {
         ]
       }
     }
+  },
+  cpp: {
+    label: 'C++',
+    categories: {
+      trial: {
+        label: '试听课',
+        series: [
+          { name: '我的第一个C++程序', lessons: ['我的第一个C++程序'] },
+          { name: '神奇的cout输出', lessons: ['神奇的cout输出'] },
+          { name: '变量魔法盒', lessons: ['变量魔法盒'] },
+          { name: '算术运算大冒险', lessons: ['算术运算大冒险'] },
+          { name: 'if选择大闯关', lessons: ['if选择大闯关'] },
+          { name: 'for循环画图形', lessons: ['for循环画图形'] },
+          { name: '数组小管家', lessons: ['数组小管家'] },
+          { name: '函数初体验', lessons: ['函数初体验'] }
+        ]
+      },
+      formal: {
+        label: '正式课',
+        series: [
+          { name: '一级备考(基础语法) - 模块一·编程环境', lessons: ['认识C++开发环境','第一个C++程序','编译与运行','调试基础'] },
+          { name: '一级备考(基础语法) - 模块二·变量与运算', lessons: ['标识符与关键字','常量与变量','算术运算','逻辑与关系运算','自增自减与三目运算'] },
+          { name: '一级备考(基础语法) - 模块三·基本结构', lessons: ['顺序结构','分支结构(if)','分支结构(switch)','循环结构(for)','循环结构(while)'] },
+          { name: '一级备考(基础语法) - 模块四·综合练习', lessons: ['简单计算器','成绩判断','九九乘法表','数字求和','图形打印'] },
+          { name: '二级备考(进阶语法) - 模块一·计算机基础', lessons: ['存储器(ROM/RAM/CACHE)','网络基础','TCP/IP模型','IP地址','流程图绘制'] },
+          { name: '二级备考(进阶语法) - 模块二·编码与转换', lessons: ['ASCII编码','字符与整数转换','数据类型转换','数学函数使用'] },
+          { name: '二级备考(进阶语法) - 模块三·嵌套结构', lessons: ['多层分支嵌套','多层循环嵌套','循环与分支混合','复杂条件判断','综合练习'] },
+          { name: '三级备考(算法入门) - 模块一·数据编码', lessons: ['原码反码补码','进制转换(二/八/十/十六)','位运算基础','位运算应用'] },
+          { name: '三级备考(算法入门) - 模块二·算法基础', lessons: ['枚举算法','模拟算法','算法描述方法','一维数组应用','字符串操作进阶'] },
+          { name: '四级备考(函数与结构) - 模块一·指针', lessons: ['指针概念','指针定义与赋值','指针解引用','指针与数组','指针运算'] },
+          { name: '四级备考(函数与结构) - 模块二·复合类型', lessons: ['二维数组','多维数组','结构体定义','结构体数组','结构体指针'] },
+          { name: '四级备考(函数与结构) - 模块三·函数进阶', lessons: ['函数定义与声明','形参与实参','全局与局部作用域','值传递与引用传递','递推算法'] },
+          { name: '四级备考(函数与结构) - 模块四·排序与文件', lessons: ['冒泡排序','插入排序','选择排序','复杂度分析','文件操作与异常处理'] },
+          { name: '五级备考(数据结构) - 模块一·数论', lessons: ['素数与合数','GCD与LCM','欧几里得算法','质因数分解','筛法求素数'] },
+          { name: '五级备考(数据结构) - 模块二·高精度与链表', lessons: ['高精度加法','高精度减法','高精度乘法','单链表操作','双链表与循环链表'] },
+          { name: '五级备考(数据结构) - 模块三·算法进阶', lessons: ['二分查找','二分答案','递归算法','归并排序','快速排序','贪心算法'] },
+          { name: '六级备考(树与DP) - 模块一·树结构', lessons: ['树的基本概念','二叉树','哈夫曼树','完全二叉树','二叉排序树'] },
+          { name: '六级备考(树与DP) - 模块二·搜索与编码', lessons: ['深度优先搜索(DFS)','广度优先搜索(BFS)','格雷编码','哈夫曼编码'] },
+          { name: '六级备考(树与DP) - 模块三·动态规划', lessons: ['一维动态规划','简单背包问题','面向对象基础','栈与队列','循环队列'] }
+        ]
+      },
+      topic: {
+        label: '专题课',
+        series: [
+          { name: 'C++基础语法练习', lessons: ['变量与数据类型(int/float/double/char/bool)','输入输出(cin/cout)','赋值与运算','算术运算练习','类型转换练习'] },
+          { name: '选择结构入门', lessons: ['if语句基础','if-else语句','多分支if-else if','switch语句','条件嵌套'] },
+          { name: '循环结构入门', lessons: ['for循环基础','while循环','do-while循环','循环嵌套','break与continue'] },
+          { name: '数组与字符串', lessons: ['一维数组定义与遍历','数组查找与修改','字符数组','string类基础','字符串操作'] },
+          { name: '函数入门', lessons: ['函数定义与调用','参数传递(值传递)','函数返回值','递归初步','变量作用域'] }
+        ]
+      }
+    }
+  }
+};
+
+// ===== 考级大纲数据（中国电子学会全国青少年软件编程等级考试）=====
+const EXAM_OUTLINE = {
+  scratch: {
+    label: 'Scratch',
+    levels: [
+      {
+        level: 1, age: '1-3年级', stage: '普及',
+        goal: '初步使用编程工具，编写出完整的顺序结构程序',
+        blocks: [
+          { no: 1, name: '编程工具', points: '熟悉Scratch界面，角色和舞台的概念，积木的分类' },
+          { no: 2, name: '运动指令', points: '移动、转向、旋转、滑行，坐标基础概念' },
+          { no: 3, name: '外观指令', points: '切换造型、切换背景、设置大小、显示/隐藏' },
+          { no: 4, name: '声音指令', points: '播放声音、设置音量、播放鼓声' },
+          { no: 5, name: '事件指令', points: '当绿旗被点击' }
+        ]
+      },
+      {
+        level: 2, age: '1-3年级', stage: '普及',
+        goal: '程序的三种基本结构，编写出能够进行交互的程序',
+        blocks: [
+          { no: 1, name: '选择结构', points: '如果...那么...，如果...那么...否则...，选择结构流程图' },
+          { no: 2, name: '循环结构', points: '重复执行、重复执行N次、重复执行直到' },
+          { no: 3, name: '运算', points: '数学运算、关系运算（大于/小于/等于）、逻辑运算（且/或/不成立）、四舍五入、绝对值' },
+          { no: 4, name: '画笔', points: '画笔大小粗细设置、抬笔、落笔、擦除' },
+          { no: 5, name: '侦测', points: '碰到鼠标指针/角色/颜色、距离侦测' },
+          { no: 6, name: '声音处理', points: '录入声音并处理' }
+        ]
+      },
+      {
+        level: 3, age: '4-6年级', stage: '普及',
+        goal: '理解变量的概念，创建变量并处理变量中的数据',
+        blocks: [
+          { no: 1, name: '变量', points: '变量的新建、删除、修改、初始化、显示/隐藏、作用域' },
+          { no: 2, name: '随机数', points: '随机数的生成和使用' },
+          { no: 3, name: '广播', points: '广播消息的发送和接收、广播并等待、角色间通信' },
+          { no: 4, name: '克隆', points: '克隆体生成、控制与删除' },
+          { no: 5, name: '条件嵌套', points: '条件分支嵌套、循环嵌套' }
+        ]
+      },
+      {
+        level: 4, age: '4-6年级', stage: '普及',
+        goal: '理解列表和函数的概念，利用函数优化程序，通过函数学习算法知识',
+        blocks: [
+          { no: 1, name: '列表', points: '创建列表、实现数据的增删改查、显示隐藏、找最值、平均值' },
+          { no: 2, name: '函数（自制积木）', points: '不同类型函数的创建、参数设置、返回值、函数调用' },
+          { no: 3, name: '字符串', points: '字符串操作、加密' },
+          { no: 4, name: '大综合', points: '前面所有知识点的综合使用与考查' }
+        ]
+      }
+    ]
+  },
+  python: {
+    label: 'Python',
+    levels: [
+      {
+        level: 1, age: '3-6年级', stage: '普及',
+        goal: '熟悉编程环境，具备编写顺序结构的简单程序的基本编程能力',
+        blocks: [
+          { no: 1, name: '编程环境', points: '了解IDLE、VS Code、Jupyter Notebook，熟练使用IDLE（新建/保存/修改/运行文件），两种开发模式切换' },
+          { no: 2, name: '基本语法', points: '输入-处理-输出方法，缩进、注释、字符串标识，变量概念与命名，保留字' },
+          { no: 3, name: '数据类型', points: '字符串型、数值型变量，类型转换' },
+          { no: 4, name: '运算与逻辑', points: '比较表达式、运算符、逻辑运算' },
+          { no: 5, name: '数学运算', points: '编写带数值类型变量的程序，解决数学运算问题' },
+          { no: 6, name: 'Turtle库', points: '导入turtle库，前进/后退/左右转/提落笔/画点/画圆' }
+        ]
+      },
+      {
+        level: 2, age: '3-6年级', stage: '普及',
+        goal: '掌握核心数据类型，编写顺序、分支、循环结构的简单程序',
+        blocks: [
+          { no: 1, name: '核心数据类型', points: '列表、元组、字典、字符串、range、集合六大内置核心数据类型' },
+          { no: 2, name: '列表操作', points: '访问/更新、获取元素个数、遍历、类型转换、添加删除、连接、排序' },
+          { no: 3, name: '元组', points: '元组与列表的异同、声明赋值、访问更新、遍历、添加删除' },
+          { no: 4, name: '字符串', points: '字符串的连接、重复、字符引用、%运算符格式输出、format()格式化输出' },
+          { no: 5, name: '字典', points: '创建字典、访问值、删除元素、修改字典' },
+          { no: 6, name: '流程控制', points: 'if语句、for循环、while循环、break和continue' }
+        ]
+      },
+      {
+        level: 3, age: '6-9年级', stage: '提高',
+        goal: '具有基本算法思维，具备以算法为目标的编程能力',
+        blocks: [
+          { no: 1, name: '数制编码', points: '二进制/十进制/十六进制转换，Python数制转换函数' },
+          { no: 2, name: '一维数据', points: '一维数据的表示和读写方法' },
+          { no: 3, name: '二维数据', points: '二维数据的表示和读写方法' },
+          { no: 4, name: 'CSV文件', points: 'CSV格式文件的读写方法' },
+          { no: 5, name: '异常处理', points: 'try-except结构语句' },
+          { no: 6, name: '算法基础', points: '解析、枚举、排序、查找算法的特征与实现' },
+          { no: 7, name: '内置函数', points: '常用核心内置函数的功能及用法' }
+        ]
+      },
+      {
+        level: 4, age: '6-9年级', stage: '提高',
+        goal: '具有初步的模块思维，函数形式代码复用的编程能力',
+        blocks: [
+          { no: 1, name: '函数概念', points: '函数及过程、参数、返回值、变量作用域' },
+          { no: 2, name: '自定义函数', points: '创建简单的自定义函数' },
+          { no: 3, name: '算法性能', points: '算法性能、效率概念，初步认识算法优化方法' },
+          { no: 4, name: '递归', points: '递归的概念，自定义函数实现递归' },
+          { no: 5, name: '递推', points: '由递归变递推的方法' },
+          { no: 6, name: '分治算法', points: '分治算法实现简单Python程序' },
+          { no: 7, name: '第三方库', points: '模块的功能、获取、安装、调用' }
+        ]
+      },
+      {
+        level: 5, age: '高中', stage: '提高',
+        goal: '具备编写Pythonic代码风格的基本编程能力',
+        blocks: [
+          { no: 1, name: '字符串进阶', points: '转义符、format()格式化方法' },
+          { no: 2, name: '数据类型进阶', points: '列表、元组、字符串、range类型的用法及常用操作' },
+          { no: 3, name: '字典', points: '字典类型的概念、基础用法及操作' },
+          { no: 4, name: '集合', points: '集合类型的概念、基础用法及操作' },
+          { no: 5, name: '推导式与解包', points: '列表推导式、生成器推导式、序列解包、切片' },
+          { no: 6, name: '标准库', points: 'math、turtle、random、time、PyInstaller、jieba、wordcloud' }
+        ]
+      },
+      {
+        level: 6, age: '高中', stage: '提高',
+        goal: '具备以数据处理为目的的基本编程能力',
+        blocks: [
+          { no: 1, name: '文件操作', points: '文件操作及数据格式化' },
+          { no: 2, name: '数据可视化', points: '数据可视化操作' },
+          { no: 3, name: '类与对象', points: '类与对象的概念，初步掌握类与对象的使用' },
+          { no: 4, name: 'SQLite数据库', points: 'SQLite数据库基础编程' },
+          { no: 5, name: 'GUI设计', points: '使用tkinter进行简单的GUI设计' }
+        ]
+      }
+    ]
+  },
+  cpp: {
+    label: 'C++',
+    levels: [
+      {
+        level: 1, age: '3-5年级', stage: '普及',
+        goal: '熟悉C++基本语法规则，理解三种基本结构，编写简单程序',
+        blocks: [
+          { no: 1, name: '计算机基础', points: '计算机软硬件组成、常见操作、发展历程' },
+          { no: 2, name: 'IDE', points: '创建/编辑/保存文件、编译、解释、调试' },
+          { no: 3, name: '结构化编程', points: '顺序结构、分支结构、循环结构' },
+          { no: 4, name: '基本语句', points: 'cin/cout/scanf/printf、赋值语句、复合语句、if/switch/for/while/do-while' },
+          { no: 5, name: '基本概念', points: '标识符、关键字、常量、变量、表达式、命名、定义、注释' },
+          { no: 6, name: '运算', points: '算术运算、逻辑运算、关系运算、自增自减、三目运算、位运算' },
+          { no: 7, name: '数据类型', points: 'int、long long、float、double、char、bool' }
+        ]
+      },
+      {
+        level: 2, age: '3-5年级', stage: '普及',
+        goal: '掌握变量作用域、一维数组、字符串基本操作，简单排序和二分查找',
+        blocks: [
+          { no: 1, name: '存储与网络', points: 'ROM/RAM/CACHE、计算机网络分类、TCP/IP四层模型、IP地址及子网划分' },
+          { no: 2, name: '程序设计语言', points: '程序设计语言分类、常见高级语言' },
+          { no: 3, name: '流程图', points: '流程图概念、绘制流程图、描述流程图' },
+          { no: 4, name: 'ASCII编码', points: '常见字符ASCII编码、字符编码间转换' },
+          { no: 5, name: '类型转换', points: '强制类型转换、隐式类型转换' },
+          { no: 6, name: '多层结构', points: 'if/switch嵌套、while/do-while/for循环嵌套' },
+          { no: 7, name: '数学函数', points: 'abs()、sqrt()、max()、min()、rand()/srand()' }
+        ]
+      },
+      {
+        level: 3, age: '5-7年级', stage: '普及',
+        goal: '枚举算法、递归算法初步，理解算法性能和效率概念',
+        blocks: [
+          { no: 1, name: '数据编码', points: '原码、反码、补码' },
+          { no: 2, name: '进制转换', points: '二进制、八进制、十进制、十六进制相互转换' },
+          { no: 3, name: '位运算', points: '与(&)、或(|)、非(~)、异或(^)、左移(<<)、右移(>>)' },
+          { no: 4, name: '算法描述', points: '枚举法、模拟法、自然语言/流程图/伪代码描述' },
+          { no: 5, name: '数据结构', points: '一维数组' },
+          { no: 6, name: '字符串', points: '大小写转换、搜索、分割、替换等' }
+        ]
+      },
+      {
+        level: 4, age: '5-7年级', stage: '普及',
+        goal: '简单动态规划算法、分治算法、贪心算法以及基础搜索算法',
+        blocks: [
+          { no: 1, name: '指针', points: '指针类型、定义变量、赋值、解引用' },
+          { no: 2, name: '多维数组', points: '二维及多维数组定义和使用' },
+          { no: 3, name: '结构体', points: '结构体定义和使用、结构体数组、结构体指针、嵌套、函数参数、const' },
+          { no: 4, name: '函数', points: '定义/调用/声明、形参实参、全局/局部作用域、值传递/引用传递' },
+          { no: 5, name: '递推算法', points: '基本思想、递推关系式推导' },
+          { no: 6, name: '排序算法', points: '冒泡排序、插入排序、选择排序、时间/空间复杂度、算法稳定性' },
+          { no: 7, name: '文件操作', points: '文件重定向、读/写/读写操作' },
+          { no: 8, name: '异常处理', points: '异常处理机制和常用方法' }
+        ]
+      },
+      {
+        level: 5, age: '8-9年级', stage: '提高',
+        goal: '结构体、指针、链表、队列、栈、哈希表、二叉树、堆和图',
+        blocks: [
+          { no: 1, name: '初等数论', points: '素数与合数、GCD与LCM、同余与模运算、约数与倍数、质因数分解、奇偶性' },
+          { no: 2, name: '数论算法', points: '欧几里得算法、唯一分解定理、埃氏筛法、线性筛法' },
+          { no: 3, name: '复杂度估算', points: '含多项式的算法复杂度、含对数的算法复杂度' },
+          { no: 4, name: '高精度运算', points: '数组模拟高精度加法、减法、乘法、除法' },
+          { no: 5, name: '链表', points: '单链表、双链表、循环链表的创建/插入/删除/遍历/查找' },
+          { no: 6, name: '二分算法', points: '二分查找算法、二分答案算法（二分枚举法）' },
+          { no: 7, name: '递归算法', points: '递归概念、时间/空间复杂度、优化策略' },
+          { no: 8, name: '分治算法', points: '归并排序算法、快速排序算法' },
+          { no: 9, name: '贪心算法', points: '贪心概念、最优子结构' }
+        ]
+      },
+      {
+        level: 6, age: '8-9年级', stage: '提高',
+        goal: '高级排序算法、数论算法、图算法',
+        blocks: [
+          { no: 1, name: '树', points: '树的基本概念、哈夫曼树、完全二叉树、二叉排序树' },
+          { no: 2, name: '基于树的编码', points: '格雷编码、哈夫曼编码' },
+          { no: 3, name: '搜索算法', points: '深度优先搜索(DFS)、宽度优先搜索(BFS)、二叉树搜索' },
+          { no: 4, name: '简单动态规划', points: '一维动态规划、简单背包问题' },
+          { no: 5, name: '面向对象', points: '面向对象思想、类的创建和初始化、继承/封装/多态' },
+          { no: 6, name: '栈和队列', points: '栈、队列、循环队列' }
+        ]
+      },
+      {
+        level: 7, age: '高中', stage: '提高',
+        goal: '复杂的分治、贪心、动态规划、搜索算法和网络流算法',
+        blocks: [
+          { no: 1, name: '数学库函数', points: '三角函数、对数函数、指数函数' },
+          { no: 2, name: '复杂动态规划', points: '二维动态规划、动态规划最值优化、区间DP、LIS、LCS、滚动数组优化' },
+          { no: 3, name: '图', points: '图的概念、图的BFS遍历、图的DFS遍历' },
+          { no: 4, name: '图论算法', points: '泛洪算法(flood fill)' },
+          { no: 5, name: '哈希表', points: '哈希表概念与应用' }
+        ]
+      },
+      {
+        level: 8, age: '高中', stage: '提高',
+        goal: '随机算法、近似算法、神经网络算法等',
+        blocks: [
+          { no: 1, name: '计数原理', points: '加法原理、乘法原理' },
+          { no: 2, name: '排列组合', points: '排列、组合' },
+          { no: 3, name: '杨辉三角', points: '定义与实现' },
+          { no: 4, name: '倍增法', points: '倍增概念' },
+          { no: 5, name: '代数与几何', points: '一元一次方程、二元一次方程、三角形/圆形/长方形面积' },
+          { no: 6, name: '图论综合', points: '最小生成树(kruskal/prim)、最短路径(dijkstra/floyd)' },
+          { no: 7, name: '效率分析', points: '算法时间空间复杂度一般分析方法' },
+          { no: 8, name: '算法优化', points: '不同算法差异分析、优化方法、数学知识优化' }
+        ]
+      },
+      {
+        level: 9, age: '高中', stage: '选拔',
+        goal: '深度学习算法、强化学习算法',
+        blocks: [
+          { no: 1, name: '随机算法', points: '随机算法概念与实现' },
+          { no: 2, name: '近似算法', points: '近似算法概念' },
+          { no: 3, name: '神经网络', points: '神经网络算法初步' }
+        ]
+      },
+      {
+        level: 10, age: '高中', stage: '选拔',
+        goal: '综合运用各类算法解决复杂问题',
+        blocks: [
+          { no: 1, name: '深度学习', points: '深度学习算法初步' },
+          { no: 2, name: '强化学习', points: '强化学习算法初步' },
+          { no: 3, name: '新兴算法', points: '各种前沿算法' }
+        ]
+      }
+    ]
   }
 };
 
@@ -2000,7 +2291,8 @@ let DB = {
   todos: [],
   achievements: [],
   reports: [],
-  taughtCourses: {}
+  taughtCourses: {},
+  examOutline: {}
 };
 
 function loadData() {
@@ -2034,6 +2326,7 @@ function ensureDBShape() {
   });
   if (!DB.classNames || typeof DB.classNames !== 'object' || Array.isArray(DB.classNames)) { DB.classNames = {}; changed = true; }
   if (!DB.taughtCourses || typeof DB.taughtCourses !== 'object' || Array.isArray(DB.taughtCourses)) { DB.taughtCourses = {}; changed = true; }
+  if (!DB.examOutline || typeof DB.examOutline !== 'object' || Array.isArray(DB.examOutline)) { DB.examOutline = {}; changed = true; }
   if (!DB.settings || typeof DB.settings !== 'object' || Array.isArray(DB.settings)) { DB.settings = {}; changed = true; }
   if (!DB.settings.name) { DB.settings.name = '编程老师工作台'; changed = true; }
   if (DB.settings.icon === undefined) { DB.settings.icon = ''; changed = true; }
@@ -2072,6 +2365,7 @@ function migrateContentLib() {
   if (!DB.holidays) { DB.holidays = []; changed = true; }
   if (!DB.classNames) { DB.classNames = {}; changed = true; }
   if (!DB.taughtCourses || typeof DB.taughtCourses !== 'object' || Array.isArray(DB.taughtCourses)) { DB.taughtCourses = {}; changed = true; }
+  if (!DB.examOutline || typeof DB.examOutline !== 'object' || Array.isArray(DB.examOutline)) { DB.examOutline = {}; changed = true; }
   if (!DB.settings) { DB.settings = { name:'编程老师工作台', icon:'', hoursPerLesson:2 }; changed = true; }
   else {
     if (!DB.settings.name) { DB.settings.name = '编程老师工作台'; changed = true; }
@@ -2612,7 +2906,7 @@ function showSubPage(name) {
   if (name === 'reports') renderReports();
   if (name === 'ws-settings') openWsSettings();
   if (name === 'recycleBin') renderRecycleBin();
-  if (name === 'curriculum') renderCurriculums();
+  if (name === 'examOutline') renderExamOutline();
   if (name === 'classRecords') renderClassRecords();
 }
 
@@ -5280,167 +5574,81 @@ function permanentDelete(id) {
   showToast('已永久删除', 'i-trash');
 }
 
-// ===== 课程大纲功能 =====
-let currentCurrClass = 'scratch_basic';
+// ===== 考级大纲功能 =====
+let examSubj = 'scratch';
 
-function filterCurrClass(el, cls) {
-  document.querySelectorAll('#curr-class-tabs .tab-item').forEach(t => t.classList.remove('active'));
+function setExamSubj(el, subj) {
+  document.querySelectorAll('#eo-subj-tabs .eo-tab').forEach(t => { t.classList.remove('active'); });
   el.classList.add('active');
-  currentCurrClass = cls;
-  renderCurriculums();
+  examSubj = subj;
+  renderExamOutline();
 }
 
-function renderCurriculums() {
-  const list = document.getElementById('curr-list');
-  const items = (DB.curriculums || []).filter(c => c.classId === currentCurrClass).sort((a,b) => a.order - b.order);
-  
-  const taught = items.filter(c => c.status === 'taught').length;
-  const total = items.length;
-  const pct = total > 0 ? Math.round(taught / total * 100) : 0;
-  
-  document.getElementById('curr-progress-val').textContent = `已教 ${taught} 节 / 共 ${total} 节`;
-  document.getElementById('curr-progress-bar').style.width = pct + '%';
-  
-  if (items.length === 0) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="es-illust"><svg style="width:80px;height:80px;color:var(--purple-light)"><use href="#i-book"/></svg></div>
-      <div class="es-text">还没有课程大纲</div>
-      <div style="font-size:11px;color:var(--text-light);margin-top:4px">点击右下角 + 添加第一课</div>
-    </div>`;
-    return;
+function isExamLearned(subj, level) {
+  const key = 'examOutline|' + subj + '|' + level;
+  return !!(DB.examOutline && DB.examOutline[key]);
+}
+
+function toggleExamLearned(subj, level) {
+  if (!DB.examOutline) DB.examOutline = {};
+  const key = 'examOutline|' + subj + '|' + level;
+  if (DB.examOutline[key]) {
+    delete DB.examOutline[key];
+    showToast('已取消「已学」标记');
+  } else {
+    DB.examOutline[key] = true;
+    showToast('已标记为「已学」', 'i-check');
   }
-  
+  saveData();
+  renderExamOutline();
+}
+
+function renderExamOutline() {
+  const subjData = EXAM_OUTLINE[examSubj];
+  const levels = subjData.levels;
+  const learnedCount = levels.filter(l => isExamLearned(examSubj, l.level)).length;
+  const total = levels.length;
+  const pct = total > 0 ? Math.round(learnedCount / total * 100) : 0;
+  document.getElementById('eo-progress-val').textContent = `已学 ${learnedCount} / ${total} 级`;
+  document.getElementById('eo-progress-bar').style.width = pct + '%';
+
+  const stageMap = { '普及':'puji', '提高':'tigao', '选拔':'xuanba' };
   let html = '';
-  items.forEach(c => {
-    const statusLabel = c.status === 'taught' ? '已教' : '未教';
-    html += `<div class="curr-item ${c.status}" onclick="toggleCurrExpand('${c.id}', this)">
-      <div class="ci-head">
-        <div class="ci-order">${c.order}</div>
-        <div class="ci-info">
-          <div class="ci-title">${c.title || '未命名课程'}</div>
+  levels.forEach(lv => {
+    const learned = isExamLearned(examSubj, lv.level);
+    const stageCls = stageMap[lv.stage] || 'puji';
+    const blocksHtml = lv.blocks.map(b => {
+      return `<div class="eo-block">
+        <div class="eo-block-head">
+          <span class="eo-block-no">${b.no}</span>
+          <span class="eo-block-name">${escapeHtml(b.name)}</span>
         </div>
-        <span class="ci-status ${c.status}">${statusLabel}</span>
+        <div class="eo-block-points">${escapeHtml(b.points)}</div>
+      </div>`;
+    }).join('');
+    html += `<div class="eo-level ${examSubj}${learned ? ' learned' : ''}" onclick="this.classList.toggle('open')">
+      <div class="eo-level-head">
+        <div class="eo-level-num">${lv.level}</div>
+        <div class="eo-level-info">
+          <div class="eo-level-title">${subjData.label} ${lv.level}级</div>
+          <div class="eo-level-meta">
+            <span>${lv.age}</span>
+            <span class="eo-stage-tag ${stageCls}">${lv.stage}</span>
+            ${learned ? '<span style="color:#4CAF50;font-weight:700">已学</span>' : ''}
+          </div>
+        </div>
+        <svg class="icon-sm eo-level-chevron"><use href="#i-arrow-r"/></svg>
       </div>
-      <div class="ci-detail">
-        ${c.content ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> 教学内容</div><div class="cid-content">${escapeHtml(c.content)}</div></div>` : ''}
-        ${c.keyPoints ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px;color:#4CAF50"><use href="#i-star"/></svg> 重点</div><div class="cid-content">${escapeHtml(c.keyPoints)}</div></div>` : ''}
-        ${c.difficulties ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px;color:var(--pink)"><use href="#i-warn"/></svg> 难点</div><div class="cid-content">${escapeHtml(c.difficulties)}</div></div>` : ''}
-        ${c.homework ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-clipboard"/></svg> 配套作业</div><div class="cid-content">${escapeHtml(c.homework)}</div></div>` : ''}
-        ${c.materials ? `<div class="cid-section"><div class="cid-label"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-link"/></svg> 参考资料</div><div class="cid-content">${escapeHtml(c.materials)}</div></div>` : ''}
-        <div class="ci-actions" onclick="event.stopPropagation()">
-          <button class="primary" onclick="editCurriculum('${c.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-edit"/></svg> 编辑</button>
-          <button class="success" onclick="toggleCurrStatus('${c.id}')">${c.status === 'taught' ? '标记未教' : '标记已教'}</button>
-          <button class="danger" onclick="deleteCurriculum('${c.id}')"><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-trash"/></svg> 删除</button>
+      <div class="eo-level-body" onclick="event.stopPropagation()">
+        <div class="eo-goal"><b>考核目标：</b>${escapeHtml(lv.goal)}</div>
+        ${blocksHtml}
+        <div class="eo-level-check" onclick="toggleExamLearned('${examSubj}',${lv.level})" title="标记/取消已学" style="margin-top:8px;width:auto;padding:5px 14px;border-radius:8px;font-size:12px;font-weight:600;gap:5px">
+          ${learned ? '<svg><use href="#i-check"/></svg> 已学' : '标记为已学'}
         </div>
       </div>
     </div>`;
   });
-  list.innerHTML = html;
-}
-
-function toggleCurrExpand(id, el) {
-  el.classList.toggle('expanded');
-}
-
-function openCurriculumModal(curriculumId) {
-  document.getElementById('curr-edit-id').value = curriculumId || '';
-  document.getElementById('curr-modal-title').textContent = curriculumId ? '编辑课程大纲' : '新增课程大纲';
-  
-  if (curriculumId) {
-    const c = DB.curriculums.find(x => x.id === curriculumId);
-    if (c) {
-      document.getElementById('curr-class').value = c.classId;
-      document.getElementById('curr-order').value = c.order;
-      document.getElementById('curr-status').value = c.status;
-      document.getElementById('curr-title').value = c.title || '';
-      document.getElementById('curr-content').value = c.content || '';
-      document.getElementById('curr-keyPoints').value = c.keyPoints || '';
-      document.getElementById('curr-difficulties').value = c.difficulties || '';
-      document.getElementById('curr-homework').value = c.homework || '';
-      document.getElementById('curr-materials').value = c.materials || '';
-    }
-  } else {
-    document.getElementById('curr-class').value = currentCurrClass;
-    const items = (DB.curriculums || []).filter(c => c.classId === currentCurrClass);
-    document.getElementById('curr-order').value = items.length + 1;
-    document.getElementById('curr-status').value = 'planned';
-    document.getElementById('curr-title').value = '';
-    document.getElementById('curr-content').value = '';
-    document.getElementById('curr-keyPoints').value = '';
-    document.getElementById('curr-difficulties').value = '';
-    document.getElementById('curr-homework').value = '';
-    document.getElementById('curr-materials').value = '';
-  }
-  openModal('modal-curriculum');
-}
-
-function editCurriculum(id) {
-  openCurriculumModal(id);
-}
-
-function saveCurriculum() {
-  const id = document.getElementById('curr-edit-id').value;
-  const classId = document.getElementById('curr-class').value;
-  const order = parseInt(document.getElementById('curr-order').value) || 1;
-  const status = document.getElementById('curr-status').value;
-  const title = document.getElementById('curr-title').value.trim();
-  
-  if (!title) {
-    showToast('请输入课程标题', 'i-warn');
-    return;
-  }
-  
-  const data = {
-    classId: classId,
-    order: order,
-    title: title,
-    content: document.getElementById('curr-content').value.trim(),
-    keyPoints: document.getElementById('curr-keyPoints').value.trim(),
-    difficulties: document.getElementById('curr-difficulties').value.trim(),
-    homework: document.getElementById('curr-homework').value.trim(),
-    materials: document.getElementById('curr-materials').value.trim(),
-    status: status
-  };
-  
-  if (id) {
-    const c = DB.curriculums.find(x => x.id === id);
-    if (c) Object.assign(c, data);
-    showToast('课程已更新');
-  } else {
-    data.id = uid();
-    if (!DB.curriculums) DB.curriculums = [];
-    DB.curriculums.push(data);
-    showToast('课程已添加');
-  }
-  
-  saveData();
-  closeModal('modal-curriculum');
-  
-  // 如果班级变了，切换到对应班级
-  if (classId !== currentCurrClass) {
-    currentCurrClass = classId;
-    document.querySelectorAll('#curr-class-tabs .tab-item').forEach(t => {
-      t.classList.toggle('active', t.dataset.class === classId);
-    });
-  }
-  renderCurriculums();
-}
-
-function toggleCurrStatus(id) {
-  const c = DB.curriculums.find(x => x.id === id);
-  if (!c) return;
-  c.status = c.status === 'taught' ? 'planned' : 'taught';
-  saveData();
-  renderCurriculums();
-  showToast(c.status === 'taught' ? '已标记为已教' : '已标记为未教');
-}
-
-function deleteCurriculum(id) {
-  if (!confirm('确定删除这个课程大纲吗？此操作不可撤销。')) return;
-  DB.curriculums = DB.curriculums.filter(x => x.id !== id);
-  saveData();
-  renderCurriculums();
-  showToast('课程大纲已删除', 'i-trash');
+  document.getElementById('eo-list').innerHTML = html;
 }
 
 function escapeHtml(str) {
