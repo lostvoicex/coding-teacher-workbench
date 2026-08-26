@@ -1849,16 +1849,6 @@ input:focus,select:focus,textarea:focus { outline:none; }
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
-        <div class="form-group" style="flex:1;margin-bottom:0">
-          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">讲授老师</label>
-          <input type="text" class="form-input" id="fb-teacher" style="font-size:12px;padding:6px 8px" placeholder="老师姓名" oninput="regenerateFeedback()">
-        </div>
-        <div class="form-group" style="flex:1;margin-bottom:0">
-          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">课程重点</label>
-          <input type="text" class="form-input" id="fb-keypoints" style="font-size:12px;padding:6px 8px" placeholder="如：变量、循环、条件判断" oninput="regenerateFeedback()">
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:10px">
         <label class="fb-toggle" style="flex:1">
           <input type="checkbox" id="fb-emoji" checked onchange="regenerateFeedback()">
           <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
@@ -6175,6 +6165,62 @@ function openFeedbackByRecord(id) {
   regenerateFeedback();
 }
 
+// 从课程资源目录中查找课程信息
+function lookupCourseInfo(record) {
+  const classId = record.classId || '';
+  const content = record.content || '';
+  let subject = '';
+  if (classId.startsWith('scratch')) subject = 'scratch';
+  else if (classId.startsWith('python')) subject = 'python';
+  else if (classId.startsWith('cpp')) subject = 'cpp';
+
+  if (!subject || !content) return null;
+
+  const cat = COURSE_CATALOG[subject];
+  if (!cat) return null;
+
+  let result = null;
+  Object.values(cat.categories).forEach(c => {
+    c.series.forEach(sr => {
+      if (sr.lessons.includes(content)) {
+        const idx = sr.lessons.indexOf(content);
+        const prevLesson = idx > 0 ? sr.lessons[idx - 1] : null;
+        const nextLesson = idx < sr.lessons.length - 1 ? sr.lessons[idx + 1] : null;
+        result = {
+          subject: subject,
+          subjectLabel: cat.label,
+          categoryName: c.label,
+          seriesName: sr.name,
+          lessonName: content,
+          allLessons: sr.lessons,
+          prevLesson: prevLesson,
+          nextLesson: nextLesson
+        };
+      }
+    });
+  });
+  return result;
+}
+
+// 从考级大纲中查找相关知识点
+function lookupExamPoints(subject, lessonName) {
+  const data = EXAM_OUTLINE[subject];
+  if (!data) return null;
+  const lower = lessonName.toLowerCase();
+  for (const lv of data.levels) {
+    for (const b of lv.blocks) {
+      const ptLower = b.points.toLowerCase();
+      const nameLower = b.name.toLowerCase();
+      if (ptLower.includes(lower) || nameLower.includes(lower) ||
+          lower.includes(nameLower) || lower.includes(ptLower) ||
+          (lower.length > 2 && ptLower.includes(lower.substring(0, 2)))) {
+        return { level: lv.level, blockName: b.name, points: b.points };
+      }
+    }
+  }
+  return null;
+}
+
 function regenerateFeedback() {
   const id = document.getElementById('cr-edit-id').value;
   const record = (DB.classRecords || []).find(r => r.id === id);
@@ -6188,8 +6234,7 @@ function regenerateFeedback() {
   const useSuggest = document.getElementById('fb-suggest').checked;
   const extra = (document.getElementById('fb-extra').value || '').trim();
   const fbLen = document.getElementById('fb-length').value;
-  const teacherName = (document.getElementById('fb-teacher').value || '').trim() || (DB.settings?.name || '编程老师');
-  const keyPoints = (document.getElementById('fb-keypoints').value || '').trim() || record.overallNote || '';
+  const teacherName = DB.settings?.name || '编程老师';
   const tone = TONE_CONFIG[fbTone];
   const e = useEmoji ? EMOJIS : {};
 
@@ -6203,6 +6248,32 @@ function regenerateFeedback() {
   const students = DB.students.filter(s => s.class === record.classId);
   const studentMap = {};
   students.forEach(s => studentMap[s.id] = s.name);
+
+  // 自动从课程资源查找
+  const courseInfo = lookupCourseInfo(record);
+  const examInfo = courseInfo ? lookupExamPoints(courseInfo.subject, courseInfo.lessonName) : null;
+
+  // 课程内容
+  const contentTitle = courseInfo ? courseInfo.lessonName : content;
+
+  // 学习内容（系列名 + 同系列其他课程）
+  let learningContent = '';
+  if (courseInfo) {
+    learningContent = courseInfo.seriesName;
+    if (fbLen !== 'short' && courseInfo.allLessons.length > 1) {
+      learningContent += '（包含：' + courseInfo.allLessons.slice(0, 5).join('、') + (courseInfo.allLessons.length > 5 ? '等' : '') + '）';
+    }
+  }
+
+  // 重难点（从考级大纲查找或使用课堂记录的整体备注）
+  let keyPoints = '';
+  if (examInfo) {
+    keyPoints = examInfo.points;
+  } else if (courseInfo) {
+    keyPoints = courseInfo.seriesName;
+  } else if (record.overallNote) {
+    keyPoints = record.overallNote;
+  }
 
   // 字数控制
   const isShort = fbLen === 'short';
@@ -6218,19 +6289,24 @@ function regenerateFeedback() {
 
   // 2. 课程内容
   const contentDesc = isShort
-    ? `《${content}》`
-    : `${pick(tone.opening)}，本节课为《${content}》（${dateStr}）`;
+    ? `《${contentTitle}》`
+    : `${pick(tone.opening)}，本节课为《${contentTitle}》（${dateStr}）`;
   parts.push(line('📚 课程内容', contentDesc));
 
-  // 3. 课程重点
-  if (keyPoints) {
-    parts.push(line('🎯 课程重点', keyPoints));
+  // 3. 学习内容
+  if (learningContent) {
+    parts.push(line('📖 学习内容', learningContent));
   }
 
-  // 4. 讲授老师
+  // 4. 重难点
+  if (keyPoints) {
+    parts.push(line('🎯 重难点', keyPoints));
+  }
+
+  // 5. 讲授老师
   parts.push(line('👨‍🏫 讲授老师', teacherName));
 
-  // 5. 学员情况
+  // 6. 学员情况
   if (notes.length > 0) {
     parts.push('');
     if (useNames) {
@@ -6262,13 +6338,13 @@ function regenerateFeedback() {
     }
   }
 
-  // 6. 额外备注
+  // 7. 额外备注
   if (extra) {
     parts.push('');
     parts.push('📌 ' + extra);
   }
 
-  // 7. 结束语
+  // 8. 结束语
   if (!isShort) {
     parts.push('');
     parts.push(em(e.closing) + pick(tone.closing) + '！');
