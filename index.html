@@ -564,6 +564,18 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .sd-record .sdr-date { font-weight:600; color:var(--purple-dark); }
 .sd-record .sdr-text { color:var(--text-sub); margin-top:2px; }
 
+/* ===== Feedback Modal ===== */
+.fb-tone-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.fb-tone-item { padding:8px 10px; border-radius:8px; border:2px solid var(--border); text-align:center; font-size:12px; font-weight:700; cursor:pointer; transition:all .15s; background:var(--card-bg); color:var(--text-sub); }
+.fb-tone-item:active { transform:scale(.97); }
+.fb-tone-item.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue-dark); }
+.fb-toggle { display:flex; align-items:center; gap:6px; cursor:pointer; }
+.fb-toggle input { display:none; }
+.fb-toggle-track { width:34px; height:18px; border-radius:10px; background:var(--border); position:relative; transition:all .2s; flex-shrink:0; }
+.fb-toggle-thumb { position:absolute; width:14px; height:14px; border-radius:50%; background:#fff; top:2px; left:2px; transition:all .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+.fb-toggle input:checked + .fb-toggle-track { background:var(--blue); }
+.fb-toggle input:checked + .fb-toggle-track .fb-toggle-thumb { left:18px; }
+
 /* ===== Toast ===== */
 .toast { position:fixed; bottom:calc(90px + var(--safe-b)); left:50%; transform:translateX(-50%) translateY(20px); background:rgba(45,45,68,0.95); color:#fff; padding:10px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:200; opacity:0; pointer-events:none; transition:all .3s; max-width:90vw; text-align:center; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -806,6 +818,7 @@ input:focus,select:focus,textarea:focus { outline:none; }
 <symbol id="i-bug" viewBox="0 0 24 24"><ellipse cx="12" cy="13" rx="5" ry="7"/><path d="M12 6V3M8 8L4 6M16 8l4-2M7 11H3M17 11h4M7 15H3M17 15h4M9 20l-2 2M15 20l2 2"/></symbol>
 <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1.5 1.5M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1.5-1.5"/></symbol>
 <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-3-6.7M21 3v6h-6"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24"><path d="M21 11.5a8.5 8.5 0 01-12 8L3 21l1.5-6A8.5 8.5 0 1121 11.5z"/></symbol>
 <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.1M3 12h.1M3 18h.1"/></symbol>
 <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 3h12l4 4v14H5V3z"/><path d="M8 3v5h8M8 14h8v6H8z"/></symbol>
 <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3z"/><path d="M14 3v4h4M9 12h6M9 16h6M9 8h2"/></symbol>
@@ -1797,8 +1810,65 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <div style="font-size:11px;color:var(--text-sub);margin-bottom:6px">为每位学员选择表现等级，填写亮点与问题</div>
       <div id="cr-student-notes" style="max-height:35vh;overflow-y:auto;padding-right:4px"></div>
     </div>
-    <button class="btn btn-primary btn-block" onclick="saveClassRecord()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存记录</button>
-    <button id="cr-delete-btn" class="btn btn-block btn-sm" style="margin-top:8px;background:var(--pink-light);color:var(--pink-dark);display:none" onclick="deleteClassRecordFromModal()"><svg class="icon-sm"><use href="#i-trash"/></svg> 删除此记录</button>
+    <div style="display:flex;gap:8px;margin-bottom:8px">
+      <button class="btn btn-primary" style="flex:1" onclick="saveClassRecord()"><svg class="icon-sm"><use href="#i-save"/></svg> 保存记录</button>
+      <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="openFeedbackModal()"><svg class="icon-sm"><use href="#i-msg"/></svg> 生成反馈</button>
+    </div>
+    <button id="cr-delete-btn" class="btn btn-block btn-sm" style="background:var(--pink-light);color:var(--pink-dark);display:none" onclick="deleteClassRecordFromModal()"><svg class="icon-sm"><use href="#i-trash"/></svg> 删除此记录</button>
+  </div>
+</div>
+
+<!-- ===== 课程反馈模态框 ===== -->
+<div class="modal-overlay" id="modal-feedback">
+  <div class="modal" style="max-width:520px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column">
+    <div class="modal-head" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;align-items:center;gap:6px">
+        <svg style="width:18px;height:18px;color:var(--blue)"><use href="#i-msg"/></svg>
+        <span style="font-size:15px;font-weight:800">课程反馈生成</span>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-feedback')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
+    </div>
+    <div style="overflow-y:auto;padding:12px 16px;flex:1">
+      <div class="form-group" style="margin-bottom:10px">
+        <label class="form-label" style="font-size:12px;font-weight:700;margin-bottom:6px">反馈语气</label>
+        <div class="fb-tone-grid" id="fb-tones">
+          <div class="fb-tone-item active" data-tone="warm" onclick="setFeedbackTone(this,'warm')">温和鼓励</div>
+          <div class="fb-tone-item" data-tone="pro" onclick="setFeedbackTone(this,'pro')">专业正式</div>
+          <div class="fb-tone-item" data-tone="fun" onclick="setFeedbackTone(this,'fun')">轻松活泼</div>
+          <div class="fb-tone-item" data-tone="brief" onclick="setFeedbackTone(this,'brief')">简洁明了</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <label class="fb-toggle" style="flex:1">
+          <input type="checkbox" id="fb-emoji" checked onchange="regenerateFeedback()">
+          <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
+          <span style="font-size:12px;font-weight:600">表情符号</span>
+        </label>
+        <label class="fb-toggle" style="flex:1">
+          <input type="checkbox" id="fb-names" checked onchange="regenerateFeedback()">
+          <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
+          <span style="font-size:12px;font-weight:600">学员姓名</span>
+        </label>
+        <label class="fb-toggle" style="flex:1">
+          <input type="checkbox" id="fb-suggest" checked onchange="regenerateFeedback()">
+          <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
+          <span style="font-size:12px;font-weight:600">改进建议</span>
+        </label>
+      </div>
+      <div class="form-group" style="margin-bottom:8px">
+        <label class="form-label" style="font-size:12px;font-weight:700;margin-bottom:4px">额外备注（可选）</label>
+        <input type="text" class="form-input" id="fb-extra" style="font-size:12px" placeholder="如：下节课需要带..." oninput="regenerateFeedback()">
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--text-sub)">反馈预览</span>
+        <span style="font-size:10px;color:var(--text-light)" id="fb-char-count">0字</span>
+      </div>
+      <textarea class="form-textarea" id="fb-output" rows="12" style="font-size:13px;line-height:1.6;min-height:200px" placeholder="点击下方按钮生成反馈..."></textarea>
+    </div>
+    <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px">
+      <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="regenerateFeedback()"><svg class="icon-sm"><use href="#i-refresh"/></svg> 重新生成</button>
+      <button class="btn btn-primary" style="flex:1" onclick="copyFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制反馈</button>
+    </div>
   </div>
 </div>
 
@@ -5734,6 +5804,7 @@ function renderClassRecords() {
         <span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-people"/></svg> ${studentCount} 名学员</span>
         ${courseInfo ? `<span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-book"/></svg> 第${courseInfo.order}课</span>` : ''}
       </div>
+      ${studentCount > 0 ? `<div style="margin-top:6px"><button class="btn btn-sm" style="width:auto;padding:4px 12px;font-size:11px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="event.stopPropagation();openFeedbackByRecord('${r.id}')"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-msg"/></svg> 生成反馈</button></div>` : ''}
     </div>`;
   });
   list.innerHTML = html;
@@ -5972,6 +6043,234 @@ function deleteClassRecordFromModal() {
   renderClassRecords();
   renderStudents();
   showToast('记录已删除', 'i-trash');
+}
+
+// ===== 课程反馈生成 =====
+let fbTone = 'warm';
+
+const TONE_CONFIG = {
+  warm: {
+    label: '温和鼓励',
+    greeting: ['亲爱的家长们好', '各位家长好呀', '家长朋友们好'],
+    opening: ['今天的课程已经圆满结束啦', '今天的小课堂又度过了充实的一节课', '今天的编程课顺利完成了'],
+    excellent: ['表现非常出色', '今天的表现特别棒', '课堂上的表现让人眼前一亮'],
+    good: ['整体表现不错', '表现得很好', '课堂表现良好'],
+    normal: ['基本掌握了今天的内容', '完成了今天的学习任务', '跟上了课堂节奏'],
+    struggling: ['还需要多多练习', '还需要一些时间来适应', '建议课后多加巩固'],
+    highlight: ['特别值得表扬的是', '亮点在于', '值得肯定的是'],
+    issue: ['建议在', '可以尝试在', '课后可以多练习'],
+    closing: ['期待下节课继续加油', '希望下次课继续努力', '期待孩子们更大的进步'],
+    separator: '\n\n',
+    studentSep: '\n'
+  },
+  pro: {
+    label: '专业正式',
+    greeting: ['各位家长', '家长您好', '各位家长好'],
+    opening: ['本次课程已结束', '本节课的教学内容已完成', '今日课程已圆满结束'],
+    excellent: ['课堂表现优秀', '学习效果突出', '展现了较强的编程能力'],
+    good: ['课堂表现良好', '学习态度端正', '较好地完成了课堂任务'],
+    normal: ['基本完成学习目标', '掌握了核心知识点', '达到了基本教学要求'],
+    struggling: ['需加强课后练习', '建议巩固基础知识', '需要额外辅导支持'],
+    highlight: ['表现亮点：', '学习成果：', '课堂优势：'],
+    issue: ['改进建议：', '课后建议：', '需关注：'],
+    closing: ['感谢家长的配合与支持', '如有疑问请随时沟通', '期待下节课的学习'],
+    separator: '\n',
+    studentSep: '\n'
+  },
+  fun: {
+    label: '轻松活泼',
+    greeting: ['哈喽家长们', '各位家长好呀', '家长们好~'],
+    opening: ['今天的小程序员们又升级啦', '今天的编程冒险又通关了', '今天的代码小达人又解锁新技能了'],
+    excellent: ['简直是开挂了', '厉害到飞起', '简直是小coder达人'],
+    good: ['发挥得不错哦', '状态在线', '稳稳的'],
+    normal: ['完成了今日份挑战', '基本搞定', '还算顺利'],
+    struggling: ['还需要再练练手', '慢慢来不着急', '下次继续冲'],
+    highlight: ['超赞的一点是', '高光时刻：', '特别要夸的是'],
+    issue: ['小建议：', '可以试试', '偷偷支个招：'],
+    closing: ['下次课继续冲鸭', '期待下次的精彩表现', '我们下节课见~'],
+    separator: '\n\n',
+    studentSep: '\n'
+  },
+  brief: {
+    label: '简洁明了',
+    greeting: ['家长好', '各位家长', '家长好：'],
+    opening: ['今日课程已结束。', '本节课已完成。', '今日课程结束。'],
+    excellent: ['表现优秀。', '优秀。', '出色。'],
+    good: ['表现良好。', '良好。', '不错。'],
+    normal: ['基本掌握。', '一般。', '完成任务。'],
+    struggling: ['需加强练习。', '需巩固。', '待提升。'],
+    highlight: ['亮点：', '优点：', '表现好：'],
+    issue: ['建议：', '需改进：', '课后：'],
+    closing: ['下节课继续。', '感谢配合。', '下次见。'],
+    separator: '\n',
+    studentSep: ' '
+  }
+};
+
+const EMOJIS = {
+  excellent: ['🌟', '🎉', '🏆', '✨', '🚀'],
+  good: ['👍', '💪', '👏', '💡'],
+  normal: ['📝', '✏️', '📖'],
+  struggling: ['🔧', '📌', '✍️'],
+  greeting: '👋',
+  opening: '📚',
+  highlight: '🌟',
+  issue: '💡',
+  closing: '🎯',
+  student: '👨‍💻'
+};
+
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function setFeedbackTone(el, tone) {
+  fbTone = tone;
+  document.querySelectorAll('#fb-tones .fb-tone-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  regenerateFeedback();
+}
+
+function openFeedbackModal() {
+  const id = document.getElementById('cr-edit-id').value;
+  if (!id) {
+    showToast('请先保存记录再生成反馈', 'i-warn');
+    return;
+  }
+  const record = (DB.classRecords || []).find(r => r.id === id);
+  if (!record) {
+    showToast('记录不存在', 'i-warn');
+    return;
+  }
+  openModal('modal-feedback');
+  regenerateFeedback();
+}
+
+function openFeedbackByRecord(id) {
+  const record = (DB.classRecords || []).find(r => r.id === id);
+  if (!record) {
+    showToast('记录不存在', 'i-warn');
+    return;
+  }
+  document.getElementById('cr-edit-id').value = id;
+  openModal('modal-feedback');
+  regenerateFeedback();
+}
+
+function regenerateFeedback() {
+  const id = document.getElementById('cr-edit-id').value;
+  const record = (DB.classRecords || []).find(r => r.id === id);
+  if (!record) {
+    document.getElementById('fb-output').value = '请先保存课堂记录';
+    return;
+  }
+
+  const useEmoji = document.getElementById('fb-emoji').checked;
+  const useNames = document.getElementById('fb-names').checked;
+  const useSuggest = document.getElementById('fb-suggest').checked;
+  const extra = (document.getElementById('fb-extra').value || '').trim();
+  const tone = TONE_CONFIG[fbTone];
+  const e = useEmoji ? EMOJIS : {};
+
+  function em(emoji) { return e && emoji ? emoji + ' ' : ''; }
+
+  const cls = CLASS_INFO[record.classId] || { name: '编程班' };
+  const dateStr = record.date ? fmtDate(record.date) : '今日';
+  const content = record.content || '编程课';
+  const notes = record.studentNotes || [];
+  const students = DB.students.filter(s => s.class === record.classId);
+  const studentMap = {};
+  students.forEach(s => studentMap[s.id] = s.name);
+
+  let parts = [];
+
+  // Greeting
+  parts.push(em(e.greeting) + pick(tone.greeting) + '！');
+
+  // Opening with course info
+  parts.push(em(e.opening) + `${pick(tone.opening)}，本节课为《${content}》（${dateStr}）。`);
+
+  // Overall note
+  if (record.overallNote) {
+    parts.push('📋 ' + record.overallNote);
+  }
+
+  // Student feedback
+  if (useNames && notes.length > 0) {
+    parts.push('');
+    parts.push('—' + ' 学员表现 —');
+    notes.forEach(note => {
+      const name = studentMap[note.studentId] || '学员';
+      const perfKey = note.performance || 'normal';
+      const perfText = pick(tone[perfKey] || tone.normal);
+      let line = `${em(e.student)}${name}：${perfText}`;
+
+      if (note.highlights) {
+        line += `。${pick(tone.highlight)}${note.highlights}`;
+      }
+      if (useSuggest && note.issues) {
+        line += `。${pick(tone.issue)}${note.issues}`;
+      }
+      parts.push(line);
+    });
+  } else if (notes.length > 0) {
+    // Without names, summarize
+    const excellent = notes.filter(n => n.performance === 'excellent').length;
+    const good = notes.filter(n => n.performance === 'good').length;
+    const normal = notes.filter(n => n.performance === 'normal').length;
+    const struggling = notes.filter(n => n.performance === 'struggling').length;
+    let summary = [];
+    if (excellent > 0) summary.push(`${excellent}名${pick(tone.excellent)}`);
+    if (good > 0) summary.push(`${good}名${pick(tone.good)}`);
+    if (normal > 0) summary.push(`${normal}名${pick(tone.normal)}`);
+    if (struggling > 0) summary.push(`${struggling}名${pick(tone.struggling)}`);
+    parts.push('📊 ' + summary.join('、'));
+  }
+
+  // Extra note
+  if (extra) {
+    parts.push('');
+    parts.push('📌 ' + extra);
+  }
+
+  // Closing
+  parts.push('');
+  parts.push(em(e.closing) + pick(tone.closing) + '！');
+
+  const result = parts.join(tone.separator === '\n\n' ? '\n\n' : '\n');
+  document.getElementById('fb-output').value = result;
+  document.getElementById('fb-char-count').textContent = result.length + '字';
+}
+
+function copyFeedback() {
+  const text = document.getElementById('fb-output').value;
+  if (!text) {
+    showToast('没有可复制的内容', 'i-warn');
+    return;
+  }
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast('反馈已复制到剪贴板', 'i-check');
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    showToast('反馈已复制', 'i-check');
+  } catch (e) {
+    showToast('复制失败，请手动选择文本', 'i-warn');
+  }
+  document.body.removeChild(ta);
 }
 
 // 学员详情中的课堂记录
