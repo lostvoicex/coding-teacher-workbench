@@ -3003,7 +3003,7 @@ function renderCourseLib() {
     html += `<div class="empty-state" style="padding:30px 20px"><div class="es-text">没有找到匹配的课程</div></div>`;
   } else {
     series.forEach(sr => {
-      const openCls = kw ? ' open' : '';
+      const openCls = ' open';
       const lessonsHtml = sr.lessons.map(l => {
         const key = catalogSubj + '|' + sr.name + '|' + l;
         const isTaught = !!DB.taughtCourses[key];
@@ -5634,9 +5634,8 @@ function renderExamOutline() {
         <div class="eo-block-points">${escapeHtml(b.points)}</div>
       </div>`;
     }).join('');
-    const isFirst = lv.level === 1;
     const previewText = lv.blocks.map(b => b.name).join(' · ');
-    html += `<div class="eo-level ${examSubj}${learned ? ' learned' : ''}${isFirst ? ' open' : ''}" onclick="this.classList.toggle('open')">
+    html += `<div class="eo-level ${examSubj}${learned ? ' learned' : ''} open" onclick="this.classList.toggle('open')">
       <div class="eo-level-head">
         <div class="eo-level-num">${lv.level}</div>
         <div class="eo-level-info">
