@@ -303,6 +303,37 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .sub-page.active { display:block; }
 .sub-back { display:flex; align-items:center; gap:6px; padding:12px; font-size:14px; font-weight:700; cursor:pointer; color:var(--purple-dark); }
 
+/* ===== Course Library (课程资源目录) ===== */
+.cl-stats { display:flex; flex-wrap:wrap; gap:6px; padding:4px 12px 10px; }
+.cl-stat-pill { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; color:var(--text-sub); background:var(--card-bg); border:1px solid var(--border); padding:4px 10px; border-radius:12px; box-shadow:var(--shadow); }
+.cl-cat-summary { padding:0 12px 8px; font-size:11px; color:var(--text-light); }
+.cl-list { padding:0 12px 90px; }
+.cl-series { background:var(--card-bg); border-radius:var(--r-sm); box-shadow:var(--shadow); border:1px solid var(--border); margin-bottom:8px; overflow:hidden; }
+.cl-series-head { display:flex; align-items:center; padding:12px; cursor:pointer; gap:8px; }
+.cl-series-name { flex:1; font-size:13px; font-weight:700; line-height:1.3; }
+.cl-series-count { font-size:10px; background:var(--purple-light); color:var(--purple-dark); padding:2px 8px; border-radius:8px; font-weight:700; flex-shrink:0; }
+.cl-chevron { transition:transform .2s; color:var(--text-light); flex-shrink:0; }
+.cl-series.open .cl-chevron { transform:rotate(90deg); }
+.cl-lessons { display:none; flex-direction:column; gap:3px; padding:0 12px 12px; }
+.cl-series.open .cl-lessons { display:flex; }
+.cl-lesson { font-size:12px; padding:7px 10px; border-radius:6px; background:var(--bg-start); color:var(--text-main); line-height:1.3; cursor:pointer; display:flex; align-items:center; gap:6px; transition:all .15s; }
+.cl-lesson:active { transform:scale(0.98); }
+.cl-lesson.taught { background:#E8F5E9; color:#2E7D32; }
+.cl-lesson .cl-check { width:16px; height:16px; border-radius:4px; border:2px solid var(--purple); flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+.cl-lesson.taught .cl-check { background:#4CAF50; border-color:#4CAF50; }
+.cl-lesson.taught .cl-check svg { width:10px; height:10px; color:#fff; }
+.cl-lesson .cl-lname { flex:1; }
+.cl-lesson.taught .cl-lname { text-decoration:line-through; opacity:0.7; }
+.cl-hl { background:#FFF59D; color:#F57F17; padding:0 3px; border-radius:3px; font-weight:700; }
+.cl-progress { margin:0 12px 8px; background:var(--card-bg); border-radius:var(--r-sm); padding:10px 12px; box-shadow:var(--shadow); border:1px solid var(--border); }
+.cl-progress-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.cl-progress-label { font-size:12px; font-weight:600; color:var(--text-sub); }
+.cl-progress-val { font-size:14px; font-weight:800; color:var(--purple-dark); }
+.cl-progress-bar { height:8px; background:rgba(155,127,217,0.1); border-radius:4px; overflow:hidden; }
+.cl-progress-fill { height:100%; border-radius:4px; background:linear-gradient(to right,#4CAF50,#8BC34A); transition:width .3s; }
+/* 排课表单中的课程名称展示 */
+.sched-item .si-course-name { font-size:12px; color:var(--purple-dark); background:var(--purple-light); display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:8px; margin-top:4px; font-weight:600; }
+
 /* Resources */
 /* Code Snippets */
 .snippet-search { padding:8px 12px; display:flex; gap:8px; align-items:center; }
@@ -992,6 +1023,11 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <div class="mc-label">课程大纲</div>
           <div class="mc-desc">备课·进度·教案</div>
         </div>
+        <div class="more-card" onclick="switchPage('course-lib')">
+          <div class="mc-icon" style="background:linear-gradient(135deg,#26C6DA,#42A5F5)"><svg><use href="#i-folder"/></svg></div>
+          <div class="mc-label">课程资源</div>
+          <div class="mc-desc">Scratch·Python目录</div>
+        </div>
         <div class="more-card" onclick="showSubPage('classRecords')">
           <div class="mc-icon" style="background:linear-gradient(135deg,#FF85A2,#9B7FD9)"><svg><use href="#i-clipboard"/></svg></div>
           <div class="mc-label">课堂记录</div>
@@ -1216,6 +1252,26 @@ input:focus,select:focus,textarea:focus { outline:none; }
   </div>
 </div>
 
+  <!-- ===== Page: 课程资源 ===== -->
+  <div class="page" id="page-course-lib">
+    <div class="sub-back" onclick="switchPage('more')"><svg class="icon-sm"><use href="#i-back"/></svg> 返回更多</div>
+    <div class="sec-title"><span class="pixel-deco"></span>课程资源目录</div>
+    <div class="cl-stats" id="cl-stats"></div>
+    <div class="tab-bar" id="cl-subj-tabs">
+      <div class="tab-item active" data-subj="scratch" onclick="setCatalogSubj(this,'scratch')"><svg class="ti-cat-icon ci-scratch"><use href="#i-cat"/></svg>Scratch</div>
+      <div class="tab-item" data-subj="python" onclick="setCatalogSubj(this,'python')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python</div>
+    </div>
+    <div class="tab-bar" id="cl-cat-tabs" style="padding-top:0"></div>
+    <div class="search-bar">
+      <div class="search-wrap">
+        <svg><use href="#i-search"/></svg>
+        <input type="text" class="search-input" id="cl-search" placeholder="搜索课程系列或课程名..." oninput="renderCourseLib()">
+      </div>
+    </div>
+    <div id="cl-progress" class="cl-progress"></div>
+    <div id="cl-list" class="cl-list"></div>
+  </div>
+
 <!-- ===== FAB ===== -->
 <button class="fab" id="fab" onclick="quickAdd()" style="display:none">
   <svg class="icon"><use href="#i-plus"/></svg>
@@ -1271,6 +1327,32 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <option value="python_adv">Python进阶班</option>
         <option value="cpp_basic">C++基础班</option>
         <option value="cpp_adv">C++进阶班</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">科目</label>
+      <select class="form-select" id="course-subject" onchange="onCourseSubjChange()">
+        <option value="">不指定</option>
+        <option value="scratch">Scratch</option>
+        <option value="python">Python</option>
+      </select>
+    </div>
+    <div class="form-group" id="course-cat-wrap" style="display:none">
+      <label class="form-label">课程分类</label>
+      <select class="form-select" id="course-category" onchange="onCourseCatChange()" disabled>
+        <option value="">请选择分类</option>
+      </select>
+    </div>
+    <div class="form-group" id="course-series-wrap" style="display:none">
+      <label class="form-label">课程系列</label>
+      <select class="form-select" id="course-series" onchange="onCourseSeriesChange()" disabled>
+        <option value="">请选择系列</option>
+      </select>
+    </div>
+    <div class="form-group" id="course-select-wrap" style="display:none">
+      <label class="form-label">具体课程（可选）</label>
+      <select class="form-select" id="course-course" onchange="onCourseLessonChange()" disabled>
+        <option value="">不选择课程</option>
       </select>
     </div>
     <div class="form-row">
@@ -1751,6 +1833,158 @@ const SUBJECT_INFO = {
   cpp: { name:'C++', icon:'i-cpp', iconClass:'ci-cpp', bg:'var(--purple-light)' }
 };
 
+// ===== 课程资源目录（内置）=====
+// 来源：奇码课程PPT目录，结构 = 科目 > 课程类型(试听/正式/专题) > 课程系列 > 具体课程
+const COURSE_CATALOG = {
+  scratch: {
+    label: 'Scratch',
+    categories: {
+      trial: {
+        label: '试听课',
+        series: [
+          { name: 'Hi Mom', lessons: ['Hi Mom'] },
+          { name: '丰收农场', lessons: ['丰收农场'] },
+          { name: '争分夺秒-天空极速', lessons: ['争分夺秒'] },
+          { name: '争分夺秒-消防演练', lessons: ['消防演练'] },
+          { name: '你追我赶', lessons: ['你追我赶（海洋）', '你追我赶（雪天）'] },
+          { name: '保卫爸爸', lessons: ['保卫爸爸'] },
+          { name: '兔兔的月饼', lessons: ['兔兔的月饼'] },
+          { name: '大白体验卡', lessons: ['大白体验卡'] },
+          { name: '天空翱翔', lessons: ['天空翱翔'] },
+          { name: '小青蛙过河', lessons: ['小青蛙过河'] },
+          { name: '我和我的祖国', lessons: ['我和我的祖国'] },
+          { name: '拼图赞祖国', lessons: ['拼图赞祖国'] },
+          { name: '探索火星', lessons: ['探索火星'] },
+          { name: '播种希望（简易版）', lessons: ['播种希望'] },
+          { name: '播种希望（进阶版）', lessons: ['播种希望'] },
+          { name: '收纳小能手', lessons: ['收纳小能手'] },
+          { name: '新年礼物', lessons: ['新年礼物'] },
+          { name: '欢乐闹元宵', lessons: ['欢乐闹元宵'] },
+          { name: '毛球历险', lessons: ['毛球历险'] },
+          { name: '猜心愿', lessons: ['猜心愿'] },
+          { name: '玉兔探月', lessons: ['玉兔探月'] },
+          { name: '穿越斑马线', lessons: ['穿越斑马线'] },
+          { name: '编程粽动员', lessons: ['编程粽动员'] },
+          { name: '赛车竞速', lessons: ['赛车竞速'] },
+          { name: '防疫健康码', lessons: ['防疫健康码'] },
+          { name: '龙舟勇进', lessons: ['龙舟勇进'] }
+        ]
+      },
+      formal: {
+        label: '正式课',
+        series: [
+          { name: '多彩世界2.0 - 克隆与变量高阶', lessons: ['天降正义','拯救同伴','正方形排列','水果狂欢','火山之行','跃动石柱','麦田之旅'] },
+          { name: '多彩世界2.0 - 列表与综合应用', lessons: ['地精挑战','点餐助手','综合练习（二）','记忆挑战','魔幻骰子'] },
+          { name: '多彩世界2.0 - 判断与侦测', lessons: ['寻找目的地','探索宇宙','森林音乐会','突出重围','绝地反击','躲避糖果雨','逃离大角星'] },
+          { name: '多彩世界2.0 - 数学运算与克隆', lessons: ['保护候鸟群','光源躲避','宝石探秘','水中嬉戏','照亮海底','躲避捣蛋鬼','飞鼠游戏'] },
+          { name: '多彩世界2.0 - 画笔与广播', lessons: ['摇摆飞行','收集水果','画板涂鸦','石头守卫','综合练习（一）','装扮圣诞树','黄沙迷宫'] },
+          { name: '多彩世界2.0 - 运动与造型', lessons: ['捉迷藏','森林卫士','森林巡逻','神秘森林','花之精灵','萤火之夜','采蘑菇'] },
+          { name: '创想乐园 - 基础知识综合', lessons: ['兵贵神速','双人竞赛','智斗商人（上）','智斗商人（下）','赛前准备','趣味道具','龟兔的故事'] },
+          { name: '创想乐园 - 变量与列表进阶', lessons: ['保卫货物','大漠乐章（上）','大漠乐章（下）','大漠乐章（中）','水果分类','装货能手（上）','装货能手（下）'] },
+          { name: '创想乐园 - 嵌套与克隆进阶', lessons: ['冒泡排序','手动排序','排列糖果','插入排序','温故知新','选择排序','通关秘籍'] },
+          { name: '创想乐园 - 画笔与运动进阶', lessons: ['守护神殿（上）','守护神殿（下）','智能面板','神笔马良','蚂蚁小课堂（上）','蚂蚁小课堂（下）','记忆画笔'] },
+          { name: '创想乐园 - 自制积木进阶', lessons: ['不速之客','反戈一击','拯救行动','森林之光','森林迷宫','背水一战','胜利逃亡'] },
+          { name: '创想乐园 - 逻辑思维挑战', lessons: ['冰壶球竞赛','双人坦克','图形大匹配','最强大胃王','汽车竞速赛','眼力大比拼（上）','眼力大比拼（下）'] },
+          { name: '神秘探险 - 侦测与条件', lessons: ['丛林探秘','出海准备','击退野兽','扬帆起航','新的征程','神秘海域','荒岛求生'] },
+          { name: '神秘探险 - 列表与克隆', lessons: ['同步移动','微观秘密','细胞免疫','肺与呼吸','营养合成（上）','营养合成（下）','身体卫士'] },
+          { name: '神秘探险 - 广播与条件综合', lessons: ['小人岛','巨人岛','开拓土地','格列佛的旅程','沙漠迷城','添砖加瓦','飞岛游戏'] },
+          { name: '神秘探险 - 循环与变量', lessons: ['工厂危机','收集能量','机器人学步','机器城','机器工厂','流水线','质量检测'] },
+          { name: '神秘探险 - 知识综合应用', lessons: ['星际大战（上）','星际大战（下）','沙场点兵（上）','沙场点兵（下）','鹏程万里'] },
+          { name: '神秘探险 - 自制积木与变量高阶', lessons: ['决斗海盗','击碎礁石','地心历险（上）','地心历险（下）','暴风热气球','朝花夕拾','沙漠寻宝'] },
+          { name: '蓝色星球 - 运动与外观', lessons: ['发光水母','探险之旅','播种果实','海洋相册','海边拾贝','风车花园','鲨鱼巡游'] },
+          { name: '蓝色星球 - 循环与分支', lessons: ['大鱼吃小鱼','小兔回家','小猫钓鱼','水母跳跳','海底跑酷','海星觅食','海洋泡泡'] },
+          { name: '蓝色星球 - 画笔模块', lessons: ['创意七巧板','宝石矿工','沙漠变绿洲','画笔连线','糖饼印花','趣味填色画','颜色大挑战'] },
+          { name: '蓝色星球 - 克隆与变量', lessons: ['光梦捕手','动物消消乐','果蔬达人','百步穿杨','豌豆保卫战（上）','豌豆保卫战（下）','飞行大师'] },
+          { name: '蓝色星球 - 广播与声音', lessons: ['动听音乐','学海拾遗','幸运盲盒（上）','幸运盲盒（下）','生日贺卡（上）','生日贺卡（下）','音乐大师'] },
+          { name: '蓝色星球 - 综合应用创作', lessons: ['AR钢琴','几何跑酷','四季变换','打地鼠','温故知新'] },
+          { name: '米乐熊高阶', lessons: ['小猴子抓气球'] }
+        ]
+      },
+      topic: {
+        label: '专题课',
+        series: [
+          { name: '赛训Sc训练营', lessons: ['3D打印','复杂图形二','昼夜交替','正多边形之复杂图形','统计图（一）','统计图（二）','花样排列'] },
+          { name: '亚运江南忆', lessons: ['小小神枪手','百步穿杨','赛艇争流','走近亚运','足球小子'] },
+          { name: '亲子物语', lessons: ['荒野行动','购买商品','超市促销活动'] },
+          { name: '我的军人梦', lessons: ['射击训练','抗震救灾','抵御危机','穿越未来','解救危难'] },
+          { name: '数与算法', lessons: ['因数与完美数','最大公因数（上）','最大公因数（下）','最小公倍数','特别的数','质数','进制转换'] },
+          { name: '数字乐园', lessons: ['乘法速算','减法心算','初识角度','图形的运动','数字比大小','认识单位','认识图形'] },
+          { name: '数字乐园2', lessons: ['丈量正方形','四则运算','数字排列','百变时钟','称识轻重','角的问答','超级小买手'] },
+          { name: '新春集福', lessons: ['新年礼物','集五福（上）','集五福（下）'] },
+          { name: '星际迷航', lessons: ['太空漫步','收集能量','火箭发射'] },
+          { name: '梦想小镇', lessons: ['城市规划师（上）','城市规划师（下）','城市规划师（中）','牧场物语（上）','牧场物语（下）'] },
+          { name: '森林之夏2.0', lessons: ['收集树叶','森林之夏','空中来信','落日派对','遮风挡雨'] },
+          { name: '水果狂奔', lessons: ['万物复苏（上）','万物复苏（下）','水果速递（上）','水果速递（下）','水果速递（中）'] },
+          { name: '璀璨星空', lessons: ['收集流星','点点星光','璀璨星空'] },
+          { name: '生命保卫战', lessons: ['保卫医生','收集道具','最后一战','病毒来袭','病毒蔓延'] },
+          { name: '电脑小能手', lessons: ['键盘小能手（上）','键盘小能手（下）','键盘小能手（中）','键鼠与文件','鼠标的秘密'] },
+          { name: '神奇的画笔', lessons: ['几何图形','守护之盾','智圆行方','美丽的烟花','认识画笔'] },
+          { name: '算法魔方', lessons: ['冒泡排序','字符密码','插入排序','枚举算法','查找算法','选择排序','递归算法'] },
+          { name: '红色卫士', lessons: ['消防卫士','火线救援','车水马龙','重获新生','马力全开'] },
+          { name: '走进科学', lessons: ['串并联电路','光的反射','相对运动','聚光燃烧','营养均衡','跷跷板','麦田计划'] },
+          { name: '阿布奇遇', lessons: ['初遇阿布','拯救植物','绝地求生','躲避飞鸟','阿布飞起来'] },
+          { name: '阿鲁漂流记', lessons: ['抵御海盗','拯救年兽','收集物资','漂流荒岛','野兽来袭'] }
+        ]
+      }
+    }
+  },
+  python: {
+    label: 'Python',
+    categories: {
+      trial: {
+        label: '试听课',
+        series: [
+          { name: '一起倒计时', lessons: ['一起倒计时'] },
+          { name: '天气预报', lessons: ['天气预报'] },
+          { name: '我的词云图', lessons: ['我的词云图'] },
+          { name: '智能决策机', lessons: ['智能决策机'] },
+          { name: '智能助手', lessons: ['智能助手'] },
+          { name: '科学家的生日', lessons: ['科学家的生日'] },
+          { name: '谁是数字高手', lessons: ['谁是数字高手'] },
+          { name: '陌生来电', lessons: ['陌生来电'] }
+        ]
+      },
+      formal: {
+        label: '正式课',
+        series: [
+          { name: '斗转星移 - 模块一', lessons: ['走进Python世界','初识变量','变量的数据类型','字符串','字符串的格式化输出','条件判断（一）','Python实战（一）'] },
+          { name: '斗转星移 - 模块二', lessons: ['条件判断（二）','初识列表','列表进阶','循环结构（while）','循环结构（for循环）','循环结构（while进阶）','循环结构（循环嵌套）'] },
+          { name: '斗转星移 - 模块三', lessons: ['Python实战（二）','Python实战（三）','元组与集合','字典','共有操作及异常','进制转换','综合测评（一）'] },
+          { name: '斗转星移 - 模块四', lessons: ['Python实战（四）','函数基础','函数进阶','函数高级','数学算法（一）','模块使用（上）','模块使用（下）'] },
+          { name: '斗转星移 - 模块五', lessons: ['排序算法（一）','排序算法（二）','枚举算法（一）','枚举算法（二）','查找算法','递归函数（一）','递归函数（二）'] },
+          { name: '斗转星移 - 模块六', lessons: ['Python实战（五）','文件操作','类与对象（一）','类与对象（二）','分治算法（一）','分治算法（二）','算法复杂度和稳定性'] },
+          { name: '点石成金 - 小试牛刀', lessons: ['走进Python','Arco大讲堂（一）','Arco大讲堂（二）','分类货物','智能超市','质检专家','超市大亨'] },
+          { name: '点石成金 - 首战告捷', lessons: ['Arco大讲堂（三）','Arco大讲堂（四）','海底世界','海底拼图','海洋卫士','海洋图鉴','净化海域'] },
+          { name: '点石成金 - 飞鸿传书', lessons: ['Arco大讲堂（五）','Arco大讲堂（六）','启动引擎','微型隧道','驱逐病毒','疑案追踪','重获新生'] },
+          { name: '科技之光2.0 - 计算机世界', lessons: ['保卫CPU','告别蓝屏','恢复记忆','硬盘探秘','网络漫游','账号管家','跳跃大瀑布'] },
+          { name: '科技之光2.0 - 科技与生活', lessons: ['十二星座','历史真相','发明发电机','我的城市','神秘庄园','篮球队选拔','购买材料'] },
+          { name: '科技之光2.0 - 数据的价值', lessons: ['前进坦克群','山洞探险','无线电技术','气象分析','破解密码','飞机编队','魔法师的化学实验'] },
+          { name: '数据极客 - 趣味函数', lessons: ['函数精讲','数字奥秘（入门）','数字奥秘（进阶）','数字奥秘（精通）','概率陷阱（入门）','概率陷阱（进阶）','概率陷阱（精通）'] },
+          { name: '数据极客 - 编程生活', lessons: ['借贷陷阱','多维测试','时间管理','求和难题','生日奥秘','约瑟夫环','金融管家'] },
+          { name: '数据极客 - 算法迷宫', lessons: ['代码揭秘','排序算法（上）','排序算法（下）','快速排序','数列之谜','数据查找','递归函数'] },
+          { name: '数据极客 - 秘密任务', lessons: ['任务清单','侵入系统','凯撒密码','密码大赛','密码破解','维吉尼亚算法（上）','维吉尼亚算法（下）'] },
+          { name: '数据极客 - 智能助手', lessons: ['故事大王','智能助手（上）','智能助手（下）','知识宝典（上）','知识宝典（下）','密林围猎（上）','密林围猎（下）'] },
+          { name: '数据极客 - 制作大师', lessons: ['摩拳擦掌','挖宝达人','障眼戏法','赛车追逐（上）','赛车追逐（中）','赛车追逐（下）','辉煌旅程'] }
+        ]
+      },
+      topic: {
+        label: '专题课',
+        series: [
+          { name: '小海龟绘图', lessons: ['turtle小海龟','小鲤鱼','放气球（上）','放气球（下）','表情包'] },
+          { name: '小海龟绘图第II季', lessons: ['万花筒','圣诞贺卡','奥运五环','时钟','星空','烟花','风车'] },
+          { name: '海龟高阶 - 图形的奥秘', lessons: ['分形樱花树','勾股树','科赫雪花','谢尔宾斯基三角','递归波点画'] },
+          { name: 'Pygame高手养成', lessons: ['小球点一点（上）','小球点一点（下）','挡板弹球（上）','挡板弹球（下）','飞翔的小鸟（上）','飞翔的小鸟（中）','飞翔的小鸟（下）'] },
+          { name: 'Python数学魔法', lessons: ['数与运算','质数','完美数与质因数','最大公因数','最小公倍数','特殊的数（上）','特殊的数（下）'] },
+          { name: 'Py算法实战', lessons: ['算法初步','模拟算法','枚举算法','贪心策略','递归算法'] },
+          { name: '网页爬虫 - 王者学院', lessons: ['王者大学堂','王者群英会','网页淘金匠','英雄招募令','英雄集结号'] },
+          { name: '玩转Python数据处理', lessons: ['初识数据分析','数据探索（一）','数据探索（二）','数据智绘','Matplotlib绘图'] },
+          { name: '玩转tkinter', lessons: ['新朋友','画图板','计算器','记事本','图片浏览器'] }
+        ]
+      }
+    }
+  }
+};
+
 // ===== Data Layer =====
 const STORE_KEY = 'wb_progedu_';
 // 本地时区日期格式化（避免 toISOString 的 UTC 时差错位一天）
@@ -1765,7 +1999,8 @@ let DB = {
   templates: [],
   todos: [],
   achievements: [],
-  reports: []
+  reports: [],
+  taughtCourses: {}
 };
 
 function loadData() {
@@ -1798,6 +2033,7 @@ function ensureDBShape() {
     if (!Array.isArray(DB[f])) { DB[f] = []; changed = true; }
   });
   if (!DB.classNames || typeof DB.classNames !== 'object' || Array.isArray(DB.classNames)) { DB.classNames = {}; changed = true; }
+  if (!DB.taughtCourses || typeof DB.taughtCourses !== 'object' || Array.isArray(DB.taughtCourses)) { DB.taughtCourses = {}; changed = true; }
   if (!DB.settings || typeof DB.settings !== 'object' || Array.isArray(DB.settings)) { DB.settings = {}; changed = true; }
   if (!DB.settings.name) { DB.settings.name = '编程老师工作台'; changed = true; }
   if (DB.settings.icon === undefined) { DB.settings.icon = ''; changed = true; }
@@ -1835,6 +2071,7 @@ function migrateContentLib() {
   if (!DB.reports) { DB.reports = []; changed = true; }
   if (!DB.holidays) { DB.holidays = []; changed = true; }
   if (!DB.classNames) { DB.classNames = {}; changed = true; }
+  if (!DB.taughtCourses || typeof DB.taughtCourses !== 'object' || Array.isArray(DB.taughtCourses)) { DB.taughtCourses = {}; changed = true; }
   if (!DB.settings) { DB.settings = { name:'编程老师工作台', icon:'', hoursPerLesson:2 }; changed = true; }
   else {
     if (!DB.settings.name) { DB.settings.name = '编程老师工作台'; changed = true; }
@@ -2335,7 +2572,8 @@ function switchPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+  const _navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (_navItem) _navItem.classList.add('active');
   currentPage = page;
   
   // Show/hide sub-pages on more page
@@ -2357,6 +2595,7 @@ function switchPage(page) {
   if (page === 'schedule') renderSchedule();
   if (page === 'students') renderStudents();
   if (page === 'homework') renderHomework();
+  if (page === 'course-lib') renderCourseLib();
   
   window.scrollTo(0, 0);
 }
@@ -2380,6 +2619,125 @@ function showSubPage(name) {
 function backToMore() {
   document.querySelectorAll('.sub-page').forEach(sp => sp.classList.remove('active'));
   document.getElementById('more-main').style.display = 'block';
+}
+
+// ===== 课程资源目录 (Course Library) =====
+let catalogSubj = 'scratch';
+let catalogCat = 'trial';
+
+function setCatalogSubj(el, subj) {
+  document.querySelectorAll('#cl-subj-tabs .tab-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  catalogSubj = subj;
+  // 切换科目时，分类回到第一个
+  const cats = Object.keys(COURSE_CATALOG[subj].categories);
+  catalogCat = cats[0];
+  // 清空搜索框
+  const sEl = document.getElementById('cl-search');
+  if (sEl) sEl.value = '';
+  renderCatalogCatTabs();
+  renderCourseLib();
+}
+
+function setCatalogCat(el, cat) {
+  document.querySelectorAll('#cl-cat-tabs .tab-item').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  catalogCat = cat;
+  renderCourseLib();
+}
+
+function renderCatalogCatTabs() {
+  const subjData = COURSE_CATALOG[catalogSubj];
+  const cats = Object.keys(subjData.categories);
+  let html = '';
+  cats.forEach(c => {
+    html += `<div class="tab-item ${c===catalogCat?'active':''}" onclick="setCatalogCat(this,'${c}')">${subjData.categories[c].label}</div>`;
+  });
+  document.getElementById('cl-cat-tabs').innerHTML = html;
+}
+
+// 统计全部课程数（科目>分类>系列>课程）
+function countCatalogAll() {
+  let series = 0, lessons = 0;
+  Object.values(COURSE_CATALOG).forEach(s => {
+    Object.values(s.categories).forEach(c => {
+      c.series.forEach(sr => { series++; lessons += sr.lessons.length; });
+    });
+  });
+  return { series, lessons, subjects: Object.keys(COURSE_CATALOG).length };
+}
+
+function renderCourseLib() {
+  const subjData = COURSE_CATALOG[catalogSubj];
+  const catData = subjData.categories[catalogCat];
+  const kw = (document.getElementById('cl-search').value || '').trim().toLowerCase();
+  // 顶部全局统计
+  const total = countCatalogAll();
+  let taughtCount = 0;
+  Object.keys(COURSE_CATALOG).forEach(sj => {
+    Object.values(COURSE_CATALOG[sj].categories).forEach(c => {
+      c.series.forEach(sr => { sr.lessons.forEach(l => { if (DB.taughtCourses[sj + '|' + sr.name + '|' + l]) taughtCount++; }); });
+    });
+  });
+  document.getElementById('cl-stats').innerHTML =
+    `<span class="cl-stat-pill"><svg class="icon-sm" style="width:13px;height:13px;color:var(--purple)"><use href="#i-folder"/></svg> ${total.series} 系列</span>` +
+    `<span class="cl-stat-pill"><svg class="icon-sm" style="width:13px;height:13px;color:var(--blue)"><use href="#i-book"/></svg> ${total.lessons} 节课程</span>` +
+    `<span class="cl-stat-pill"><svg class="icon-sm" style="width:13px;height:13px;color:#4CAF50"><use href="#i-check"/></svg> 已上 ${taughtCount} 节</span>`;
+  // 进度条
+  const pct = total.lessons > 0 ? Math.round(taughtCount / total.lessons * 100) : 0;
+  document.getElementById('cl-progress').innerHTML =
+    `<div class="cl-progress-top"><span class="cl-progress-label">已上课程进度</span><span class="cl-progress-val">${taughtCount} / ${total.lessons} (${pct}%)</span></div>` +
+    `<div class="cl-progress-bar"><div class="cl-progress-fill" style="width:${pct}%"></div></div>`;
+  // 当前分类下系列过滤
+  let series = catData.series;
+  if (kw) {
+    series = series.filter(sr => sr.name.toLowerCase().includes(kw) || sr.lessons.some(l => l.toLowerCase().includes(kw)));
+  }
+  let catLessons = series.reduce((s, sr) => s + sr.lessons.length, 0);
+  let catTaught = 0;
+  series.forEach(sr => sr.lessons.forEach(l => { if (DB.taughtCourses[catalogSubj + '|' + sr.name + '|' + l]) catTaught++; }));
+  let html = `<div class="cl-cat-summary">${catData.label}${kw ? ' · 搜索结果' : ''}：${series.length} 系列 · ${catLessons} 节${catTaught > 0 ? ` · 已上 ${catTaught} 节` : ''}</div>`;
+  if (series.length === 0) {
+    html += `<div class="empty-state" style="padding:30px 20px"><div class="es-text">没有找到匹配的课程</div></div>`;
+  } else {
+    series.forEach(sr => {
+      const openCls = kw ? ' open' : '';
+      const lessonsHtml = sr.lessons.map(l => {
+        const key = catalogSubj + '|' + sr.name + '|' + l;
+        const isTaught = !!DB.taughtCourses[key];
+        const hl = kw && l.toLowerCase().includes(kw);
+        const nameHtml = hl ? `<b class="cl-hl">${l}</b>` : l;
+        return `<div class="cl-lesson${isTaught ? ' taught' : ''}" onclick="toggleTaughtCourse('${catalogSubj}','${sr.name.replace(/'/g,"\\'")}','${l.replace(/'/g,"\\'")}')">
+          <div class="cl-check">${isTaught ? '<svg class="icon-sm"><use href="#i-check"/></svg>' : ''}</div>
+          <span class="cl-lname">${nameHtml}</span>
+        </div>`;
+      }).join('');
+      const srTaught = sr.lessons.filter(l => DB.taughtCourses[catalogSubj + '|' + sr.name + '|' + l]).length;
+      html += `<div class="cl-series${openCls}">
+        <div class="cl-series-head" onclick="this.parentElement.classList.toggle('open')">
+          <div class="cl-series-name">${sr.name}</div>
+          <span class="cl-series-count">${srTaught}/${sr.lessons.length}节</span>
+          <svg class="icon-sm cl-chevron"><use href="#i-arrow-r"/></svg>
+        </div>
+        <div class="cl-lessons">${lessonsHtml}</div>
+      </div>`;
+    });
+  }
+  document.getElementById('cl-list').innerHTML = html;
+}
+
+// 标记/取消标记课程为已上
+function toggleTaughtCourse(subj, seriesName, lessonName) {
+  const key = subj + '|' + seriesName + '|' + lessonName;
+  if (DB.taughtCourses[key]) {
+    delete DB.taughtCourses[key];
+    showToast('已取消「已上」标记');
+  } else {
+    DB.taughtCourses[key] = true;
+    showToast('已标记为「已上」', 'i-check');
+  }
+  saveData();
+  renderCourseLib();
 }
 
 // ===== Home Page =====
@@ -2541,6 +2899,7 @@ function renderScheduleList() {
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
+        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟</span>
@@ -2631,7 +2990,7 @@ function renderCalendar() {
     dayCourses.slice(0, 2).forEach(c => {
       const key = String(c.class).includes('scratch') ? 'scratch' : (String(c.class).includes('python') ? 'python' : 'cpp');
       const tag = { scratch:'Scr', python:'Py', cpp:'C++' }[key];
-      inner += `<span class="cal-chip c-${key} ${c.status==='completed'?'done':''}">${c.time || ''} ${tag}</span>`;
+      inner += `<span class="cal-chip c-${key} ${c.status==='completed'?'done':''}">${c.time || ''} ${c.courseName || tag}</span>`;
     });
     if (dayCourses.length > 2) inner += `<span class="cal-more">还有${dayCourses.length - 2}节</span>`;
     html += `<div class="cal-day ${isTodayCell?'today':''} ${isSel?'selected':''} ${isHoliday?'holiday':''}" onclick="openDayModal('${dateStr}')">${inner}</div>`;
@@ -2680,6 +3039,7 @@ function renderDayModal() {
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
+        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟</span>
@@ -4620,14 +4980,115 @@ function renderTrendChart() {
 }
 
 // ===== Course Management =====
+// 四级联动：科目 → 分类 → 系列 → 具体课程
+function onCourseSubjChange() {
+  const subj = document.getElementById('course-subject').value;
+  const catWrap = document.getElementById('course-cat-wrap');
+  const seriesWrap = document.getElementById('course-series-wrap');
+  const courseWrap = document.getElementById('course-select-wrap');
+  const catSel = document.getElementById('course-category');
+  const seriesSel = document.getElementById('course-series');
+  const courseSel = document.getElementById('course-course');
+  // 重置下级
+  seriesWrap.style.display = 'none';
+  courseWrap.style.display = 'none';
+  seriesSel.innerHTML = '<option value="">请选择系列</option>';
+  seriesSel.disabled = true;
+  courseSel.innerHTML = '<option value="">不选择课程</option>';
+  courseSel.disabled = true;
+  if (subj && COURSE_CATALOG[subj]) {
+    catWrap.style.display = 'block';
+    catSel.innerHTML = '<option value="">请选择分类</option>';
+    Object.keys(COURSE_CATALOG[subj].categories).forEach(ck => {
+      const opt = document.createElement('option');
+      opt.value = ck; opt.textContent = COURSE_CATALOG[subj].categories[ck].label;
+      catSel.appendChild(opt);
+    });
+    catSel.disabled = false;
+  } else {
+    catWrap.style.display = 'none';
+    catSel.innerHTML = '<option value="">请选择分类</option>';
+    catSel.disabled = true;
+  }
+}
+
+function onCourseCatChange() {
+  const subj = document.getElementById('course-subject').value;
+  const cat = document.getElementById('course-category').value;
+  const seriesWrap = document.getElementById('course-series-wrap');
+  const courseWrap = document.getElementById('course-select-wrap');
+  const seriesSel = document.getElementById('course-series');
+  const courseSel = document.getElementById('course-course');
+  // 重置下级
+  courseWrap.style.display = 'none';
+  courseSel.innerHTML = '<option value="">不选择课程</option>';
+  courseSel.disabled = true;
+  if (subj && cat && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
+    seriesWrap.style.display = 'block';
+    seriesSel.innerHTML = '<option value="">请选择系列</option>';
+    COURSE_CATALOG[subj].categories[cat].series.forEach(sr => {
+      const opt = document.createElement('option');
+      opt.value = sr.name; opt.textContent = sr.name + ' (' + sr.lessons.length + '节)';
+      seriesSel.appendChild(opt);
+    });
+    seriesSel.disabled = false;
+  } else {
+    seriesWrap.style.display = 'none';
+    seriesSel.innerHTML = '<option value="">请选择系列</option>';
+    seriesSel.disabled = true;
+  }
+}
+
+function onCourseSeriesChange() {
+  const subj = document.getElementById('course-subject').value;
+  const cat = document.getElementById('course-category').value;
+  const srName = document.getElementById('course-series').value;
+  const courseWrap = document.getElementById('course-select-wrap');
+  const courseSel = document.getElementById('course-course');
+  if (subj && cat && srName && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
+    const sr = COURSE_CATALOG[subj].categories[cat].series.find(s => s.name === srName);
+    if (sr) {
+      courseWrap.style.display = 'block';
+      courseSel.innerHTML = '<option value="">不选择课程</option>';
+      sr.lessons.forEach(l => {
+        const opt = document.createElement('option');
+        opt.value = l; opt.textContent = l;
+        courseSel.appendChild(opt);
+      });
+      courseSel.disabled = false;
+      return;
+    }
+  }
+  courseWrap.style.display = 'none';
+  courseSel.innerHTML = '<option value="">不选择课程</option>';
+  courseSel.disabled = true;
+}
+
+function onCourseLessonChange() {
+  const lesson = document.getElementById('course-course').value;
+  const titleInput = document.getElementById('course-title');
+  if (lesson) {
+    titleInput.value = lesson;
+  }
+}
+
+// 兼容旧调用：初始化时清空级联
+function updateCourseSelect() {
+  onCourseSubjChange();
+}
+
 function saveCourse() {
   const title = document.getElementById('course-title').value.trim();
   if (!title) { showToast('请输入课程主题', 'i-warn'); return; }
   const isRecurring = document.getElementById('course-recurring').value === '1';
+  const _subject = document.getElementById('course-subject').value;
+  const _courseName = document.getElementById('course-course').value;
   const baseCourse = {
     id: uid(),
     class: document.getElementById('course-class').value,
     title: title,
+    subject: _subject,
+    courseName: _courseName || '',
     date: document.getElementById('course-date').value || fmtLocalDate(new Date()),
     time: document.getElementById('course-time').value || '09:00',
     duration: parseInt(document.getElementById('course-duration').value) || 90,
@@ -4651,8 +5112,11 @@ function saveCourse() {
   renderSchedule();
   if (isHoliday(baseCourse.date)) showToast('注意：这天已标记放假 🏖', 'i-warn');
   else showToast(isRecurring ? '已添加课程（含4周重复排课）' : '课程添加成功！');
+  // 重置表单
   document.getElementById('course-title').value = '';
   document.getElementById('course-note').value = '';
+  document.getElementById('course-subject').value = '';
+  onCourseSubjChange();
 }
 
 
@@ -5409,7 +5873,7 @@ function exportCSV() {
 function clearAllData() {
   if (!confirm('确定要清空所有数据吗？此操作不可撤销！\n\n建议先导出备份！')) return;
   if (!confirm('再次确认：真的要清空全部数据吗？')) return;
-  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'', hoursPerLesson:2 }, recycleBin:[], curriculums:[], classRecords:[] };
+  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'', hoursPerLesson:2 }, recycleBin:[], curriculums:[], classRecords:[], taughtCourses:{} };
   saveData();
   showToast('数据已清空');
   setTimeout(() => location.reload(), 500);
@@ -5440,6 +5904,7 @@ try {
   document.getElementById('course-date').value = todayStr;
   document.getElementById('todo-due').value = todayStr;
   document.getElementById('stu-enroll').value = todayStr;
+  updateCourseSelect();
 
   // Close modals on overlay click
   document.querySelectorAll('.modal-overlay').forEach(m => {
