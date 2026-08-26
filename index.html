@@ -1829,34 +1829,54 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <button class="modal-close" onclick="closeModal('modal-feedback')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
     </div>
     <div style="overflow-y:auto;padding:12px 16px;flex:1">
-      <div class="form-group" style="margin-bottom:10px">
-        <label class="form-label" style="font-size:12px;font-weight:700;margin-bottom:6px">反馈语气</label>
-        <div class="fb-tone-grid" id="fb-tones">
-          <div class="fb-tone-item active" data-tone="warm" onclick="setFeedbackTone(this,'warm')">温和鼓励</div>
-          <div class="fb-tone-item" data-tone="pro" onclick="setFeedbackTone(this,'pro')">专业正式</div>
-          <div class="fb-tone-item" data-tone="fun" onclick="setFeedbackTone(this,'fun')">轻松活泼</div>
-          <div class="fb-tone-item" data-tone="brief" onclick="setFeedbackTone(this,'brief')">简洁明了</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="form-group" style="flex:1;margin-bottom:0">
+          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">反馈语气</label>
+          <div class="fb-tone-grid" id="fb-tones">
+            <div class="fb-tone-item active" data-tone="warm" onclick="setFeedbackTone(this,'warm')">温和鼓励</div>
+            <div class="fb-tone-item" data-tone="pro" onclick="setFeedbackTone(this,'pro')">专业正式</div>
+            <div class="fb-tone-item" data-tone="fun" onclick="setFeedbackTone(this,'fun')">轻松活泼</div>
+            <div class="fb-tone-item" data-tone="brief" onclick="setFeedbackTone(this,'brief')">简洁明了</div>
+          </div>
+        </div>
+        <div class="form-group" style="width:90px;margin-bottom:0">
+          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">字数</label>
+          <select class="form-input" id="fb-length" style="font-size:12px;padding:6px 8px" onchange="regenerateFeedback()">
+            <option value="short">简短~100字</option>
+            <option value="standard" selected>标准~200字</option>
+            <option value="detailed">详细~300字</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <div class="form-group" style="flex:1;margin-bottom:0">
+          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">讲授老师</label>
+          <input type="text" class="form-input" id="fb-teacher" style="font-size:12px;padding:6px 8px" placeholder="老师姓名" oninput="regenerateFeedback()">
+        </div>
+        <div class="form-group" style="flex:1;margin-bottom:0">
+          <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">课程重点</label>
+          <input type="text" class="form-input" id="fb-keypoints" style="font-size:12px;padding:6px 8px" placeholder="如：变量、循环、条件判断" oninput="regenerateFeedback()">
         </div>
       </div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
         <label class="fb-toggle" style="flex:1">
           <input type="checkbox" id="fb-emoji" checked onchange="regenerateFeedback()">
           <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
-          <span style="font-size:12px;font-weight:600">表情符号</span>
+          <span style="font-size:11px;font-weight:600">表情符号</span>
         </label>
         <label class="fb-toggle" style="flex:1">
           <input type="checkbox" id="fb-names" checked onchange="regenerateFeedback()">
           <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
-          <span style="font-size:12px;font-weight:600">学员姓名</span>
+          <span style="font-size:11px;font-weight:600">学员姓名</span>
         </label>
         <label class="fb-toggle" style="flex:1">
           <input type="checkbox" id="fb-suggest" checked onchange="regenerateFeedback()">
           <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
-          <span style="font-size:12px;font-weight:600">改进建议</span>
+          <span style="font-size:11px;font-weight:600">改进建议</span>
         </label>
       </div>
       <div class="form-group" style="margin-bottom:8px">
-        <label class="form-label" style="font-size:12px;font-weight:700;margin-bottom:4px">额外备注（可选）</label>
+        <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">额外备注（可选）</label>
         <input type="text" class="form-input" id="fb-extra" style="font-size:12px" placeholder="如：下节课需要带..." oninput="regenerateFeedback()">
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
@@ -6167,10 +6187,14 @@ function regenerateFeedback() {
   const useNames = document.getElementById('fb-names').checked;
   const useSuggest = document.getElementById('fb-suggest').checked;
   const extra = (document.getElementById('fb-extra').value || '').trim();
+  const fbLen = document.getElementById('fb-length').value;
+  const teacherName = (document.getElementById('fb-teacher').value || '').trim() || (DB.settings?.name || '编程老师');
+  const keyPoints = (document.getElementById('fb-keypoints').value || '').trim() || record.overallNote || '';
   const tone = TONE_CONFIG[fbTone];
   const e = useEmoji ? EMOJIS : {};
 
   function em(emoji) { return e && emoji ? emoji + ' ' : ''; }
+  function line(label, content) { return `${label}：${content}`; }
 
   const cls = CLASS_INFO[record.classId] || { name: '编程班' };
   const dateStr = record.date ? fmtDate(record.date) : '今日';
@@ -6180,62 +6204,77 @@ function regenerateFeedback() {
   const studentMap = {};
   students.forEach(s => studentMap[s.id] = s.name);
 
+  // 字数控制
+  const isShort = fbLen === 'short';
+  const isDetailed = fbLen === 'detailed';
+
   let parts = [];
 
-  // Greeting
-  parts.push(em(e.greeting) + pick(tone.greeting) + '！');
-
-  // Opening with course info
-  parts.push(em(e.opening) + `${pick(tone.opening)}，本节课为《${content}》（${dateStr}）。`);
-
-  // Overall note
-  if (record.overallNote) {
-    parts.push('📋 ' + record.overallNote);
-  }
-
-  // Student feedback
-  if (useNames && notes.length > 0) {
+  // 1. 问候
+  if (!isShort) {
+    parts.push(em(e.greeting) + pick(tone.greeting) + '！');
     parts.push('');
-    parts.push('—' + ' 学员表现 —');
-    notes.forEach(note => {
-      const name = studentMap[note.studentId] || '学员';
-      const perfKey = note.performance || 'normal';
-      const perfText = pick(tone[perfKey] || tone.normal);
-      let line = `${em(e.student)}${name}：${perfText}`;
-
-      if (note.highlights) {
-        line += `。${pick(tone.highlight)}${note.highlights}`;
-      }
-      if (useSuggest && note.issues) {
-        line += `。${pick(tone.issue)}${note.issues}`;
-      }
-      parts.push(line);
-    });
-  } else if (notes.length > 0) {
-    // Without names, summarize
-    const excellent = notes.filter(n => n.performance === 'excellent').length;
-    const good = notes.filter(n => n.performance === 'good').length;
-    const normal = notes.filter(n => n.performance === 'normal').length;
-    const struggling = notes.filter(n => n.performance === 'struggling').length;
-    let summary = [];
-    if (excellent > 0) summary.push(`${excellent}名${pick(tone.excellent)}`);
-    if (good > 0) summary.push(`${good}名${pick(tone.good)}`);
-    if (normal > 0) summary.push(`${normal}名${pick(tone.normal)}`);
-    if (struggling > 0) summary.push(`${struggling}名${pick(tone.struggling)}`);
-    parts.push('📊 ' + summary.join('、'));
   }
 
-  // Extra note
+  // 2. 课程内容
+  const contentDesc = isShort
+    ? `《${content}》`
+    : `${pick(tone.opening)}，本节课为《${content}》（${dateStr}）`;
+  parts.push(line('📚 课程内容', contentDesc));
+
+  // 3. 课程重点
+  if (keyPoints) {
+    parts.push(line('🎯 课程重点', keyPoints));
+  }
+
+  // 4. 讲授老师
+  parts.push(line('👨‍🏫 讲授老师', teacherName));
+
+  // 5. 学员情况
+  if (notes.length > 0) {
+    parts.push('');
+    if (useNames) {
+      parts.push(line('👨‍💻 学员情况', ''));
+      notes.forEach(note => {
+        const name = studentMap[note.studentId] || '学员';
+        const perfKey = note.performance || 'normal';
+        const perfText = pick(tone[perfKey] || tone.normal);
+        let s = `· ${name}：${perfText}`;
+        if (note.highlights) {
+          s += `（${pick(tone.highlight)}${note.highlights}）`;
+        }
+        if (useSuggest && note.issues && isDetailed) {
+          s += `；${pick(tone.issue)}${note.issues}`;
+        }
+        parts.push(s);
+      });
+    } else {
+      const excellent = notes.filter(n => n.performance === 'excellent').length;
+      const good = notes.filter(n => n.performance === 'good').length;
+      const normal = notes.filter(n => n.performance === 'normal').length;
+      const struggling = notes.filter(n => n.performance === 'struggling').length;
+      let summary = [];
+      if (excellent > 0) summary.push(`${excellent}名${pick(tone.excellent)}`);
+      if (good > 0) summary.push(`${good}名${pick(tone.good)}`);
+      if (normal > 0) summary.push(`${normal}名${pick(tone.normal)}`);
+      if (struggling > 0) summary.push(`${struggling}名${pick(tone.struggling)}`);
+      parts.push(line('👨‍💻 学员情况', summary.join('、')));
+    }
+  }
+
+  // 6. 额外备注
   if (extra) {
     parts.push('');
     parts.push('📌 ' + extra);
   }
 
-  // Closing
-  parts.push('');
-  parts.push(em(e.closing) + pick(tone.closing) + '！');
+  // 7. 结束语
+  if (!isShort) {
+    parts.push('');
+    parts.push(em(e.closing) + pick(tone.closing) + '！');
+  }
 
-  const result = parts.join(tone.separator === '\n\n' ? '\n\n' : '\n');
+  const result = parts.join('\n');
   document.getElementById('fb-output').value = result;
   document.getElementById('fb-char-count').textContent = result.length + '字';
 }
