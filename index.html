@@ -6130,6 +6130,34 @@ const EMOJIS = {
 
 function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
+// 叙事风格学员评价素材库
+const NARRATIVE = {
+  excellent: {
+    behaviors: ['课堂上专注度很高', '思维非常活跃', '动手能力很强', '遇到问题总是第一个尝试解决', '代码写得又快又好', '总能提出很有想法的问题', '逻辑特别清晰', '每一步都走得稳'],
+    praise: ['这种思维方式太重要了', '这种意识很关键', '这很难得', '这个习惯特别好', '这正是编程最需要的', '看得出来是真正在思考'],
+    issueLead: ['不过', '唯一可以更好的一点是', '如果说还有什么可以提升的，那就是', '美中不足的是', '稍微要注意的是'],
+    suggestion: ['慢一点、每步多检查一次，反而不容易错', '可以尝试更多自主探索', '试着把思路讲给别人听，会理解得更深', '多给自己一些试错的空间', '可以挑战更有难度的变式', '把好习惯保持下去就很好了']
+  },
+  good: {
+    behaviors: ['整体节奏不错', '任务完成度很高', '能跟上课堂进度', '基础掌握得比较扎实', '做项目时很有自己的想法', '动手实践能力不错', '课堂参与积极', '遇到困难能坚持尝试'],
+    praise: ['这个状态很好', '能看出是在认真学的', '继续保持就对了', '进步很明显', '能坚持下来的孩子都不简单'],
+    issueLead: ['不过', '可以再提升的地方是', '稍微留意一下', '如果非要挑一个点的话', '建议关注'],
+    suggestion: ['多练几遍就更熟练了', '试着自己改改参数看看效果', '可以多想想为什么这样做而不只是怎么做', '遇到不确定的地方大胆试', '课后复习一下今天的内容会更好', '试着不看教程自己再做一遍']
+  },
+  normal: {
+    behaviors: ['基本完成了课堂任务', '跟着步骤走下来了', '该写的代码都写了', '理解了基本概念', '在提醒下能完成操作', '课堂参与还可以'],
+    praise: ['能坚持下来就是进步', '态度是对的', '慢慢来不要急', '基础打牢了后面会快很多'],
+    issueLead: ['需要注意的是', '不过', '稍微有点困难的地方是', '建议多关注', '课后可以重点练'],
+    suggestion: ['多动手敲代码，不要只看', '试着把每一步用自己话复述一遍', '遇到卡住的地方先自己想2分钟再问', '把今天的代码回家再跑一遍', '练习画流程图理清思路', '从模仿开始，慢慢加入自己的改动']
+  },
+  struggling: {
+    behaviors: ['今天的内容有点吃力', '在几个关键步骤卡住了', '跟着做能完成，但独立做还有困难', '对概念的理解还需要时间', '操作时需要比较多提醒'],
+    praise: ['但一直在努力跟', '没有放弃，这很重要', '能坚持到下课就很棒', '态度是认真的'],
+    issueLead: ['建议', '课后', '不用担心', '慢慢来', '关键是'],
+    suggestion: ['先从最基础的练习开始，多重复几遍', '把不懂的地方记下来，下节课问老师', '回家后看看今天的代码，先理解再动手', '不着急赶进度，把每一步搞懂最重要', '可以先用纸笔把思路画出来再写代码', '多给自己一些耐心，编程本来就是慢慢积累的']
+  }
+};
+
 function setFeedbackTone(el, tone) {
   fbTone = tone;
   document.querySelectorAll('#fb-tones .fb-tone-item').forEach(t => t.classList.remove('active'));
@@ -6266,18 +6294,15 @@ function generateStudentFeedback(record, studentInfo) {
 
   const content = record.content || '编程课';
   const note = studentInfo.note;
+  const perfKey = note.performance || 'normal';
 
   // 自动从课程资源查找
   const courseInfo = lookupCourseInfo(record);
   const examInfo = courseInfo ? lookupExamPoints(courseInfo.subject, courseInfo.lessonName) : null;
 
-  // 主题：优先用系列名，否则用课程标题
   const theme = courseInfo ? courseInfo.seriesName : content;
-
-  // 学习内容描述
   const learningDesc = courseInfo ? courseInfo.lessonName : content;
 
-  // 知识点
   let keyPoints = '';
   if (examInfo) {
     keyPoints = examInfo.points;
@@ -6289,8 +6314,7 @@ function generateStudentFeedback(record, studentInfo) {
 
   const isShort = fbLen === 'short';
   const isDetailed = fbLen === 'detailed';
-  const perfKey = note.performance || 'normal';
-  const perfText = pick(tone[perfKey] || tone.normal);
+  const narr = NARRATIVE[perfKey] || NARRATIVE.normal;
 
   let parts = [];
 
@@ -6300,7 +6324,7 @@ function generateStudentFeedback(record, studentInfo) {
   parts.push(`主讲人：${teacherName}`);
   parts.push('');
 
-  // 2. 课程描述段落（叙事风格）
+  // 2. 课程描述段落
   let coursePara = pick(tone.courseIntro) + '《' + learningDesc + '》';
   if (keyPoints) {
     coursePara += '——重点包括：' + keyPoints + '。';
@@ -6317,39 +6341,39 @@ function generateStudentFeedback(record, studentInfo) {
   parts.push(pick(tone.transition));
   parts.push('');
 
-  // 4. 学员表现段落（叙事风格，只写当前学员）
-  let studentPara = studentInfo.name + '小朋友：';
+  // 4. 学员表现段落（叙事风格，自然融合）
+  let para = studentInfo.name + '小朋友：';
 
-  // 表现总评
-  if (perfKey === 'excellent') {
-    studentPara += pick(tone.excellent) + '，';
-  } else if (perfKey === 'good') {
-    studentPara += pick(tone.good) + '，';
-  } else if (perfKey === 'normal') {
-    studentPara += pick(tone.normal) + '，';
-  } else {
-    studentPara += pick(tone.struggling) + '，';
-  }
+  // 行为观察开头
+  para += pick(narr.behaviors);
 
-  // 亮点（融入段落）
+  // 融入亮点
   if (note.highlights) {
-    studentPara += pick(tone.highlightLead) + note.highlights;
-    if (useEmoji) studentPara += ' ' + pick(e.excellent || e.good || ['😊']);
-    studentPara += ' ';
-  }
-
-  // 改进建议（融入段落）
-  if (useSuggest && note.issues) {
-    if (note.highlights) studentPara += '不过';
-    else studentPara += pick(tone.issueLead);
-    studentPara += note.issues + '。';
-  } else if (!note.highlights) {
-    studentPara += '。';
+    para += '，' + note.highlights;
+    para += '——' + pick(narr.praise);
+    if (useEmoji) para += ' ' + pick(e.excellent || e.good || ['😊']);
   } else {
-    studentPara = studentPara.trim() + '。';
+    para += '。';
   }
 
-  parts.push(studentPara);
+  // 融入改进建议
+  if (useSuggest && note.issues) {
+    if (note.highlights) {
+      para += ' ' + pick(narr.issueLead) + note.issues + '，' + pick(narr.suggestion) + '。';
+    } else {
+      para += ' ' + pick(narr.issueLead) + note.issues + '。' + pick(narr.suggestion) + '。';
+    }
+  } else if (!note.highlights) {
+    // 没有亮点也没有问题，加一句通用评价
+    para += ' ' + pick(narr.praise) + '。';
+  } else {
+    // 有亮点没建议，加一句鼓励
+    if (!isShort) {
+      para += ' ' + pick(narr.suggestion) + '。';
+    }
+  }
+
+  parts.push(para);
 
   // 5. 额外备注
   if (extra) {
