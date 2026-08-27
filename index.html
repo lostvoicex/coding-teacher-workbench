@@ -1878,6 +1878,7 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="regenerateFeedback()"><svg class="icon-sm"><use href="#i-refresh"/></svg> 重新生成</button>
       <button class="btn btn-primary" style="flex:1" onclick="copyFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制当前</button>
       <button class="btn" style="flex:1;background:var(--green-light);color:var(--green-dark)" onclick="copyAllFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制全部</button>
+      <button class="btn" style="width:auto;padding:0 12px;background:var(--pink-light);color:var(--pink-dark)" onclick="clearFeedback()" title="清空反馈内容"><svg class="icon-sm"><use href="#i-trash"/></svg></button>
     </div>
   </div>
 </div>
@@ -6290,7 +6291,10 @@ function renderClassRecords() {
         <span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-people"/></svg> ${studentCount} 名学员</span>
         ${courseInfo ? `<span><svg class="icon-sm" style="width:11px;height:11px"><use href="#i-book"/></svg> 第${courseInfo.order}课</span>` : ''}
       </div>
-      ${studentCount > 0 ? `<div style="margin-top:6px"><button class="btn btn-sm" style="width:auto;padding:4px 12px;font-size:11px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="event.stopPropagation();openFeedbackByRecord('${r.id}')"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-msg"/></svg> 生成反馈</button></div>` : ''}
+      <div style="margin-top:6px;display:flex;gap:6px">
+        ${studentCount > 0 ? `<button class="btn btn-sm" style="width:auto;padding:4px 12px;font-size:11px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="event.stopPropagation();openFeedbackByRecord('${r.id}')"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-msg"/></svg> 生成反馈</button>` : ''}
+        <button class="btn btn-sm" style="width:auto;padding:4px 12px;font-size:11px;background:var(--pink-light);color:var(--pink-dark)" onclick="event.stopPropagation();confirmDeleteRecord('${r.id}')"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-trash"/></svg> 删除</button>
+      </div>
     </div>`;
   });
   list.innerHTML = html;
@@ -6519,6 +6523,21 @@ function deleteClassRecord(id) {
   showToast('记录已删除', 'i-trash');
 }
 
+function confirmDeleteRecord(id) {
+  const r = (DB.classRecords || []).find(x => x.id === id);
+  if (!r) return;
+  const studentCount = (r.studentNotes || []).length;
+  const msg = studentCount > 0
+    ? `确定删除这条课堂记录吗？\n\n日期：${fmtDate(r.date)}\n内容：${r.content || '课堂记录'}\n包含 ${studentCount} 名学员表现记录\n\n此操作不可撤销！`
+    : `确定删除这条课堂记录吗？\n\n日期：${fmtDate(r.date)}\n内容：${r.content || '课堂记录'}\n\n此操作不可撤销！`;
+  if (!confirm(msg)) return;
+  DB.classRecords = DB.classRecords.filter(x => x.id !== id);
+  saveData();
+  renderClassRecords();
+  renderStudents();
+  showToast('记录已删除', 'i-trash');
+}
+
 function deleteClassRecordFromModal() {
   const id = document.getElementById('cr-edit-id').value;
   if (!id) return;
@@ -6529,6 +6548,12 @@ function deleteClassRecordFromModal() {
   renderClassRecords();
   renderStudents();
   showToast('记录已删除', 'i-trash');
+}
+
+function clearFeedback() {
+  document.getElementById('fb-output').value = '';
+  document.getElementById('fb-char-count').textContent = '0字';
+  showToast('反馈已清空', 'i-trash');
 }
 
 // ===== 课程反馈生成 =====
