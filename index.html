@@ -1858,11 +1858,6 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <span style="font-size:11px;font-weight:600">表情符号</span>
         </label>
         <label class="fb-toggle" style="flex:1">
-          <input type="checkbox" id="fb-names" checked onchange="regenerateFeedback()">
-          <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
-          <span style="font-size:11px;font-weight:600">学员姓名</span>
-        </label>
-        <label class="fb-toggle" style="flex:1">
           <input type="checkbox" id="fb-suggest" checked onchange="regenerateFeedback()">
           <span class="fb-toggle-track"><span class="fb-toggle-thumb"></span></span>
           <span style="font-size:11px;font-weight:600">改进建议</span>
@@ -6068,59 +6063,55 @@ let fbStudentList = [];
 const TONE_CONFIG = {
   warm: {
     label: '温和鼓励',
-    greeting: ['亲爱的家长们好', '各位家长好呀', '家长朋友们好'],
-    opening: ['今天的课程已经圆满结束啦', '今天的小课堂又度过了充实的一节课', '今天的编程课顺利完成了'],
+    courseIntro: ['今天我们一起学习了', '今天和小伙伴们一起探讨了', '今天的课堂主题是'],
+    courseEnd: ['特别有意思', '很有收获', '大家都学得很投入'],
+    transition: ['其实做出答案已经很棒，但更让我在意的，是大家在课堂上的表现：', '比起答案，我更关注孩子们思考的过程：', '每个孩子的表现都值得被看到：'],
     excellent: ['表现非常出色', '今天的表现特别棒', '课堂上的表现让人眼前一亮'],
     good: ['整体表现不错', '表现得很好', '课堂表现良好'],
     normal: ['基本掌握了今天的内容', '完成了今天的学习任务', '跟上了课堂节奏'],
     struggling: ['还需要多多练习', '还需要一些时间来适应', '建议课后多加巩固'],
-    highlight: ['特别值得表扬的是', '亮点在于', '值得肯定的是'],
-    issue: ['建议在', '可以尝试在', '课后可以多练习'],
+    highlightLead: ['特别值得表扬的是', '亮点在于', '值得肯定的是'],
+    issueLead: ['不过', '需要留意的是', '建议课后'],
     closing: ['期待下节课继续加油', '希望下次课继续努力', '期待孩子们更大的进步'],
-    separator: '\n\n',
-    studentSep: '\n'
   },
   pro: {
     label: '专业正式',
-    greeting: ['各位家长', '家长您好', '各位家长好'],
-    opening: ['本次课程已结束', '本节课的教学内容已完成', '今日课程已圆满结束'],
+    courseIntro: ['本节课主要讲授', '今日课程内容为', '本节课的学习主题是'],
+    courseEnd: ['请家长关注孩子课后练习情况', '建议课后复习巩固', '以下为课堂反馈'],
+    transition: ['以下是该学员的课堂表现：', '学员课堂表现如下：', '课堂表现反馈：'],
     excellent: ['课堂表现优秀', '学习效果突出', '展现了较强的编程能力'],
     good: ['课堂表现良好', '学习态度端正', '较好地完成了课堂任务'],
     normal: ['基本完成学习目标', '掌握了核心知识点', '达到了基本教学要求'],
     struggling: ['需加强课后练习', '建议巩固基础知识', '需要额外辅导支持'],
-    highlight: ['表现亮点：', '学习成果：', '课堂优势：'],
-    issue: ['改进建议：', '课后建议：', '需关注：'],
+    highlightLead: ['表现亮点：', '学习成果：', '课堂优势：'],
+    issueLead: ['改进建议：', '课后建议：', '需关注：'],
     closing: ['感谢家长的配合与支持', '如有疑问请随时沟通', '期待下节课的学习'],
-    separator: '\n',
-    studentSep: '\n'
   },
   fun: {
     label: '轻松活泼',
-    greeting: ['哈喽家长们', '各位家长好呀', '家长们好~'],
-    opening: ['今天的小程序员们又升级啦', '今天的编程冒险又通关了', '今天的代码小达人又解锁新技能了'],
+    courseIntro: ['今天的小程序员们一起解锁了', '今天的编程冒险主题是', '今天我们一起玩转了'],
+    courseEnd: ['简直太有趣了', '大家都超兴奋', '干货满满又好玩'],
+    transition: ['不过最让我开心的是，每个孩子的表现都很亮眼：', '来看看今天的小达人们都做了什么：', '最精彩的是孩子们的表现：'],
     excellent: ['简直是开挂了', '厉害到飞起', '简直是小coder达人'],
     good: ['发挥得不错哦', '状态在线', '稳稳的'],
     normal: ['完成了今日份挑战', '基本搞定', '还算顺利'],
     struggling: ['还需要再练练手', '慢慢来不着急', '下次继续冲'],
-    highlight: ['超赞的一点是', '高光时刻：', '特别要夸的是'],
-    issue: ['小建议：', '可以试试', '偷偷支个招：'],
+    highlightLead: ['超赞的一点是', '高光时刻来了', '特别要夸的是'],
+    issueLead: ['小建议：', '不过呢，', '偷偷支个招：'],
     closing: ['下次课继续冲鸭', '期待下次的精彩表现', '我们下节课见~'],
-    separator: '\n\n',
-    studentSep: '\n'
   },
   brief: {
     label: '简洁明了',
-    greeting: ['家长好', '各位家长', '家长好：'],
-    opening: ['今日课程已结束。', '本节课已完成。', '今日课程结束。'],
-    excellent: ['表现优秀。', '优秀。', '出色。'],
-    good: ['表现良好。', '良好。', '不错。'],
-    normal: ['基本掌握。', '一般。', '完成任务。'],
-    struggling: ['需加强练习。', '需巩固。', '待提升。'],
-    highlight: ['亮点：', '优点：', '表现好：'],
-    issue: ['建议：', '需改进：', '课后：'],
-    closing: ['下节课继续。', '感谢配合。', '下次见。'],
-    separator: '\n',
-    studentSep: ' '
+    courseIntro: ['本节课主题：', '今日学习：', '课程内容：'],
+    courseEnd: ['请课后复习', '建议巩固练习', '已结束'],
+    transition: ['学员表现：', '课堂反馈：', '表现如下：'],
+    excellent: ['表现优秀', '优秀', '出色'],
+    good: ['表现良好', '良好', '不错'],
+    normal: ['基本掌握', '一般', '完成任务'],
+    struggling: ['需加强练习', '需巩固', '待提升'],
+    highlightLead: ['优点：', '亮点：', '表现好'],
+    issueLead: ['建议：', '需改进：', '课后：'],
+    closing: ['下节课继续', '感谢配合', '下次见'],
   }
 };
 
@@ -6272,9 +6263,7 @@ function generateStudentFeedback(record, studentInfo) {
   const e = useEmoji ? EMOJIS : {};
 
   function em(emoji) { return e && emoji ? emoji + ' ' : ''; }
-  function line(label, content) { return `${label}：${content}`; }
 
-  const dateStr = record.date ? fmtDate(record.date) : '今日';
   const content = record.content || '编程课';
   const note = studentInfo.note;
 
@@ -6282,21 +6271,18 @@ function generateStudentFeedback(record, studentInfo) {
   const courseInfo = lookupCourseInfo(record);
   const examInfo = courseInfo ? lookupExamPoints(courseInfo.subject, courseInfo.lessonName) : null;
 
-  const contentTitle = courseInfo ? courseInfo.lessonName : content;
+  // 主题：优先用系列名，否则用课程标题
+  const theme = courseInfo ? courseInfo.seriesName : content;
 
-  let learningContent = '';
-  if (courseInfo) {
-    learningContent = courseInfo.seriesName;
-    if (fbLen !== 'short' && courseInfo.allLessons.length > 1) {
-      learningContent += '（包含：' + courseInfo.allLessons.slice(0, 5).join('、') + (courseInfo.allLessons.length > 5 ? '等' : '') + '）';
-    }
-  }
+  // 学习内容描述
+  const learningDesc = courseInfo ? courseInfo.lessonName : content;
 
+  // 知识点
   let keyPoints = '';
   if (examInfo) {
     keyPoints = examInfo.points;
-  } else if (courseInfo) {
-    keyPoints = courseInfo.seriesName;
+  } else if (courseInfo && courseInfo.allLessons.length > 1) {
+    keyPoints = courseInfo.allLessons.slice(0, 4).join('、');
   } else if (record.overallNote) {
     keyPoints = record.overallNote;
   }
@@ -6308,51 +6294,70 @@ function generateStudentFeedback(record, studentInfo) {
 
   let parts = [];
 
-  // 1. 问候（带学员名）
-  if (!isShort) {
-    parts.push(em(e.greeting) + studentInfo.name + '家长好！');
-    parts.push('');
-  }
-
-  // 2. 课程内容
-  const contentDesc = isShort
-    ? `《${contentTitle}》`
-    : `${pick(tone.opening)}，本节课为《${contentTitle}》（${dateStr}）`;
-  parts.push(line('📚 课程内容', contentDesc));
-
-  // 3. 学习内容
-  if (learningContent) {
-    parts.push(line('📖 学习内容', learningContent));
-  }
-
-  // 4. 重难点
-  if (keyPoints) {
-    parts.push(line('🎯 重难点', keyPoints));
-  }
-
-  // 5. 讲授老师
-  parts.push(line('👨‍🏫 讲授老师', teacherName));
-
-  // 6. 学员表现（只显示当前学生）
+  // 1. 今日主题 + 主讲人
+  parts.push(`今日主题：${theme}`);
   parts.push('');
-  let perfLine = `· ${studentInfo.name}：${perfText}`;
-  if (note.highlights) {
-    perfLine += `（${pick(tone.highlight)}${note.highlights}）`;
-  }
-  if (useSuggest && note.issues && isDetailed) {
-    perfLine += `；${pick(tone.issue)}${note.issues}`;
-  } else if (useSuggest && note.issues) {
-    perfLine += `。${pick(tone.issue)}${note.issues}`;
-  }
-  parts.push(line('👨‍💻 学员表现', perfLine));
+  parts.push(`主讲人：${teacherName}`);
+  parts.push('');
 
-  // 7. 额外备注
+  // 2. 课程描述段落（叙事风格）
+  let coursePara = pick(tone.courseIntro) + '《' + learningDesc + '》';
+  if (keyPoints) {
+    coursePara += '——重点包括：' + keyPoints + '。';
+  } else {
+    coursePara += '。';
+  }
+  if (!isShort) {
+    coursePara += pick(tone.courseEnd) + '。';
+  }
+  parts.push(em(e.opening) + coursePara);
+  parts.push('');
+
+  // 3. 过渡句
+  parts.push(pick(tone.transition));
+  parts.push('');
+
+  // 4. 学员表现段落（叙事风格，只写当前学员）
+  let studentPara = studentInfo.name + '小朋友：';
+
+  // 表现总评
+  if (perfKey === 'excellent') {
+    studentPara += pick(tone.excellent) + '，';
+  } else if (perfKey === 'good') {
+    studentPara += pick(tone.good) + '，';
+  } else if (perfKey === 'normal') {
+    studentPara += pick(tone.normal) + '，';
+  } else {
+    studentPara += pick(tone.struggling) + '，';
+  }
+
+  // 亮点（融入段落）
+  if (note.highlights) {
+    studentPara += pick(tone.highlightLead) + note.highlights;
+    if (useEmoji) studentPara += ' ' + pick(e.excellent || e.good || ['😊']);
+    studentPara += ' ';
+  }
+
+  // 改进建议（融入段落）
+  if (useSuggest && note.issues) {
+    if (note.highlights) studentPara += '不过';
+    else studentPara += pick(tone.issueLead);
+    studentPara += note.issues + '。';
+  } else if (!note.highlights) {
+    studentPara += '。';
+  } else {
+    studentPara = studentPara.trim() + '。';
+  }
+
+  parts.push(studentPara);
+
+  // 5. 额外备注
   if (extra) {
     parts.push('');
     parts.push('📌 ' + extra);
   }
 
-  // 8. 结束语
+  // 6. 结束语
   if (!isShort) {
     parts.push('');
     parts.push(em(e.closing) + pick(tone.closing) + '！');
