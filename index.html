@@ -2916,7 +2916,7 @@ function ensureDBShape() {
 // 内容库升级迁移：老数据自动扩充代码/话术库、清理已废弃的字段
 function migrateContentLib() {
   let changed = false;
-  if (!DB.snippets || DB.snippets.length < 30) { DB.snippets = SNIPPET_LIB.slice(); changed = true; }
+  if (!DB.snippets) { DB.snippets = SNIPPET_LIB.slice(); changed = true; }
   // 老库自动补分类：内置条目按 id 映射，联网入库的归「未分类」
   if (DB.snippets) {
     const catMap = {};
@@ -2925,7 +2925,7 @@ function migrateContentLib() {
       if (!s.category) { s.category = catMap[s.id] || 'misc'; changed = true; }
     });
   }
-  if (!DB.templates || DB.templates.length < 15) { DB.templates = TEMPLATE_LIB.slice(); changed = true; }
+  if (!DB.templates) { DB.templates = TEMPLATE_LIB.slice(); changed = true; }
   if (!DB.reports) { DB.reports = []; changed = true; }
   if (!DB.holidays) { DB.holidays = []; changed = true; }
   if (!DB.classNames) { DB.classNames = {}; changed = true; }
@@ -2944,7 +2944,7 @@ function migrateContentLib() {
   if (changed) saveData();
 }
 
-// 老数据自动补齐 C++ 班级与作业提交状态（升级兼容）
+// 老数据自动补齐 C++ 班级与作业提交状态（升级兼容，仅首次运行）
 function migrateCppData() {
   let changed = false;
   const ymd2 = (d) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -2959,30 +2959,36 @@ function migrateCppData() {
     if (!h.channel) h.channel = '微信';
   });
 
-  // C++ 拆分为基础班/进阶班：老数据 'cpp' 统一归入 C++基础班（可在学员详情里调整班级）
+  // C++ 拆分为基础班/进阶班：老数据 'cpp' 统一归入 C++基础班
   DB.students.forEach(s => { if (s.class === 'cpp') { s.class = 'cpp_basic'; changed = true; } });
   DB.courses.forEach(c => { if (c.class === 'cpp') { c.class = 'cpp_basic'; changed = true; } });
 
-  if (!DB.students.some(s => s.class === 'cpp_basic' || s.class === 'cpp_adv')) {
-    DB.students.push(
-      { id:'s10', name:'小宇', grade:'六年级', class:'cpp_basic', enrollmentDate:'2026-06-10', totalHours:48, usedHours:4, tags:['逻辑强'], points:60, works:[], leaves:[], errors:['cin/cout流方向混淆'] },
-      { id:'s11', name:'小轩', grade:'初一', class:'cpp_adv', enrollmentDate:'2026-05-20', totalHours:48, usedHours:8, tags:['专注','进步快'], points:120, works:[], leaves:[], errors:[] },
-      { id:'s12', name:'小智', grade:'初一', class:'cpp_adv', enrollmentDate:'2026-04-05', totalHours:48, usedHours:14, tags:['有创意'], points:200, works:[{title:'猜数游戏(控制台)',date:'2026-08-20'}], leaves:[], errors:['数组越界'] }
-    );
-    changed = true;
-  }
-  if (!DB.courses.some(c => c.class === 'cpp_basic' || c.class === 'cpp_adv')) {
-    DB.courses.push(
-      { id:'c6', class:'cpp_adv', title:'C++第2课：for循环与数组', date:ymd2(tomorrow), time:'19:00', duration:120, status:'pending', note:'', isRecurring:true },
-      { id:'c8', class:'cpp_basic', title:'C++第1课：cout与变量', date:ymd2(tomorrow), time:'17:00', duration:90, status:'pending', note:'', isRecurring:true }
-    );
-    changed = true;
-  }
-  if (!DB.homework.some(h => h.subject === 'cpp')) {
-    DB.homework.push(
-      { id:'h7', studentId:'s11', studentName:'小轩', subject:'cpp', title:'第2课：循环求和', assignedDate:today, dueDate:ymd2(tomorrow), status:'pending', submitted:true, channel:'微信', grade:'', comment:'' },
-      { id:'h8', studentId:'s12', studentName:'小智', subject:'cpp', title:'第2课：循环求和', assignedDate:today, dueDate:ymd2(tomorrow), status:'pending', submitted:false, channel:'微信', grade:'', comment:'' }
-    );
+  // 仅在首次迁移时添加 C++ 示例数据，已迁移过则跳过
+  if (!DB.flags) DB.flags = {};
+  if (!DB.flags.cppMigrated) {
+    if (!DB.students.some(s => s.class === 'cpp_basic' || s.class === 'cpp_adv')) {
+      DB.students.push(
+        { id:'s10', name:'小宇', grade:'六年级', class:'cpp_basic', enrollmentDate:'2026-06-10', totalHours:48, usedHours:4, tags:['逻辑强'], points:60, works:[], leaves:[], errors:['cin/cout流方向混淆'] },
+        { id:'s11', name:'小轩', grade:'初一', class:'cpp_adv', enrollmentDate:'2026-05-20', totalHours:48, usedHours:8, tags:['专注','进步快'], points:120, works:[], leaves:[], errors:[] },
+        { id:'s12', name:'小智', grade:'初一', class:'cpp_adv', enrollmentDate:'2026-04-05', totalHours:48, usedHours:14, tags:['有创意'], points:200, works:[{title:'猜数游戏(控制台)',date:'2026-08-20'}], leaves:[], errors:['数组越界'] }
+      );
+      changed = true;
+    }
+    if (!DB.courses.some(c => c.class === 'cpp_basic' || c.class === 'cpp_adv')) {
+      DB.courses.push(
+        { id:'c6', class:'cpp_adv', title:'C++第2课：for循环与数组', date:ymd2(tomorrow), time:'19:00', duration:120, status:'pending', note:'', isRecurring:true },
+        { id:'c8', class:'cpp_basic', title:'C++第1课：cout与变量', date:ymd2(tomorrow), time:'17:00', duration:90, status:'pending', note:'', isRecurring:true }
+      );
+      changed = true;
+    }
+    if (!DB.homework.some(h => h.subject === 'cpp')) {
+      DB.homework.push(
+        { id:'h7', studentId:'s11', studentName:'小轩', subject:'cpp', title:'第2课：循环求和', assignedDate:today, dueDate:ymd2(tomorrow), status:'pending', submitted:true, channel:'微信', grade:'', comment:'' },
+        { id:'h8', studentId:'s12', studentName:'小智', subject:'cpp', title:'第2课：循环求和', assignedDate:today, dueDate:ymd2(tomorrow), status:'pending', submitted:false, channel:'微信', grade:'', comment:'' }
+      );
+      changed = true;
+    }
+    DB.flags.cppMigrated = true;
     changed = true;
   }
   if (changed) saveData();
