@@ -575,6 +575,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .fb-toggle-thumb { position:absolute; width:14px; height:14px; border-radius:50%; background:#fff; top:2px; left:2px; transition:all .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
 .fb-toggle input:checked + .fb-toggle-track { background:var(--blue); }
 .fb-toggle input:checked + .fb-toggle-track .fb-toggle-thumb { left:18px; }
+.fb-student-tab { padding:6px 14px; border-radius:20px; border:2px solid var(--border); font-size:12px; font-weight:700; cursor:pointer; white-space:nowrap; transition:all .15s; background:var(--card-bg); color:var(--text-sub); }
+.fb-student-tab:active { transform:scale(.97); }
+.fb-student-tab.active { border-color:var(--blue); background:var(--blue-light); color:var(--blue-dark); }
 
 /* ===== Toast ===== */
 .toast { position:fixed; bottom:calc(90px + var(--safe-b)); left:50%; transform:translateX(-50%) translateY(20px); background:rgba(45,45,68,0.95); color:#fff; padding:10px 20px; border-radius:12px; font-size:14px; font-weight:600; z-index:200; opacity:0; pointer-events:none; transition:all .3s; max-width:90vw; text-align:center; }
@@ -1866,18 +1869,20 @@ input:focus,select:focus,textarea:focus { outline:none; }
         </label>
       </div>
       <div class="form-group" style="margin-bottom:8px">
-        <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">额外备注（可选）</label>
+        <label class="form-label" style="font-size:11px;font-weight:700;margin-bottom:4px">额外备注（可选，所有学员共用）</label>
         <input type="text" class="form-input" id="fb-extra" style="font-size:12px" placeholder="如：下节课需要带..." oninput="regenerateFeedback()">
       </div>
+      <div id="fb-student-tabs" style="display:flex;gap:6px;overflow-x:auto;margin-bottom:8px;padding-bottom:4px"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:var(--text-sub)">反馈预览</span>
+        <span style="font-size:12px;font-weight:700;color:var(--text-sub)" id="fb-current-student">反馈预览</span>
         <span style="font-size:10px;color:var(--text-light)" id="fb-char-count">0字</span>
       </div>
       <textarea class="form-textarea" id="fb-output" rows="12" style="font-size:13px;line-height:1.6;min-height:200px" placeholder="点击下方按钮生成反馈..."></textarea>
     </div>
     <div style="padding:10px 16px;border-top:1px solid var(--border);display:flex;gap:8px">
       <button class="btn" style="flex:1;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff" onclick="regenerateFeedback()"><svg class="icon-sm"><use href="#i-refresh"/></svg> 重新生成</button>
-      <button class="btn btn-primary" style="flex:1" onclick="copyFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制反馈</button>
+      <button class="btn btn-primary" style="flex:1" onclick="copyFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制当前</button>
+      <button class="btn" style="flex:1;background:var(--green-light);color:var(--green-dark)" onclick="copyAllFeedback()"><svg class="icon-sm"><use href="#i-copy"/></svg> 复制全部</button>
     </div>
   </div>
 </div>
@@ -6057,6 +6062,8 @@ function deleteClassRecordFromModal() {
 
 // ===== 课程反馈生成 =====
 let fbTone = 'warm';
+let fbCurrentStudent = null;
+let fbStudentList = [];
 
 const TONE_CONFIG = {
   warm: {
@@ -6151,7 +6158,7 @@ function openFeedbackModal() {
     return;
   }
   openModal('modal-feedback');
-  regenerateFeedback();
+  initFeedbackStudents(record);
 }
 
 function openFeedbackByRecord(id) {
@@ -6162,6 +6169,40 @@ function openFeedbackByRecord(id) {
   }
   document.getElementById('cr-edit-id').value = id;
   openModal('modal-feedback');
+  initFeedbackStudents(record);
+}
+
+function initFeedbackStudents(record) {
+  const students = DB.students.filter(s => s.class === record.classId);
+  const studentMap = {};
+  students.forEach(s => studentMap[s.id] = s.name);
+  const notes = (record.studentNotes || []).filter(n => studentMap[n.studentId]);
+  if (notes.length === 0) {
+    fbStudentList = [];
+    document.getElementById('fb-student-tabs').innerHTML = '';
+    document.getElementById('fb-current-student').textContent = '反馈预览';
+    document.getElementById('fb-extra').value = '';
+    regenerateFeedback();
+    return;
+  }
+  fbStudentList = notes.map(n => ({ id: n.studentId, name: studentMap[n.studentId], note: n }));
+  fbCurrentStudent = fbStudentList[0].id;
+  renderStudentTabs();
+  document.getElementById('fb-extra').value = '';
+  regenerateFeedback();
+}
+
+function renderStudentTabs() {
+  const container = document.getElementById('fb-student-tabs');
+  container.innerHTML = fbStudentList.map(s => {
+    const active = s.id === fbCurrentStudent ? 'active' : '';
+    return `<div class="fb-student-tab ${active}" onclick="selectFeedbackStudent('${s.id}')">${s.name}</div>`;
+  }).join('');
+}
+
+function selectFeedbackStudent(id) {
+  fbCurrentStudent = id;
+  renderStudentTabs();
   regenerateFeedback();
 }
 
@@ -6221,16 +6262,8 @@ function lookupExamPoints(subject, lessonName) {
   return null;
 }
 
-function regenerateFeedback() {
-  const id = document.getElementById('cr-edit-id').value;
-  const record = (DB.classRecords || []).find(r => r.id === id);
-  if (!record) {
-    document.getElementById('fb-output').value = '请先保存课堂记录';
-    return;
-  }
-
+function generateStudentFeedback(record, studentInfo) {
   const useEmoji = document.getElementById('fb-emoji').checked;
-  const useNames = document.getElementById('fb-names').checked;
   const useSuggest = document.getElementById('fb-suggest').checked;
   const extra = (document.getElementById('fb-extra').value || '').trim();
   const fbLen = document.getElementById('fb-length').value;
@@ -6241,22 +6274,16 @@ function regenerateFeedback() {
   function em(emoji) { return e && emoji ? emoji + ' ' : ''; }
   function line(label, content) { return `${label}：${content}`; }
 
-  const cls = CLASS_INFO[record.classId] || { name: '编程班' };
   const dateStr = record.date ? fmtDate(record.date) : '今日';
   const content = record.content || '编程课';
-  const notes = record.studentNotes || [];
-  const students = DB.students.filter(s => s.class === record.classId);
-  const studentMap = {};
-  students.forEach(s => studentMap[s.id] = s.name);
+  const note = studentInfo.note;
 
   // 自动从课程资源查找
   const courseInfo = lookupCourseInfo(record);
   const examInfo = courseInfo ? lookupExamPoints(courseInfo.subject, courseInfo.lessonName) : null;
 
-  // 课程内容
   const contentTitle = courseInfo ? courseInfo.lessonName : content;
 
-  // 学习内容（系列名 + 同系列其他课程）
   let learningContent = '';
   if (courseInfo) {
     learningContent = courseInfo.seriesName;
@@ -6265,7 +6292,6 @@ function regenerateFeedback() {
     }
   }
 
-  // 重难点（从考级大纲查找或使用课堂记录的整体备注）
   let keyPoints = '';
   if (examInfo) {
     keyPoints = examInfo.points;
@@ -6275,15 +6301,16 @@ function regenerateFeedback() {
     keyPoints = record.overallNote;
   }
 
-  // 字数控制
   const isShort = fbLen === 'short';
   const isDetailed = fbLen === 'detailed';
+  const perfKey = note.performance || 'normal';
+  const perfText = pick(tone[perfKey] || tone.normal);
 
   let parts = [];
 
-  // 1. 问候
+  // 1. 问候（带学员名）
   if (!isShort) {
-    parts.push(em(e.greeting) + pick(tone.greeting) + '！');
+    parts.push(em(e.greeting) + studentInfo.name + '家长好！');
     parts.push('');
   }
 
@@ -6306,37 +6333,18 @@ function regenerateFeedback() {
   // 5. 讲授老师
   parts.push(line('👨‍🏫 讲授老师', teacherName));
 
-  // 6. 学员情况
-  if (notes.length > 0) {
-    parts.push('');
-    if (useNames) {
-      parts.push(line('👨‍💻 学员情况', ''));
-      notes.forEach(note => {
-        const name = studentMap[note.studentId] || '学员';
-        const perfKey = note.performance || 'normal';
-        const perfText = pick(tone[perfKey] || tone.normal);
-        let s = `· ${name}：${perfText}`;
-        if (note.highlights) {
-          s += `（${pick(tone.highlight)}${note.highlights}）`;
-        }
-        if (useSuggest && note.issues && isDetailed) {
-          s += `；${pick(tone.issue)}${note.issues}`;
-        }
-        parts.push(s);
-      });
-    } else {
-      const excellent = notes.filter(n => n.performance === 'excellent').length;
-      const good = notes.filter(n => n.performance === 'good').length;
-      const normal = notes.filter(n => n.performance === 'normal').length;
-      const struggling = notes.filter(n => n.performance === 'struggling').length;
-      let summary = [];
-      if (excellent > 0) summary.push(`${excellent}名${pick(tone.excellent)}`);
-      if (good > 0) summary.push(`${good}名${pick(tone.good)}`);
-      if (normal > 0) summary.push(`${normal}名${pick(tone.normal)}`);
-      if (struggling > 0) summary.push(`${struggling}名${pick(tone.struggling)}`);
-      parts.push(line('👨‍💻 学员情况', summary.join('、')));
-    }
+  // 6. 学员表现（只显示当前学生）
+  parts.push('');
+  let perfLine = `· ${studentInfo.name}：${perfText}`;
+  if (note.highlights) {
+    perfLine += `（${pick(tone.highlight)}${note.highlights}）`;
   }
+  if (useSuggest && note.issues && isDetailed) {
+    perfLine += `；${pick(tone.issue)}${note.issues}`;
+  } else if (useSuggest && note.issues) {
+    perfLine += `。${pick(tone.issue)}${note.issues}`;
+  }
+  parts.push(line('👨‍💻 学员表现', perfLine));
 
   // 7. 额外备注
   if (extra) {
@@ -6350,9 +6358,60 @@ function regenerateFeedback() {
     parts.push(em(e.closing) + pick(tone.closing) + '！');
   }
 
-  const result = parts.join('\n');
+  return parts.join('\n');
+}
+
+function regenerateFeedback() {
+  const id = document.getElementById('cr-edit-id').value;
+  const record = (DB.classRecords || []).find(r => r.id === id);
+  if (!record) {
+    document.getElementById('fb-output').value = '请先保存课堂记录';
+    return;
+  }
+
+  if (fbStudentList.length === 0) {
+    document.getElementById('fb-output').value = '暂无学员表现记录，请先在课堂记录中添加学员表现。';
+    document.getElementById('fb-char-count').textContent = '0字';
+    document.getElementById('fb-current-student').textContent = '反馈预览';
+    return;
+  }
+
+  const studentInfo = fbStudentList.find(s => s.id === fbCurrentStudent) || fbStudentList[0];
+  if (!studentInfo) {
+    document.getElementById('fb-output').value = '请选择学员';
+    return;
+  }
+
+  document.getElementById('fb-current-student').textContent = studentInfo.name + ' 的反馈';
+  const result = generateStudentFeedback(record, studentInfo);
   document.getElementById('fb-output').value = result;
   document.getElementById('fb-char-count').textContent = result.length + '字';
+}
+
+function copyAllFeedback() {
+  const id = document.getElementById('cr-edit-id').value;
+  const record = (DB.classRecords || []).find(r => r.id === id);
+  if (!record || fbStudentList.length === 0) {
+    showToast('没有可复制的反馈', 'i-warn');
+    return;
+  }
+
+  let allText = [];
+  fbStudentList.forEach((s, i) => {
+    allText.push(generateStudentFeedback(record, s));
+    if (i < fbStudentList.length - 1) allText.push('\n\n──────────────\n\n');
+  });
+
+  const text = allText.join('');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => {
+      showToast(`已复制全部 ${fbStudentList.length} 名学员反馈`, 'i-check');
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
 }
 
 function copyFeedback() {
