@@ -1393,15 +1393,23 @@ input:focus,select:focus,textarea:focus { outline:none; }
       </select>
     </div>
     <div class="form-group">
-      <label class="form-label">科目</label>
-      <select class="form-select" id="course-subject" onchange="onCourseSubjChange()">
-        <option value="">不指定</option>
-        <option value="scratch">Scratch</option>
-        <option value="python">Python</option>
-        <option value="cpp">C++</option>
+      <label class="form-label">排课类型</label>
+      <select class="form-select" id="course-mode" onchange="onCourseModeChange()">
+        <option value="normal">常规课程</option>
+        <option value="custom">自定义活动（考级/比赛/集训）</option>
       </select>
     </div>
-    <div class="form-group" id="course-cat-wrap" style="display:none">
+    <div id="course-normal-fields">
+      <div class="form-group">
+        <label class="form-label">科目</label>
+        <select class="form-select" id="course-subject" onchange="onCourseSubjChange()">
+          <option value="">不指定</option>
+          <option value="scratch">Scratch</option>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
+      <div class="form-group" id="course-cat-wrap" style="display:none">
       <label class="form-label">课程分类</label>
       <select class="form-select" id="course-category" onchange="onCourseCatChange()" disabled>
         <option value="">请选择分类</option>
@@ -1418,6 +1426,35 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <select class="form-select" id="course-course" onchange="onCourseLessonChange()" disabled>
         <option value="">不选择课程</option>
       </select>
+    </div>
+    </div>
+    <div id="course-custom-fields" style="display:none">
+      <div class="form-group">
+        <label class="form-label">活动类型</label>
+        <select class="form-select" id="course-custom-type" onchange="onCustomTypeChange()">
+          <option value="exam">考级</option>
+          <option value="contest">比赛</option>
+          <option value="training">集训</option>
+          <option value="other">其他</option>
+        </select>
+      </div>
+      <div class="form-group" id="course-custom-subject-wrap">
+        <label class="form-label">涉及科目</label>
+        <select class="form-select" id="course-custom-subject">
+          <option value="">综合</option>
+          <option value="scratch">Scratch</option>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label" id="course-custom-name-label">活动名称</label>
+        <input type="text" class="form-input" id="course-custom-name" placeholder="如：中国电子学会Scratch一级考试" oninput="syncCustomTitle()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">活动说明（可选）</label>
+        <input type="text" class="form-input" id="course-custom-desc" placeholder="如：模拟测试+考前复习">
+      </div>
     </div>
     <div class="form-row">
       <div class="form-group">
@@ -3681,7 +3718,7 @@ function renderHome() {
       const cls = CLASS_INFO[c.class];
       schedHtml += `<div class="schedule-card">
         <div class="sc-time"><div class="sc-h">${c.time.split(':')[0]}:${c.time.split(':')[1]}</div><div class="sc-d">${c.duration}分钟</div></div>
-        <div class="sc-info"><div class="sc-class">${c.title}</div><div class="sc-detail">${cls.name} | 已报名${DB.students.filter(s=>s.class===c.class).length}人</div></div>
+        <div class="sc-info"><div class="sc-class">${c.title}${c.isCustom ? ` <span style="font-size:9px;padding:1px 6px;border-radius:4px;background:var(--orange-light);color:var(--orange-dark);font-weight:600">${({exam:'考级',contest:'比赛',training:'集训',other:'活动'})[c.customType]||''}</span>` : ''}</div><div class="sc-detail">${cls.name} | 已报名${DB.students.filter(s=>s.class===c.class).length}人</div></div>
         <div class="sc-status ${c.status}">${c.status==='pending'?'待上课':'已完成'}</div>
       </div>`;
     });
@@ -3761,10 +3798,12 @@ function renderScheduleList() {
     items.push({ date: c.date + (c.time || ''), html: `<div class="sched-item">
         <div class="si-top">
           <span class="si-class-tag ${c.class.includes('scratch')?'scratch':(c.class.includes('python')?'python':'cpp')}"><svg class="icon-sm" style="display:inline;width:14px;height:14px"><use href="#${cls.icon}"/></use></svg> ${cls.short}</span>
+          ${c.isCustom ? `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:var(--orange-light);color:var(--orange-dark);font-weight:600">${({exam:'考级',contest:'比赛',training:'集训',other:'活动'})[c.customType]||'自定义'}</span>` : ''}
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
         ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
+        ${c.customDesc ? `<div class="si-course-name" style="color:var(--orange-dark)"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-info"/></use></svg> ${c.customDesc}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟</span>
@@ -5845,6 +5884,56 @@ function renderTrendChart() {
 }
 
 // ===== Course Management =====
+// 排课类型切换：常规课程 / 自定义活动
+function onCourseModeChange() {
+  const mode = document.getElementById('course-mode').value;
+  const normalFields = document.getElementById('course-normal-fields');
+  const customFields = document.getElementById('course-custom-fields');
+  const titleInput = document.getElementById('course-title');
+  if (mode === 'custom') {
+    normalFields.style.display = 'none';
+    customFields.style.display = 'block';
+    syncCustomTitle();
+  } else {
+    normalFields.style.display = 'block';
+    customFields.style.display = 'none';
+    if (titleInput.value && titleInput.dataset.fromCustom) {
+      titleInput.value = '';
+      delete titleInput.dataset.fromCustom;
+    }
+  }
+}
+
+function onCustomTypeChange() {
+  const type = document.getElementById('course-custom-type').value;
+  const labels = { exam:'考级名称', contest:'比赛名称', training:'集训名称', other:'活动名称' };
+  const placeholders = {
+    exam:'如：中国电子学会Scratch一级考试',
+    contest:'如：蓝桥杯Python创意编程赛',
+    training:'如：C++算法集训-Day1',
+    other:'如：家长开放日'
+  };
+  document.getElementById('course-custom-name-label').textContent = labels[type];
+  document.getElementById('course-custom-name').placeholder = placeholders[type];
+  syncCustomTitle();
+}
+
+function syncCustomTitle() {
+  const mode = document.getElementById('course-mode');
+  if (!mode || mode.value !== 'custom') return;
+  const type = document.getElementById('course-custom-type').value;
+  const name = document.getElementById('course-custom-name').value.trim();
+  const typeLabels = { exam:'考级', contest:'比赛', training:'集训', other:'活动' };
+  const titleInput = document.getElementById('course-title');
+  if (name) {
+    titleInput.value = `[${typeLabels[type]}] ${name}`;
+    titleInput.dataset.fromCustom = '1';
+  } else {
+    titleInput.value = '';
+    delete titleInput.dataset.fromCustom;
+  }
+}
+
 // 四级联动：科目 → 分类 → 系列 → 具体课程
 function onCourseSubjChange() {
   const subj = document.getElementById('course-subject').value;
@@ -5946,14 +6035,11 @@ function saveCourse() {
   const title = document.getElementById('course-title').value.trim();
   if (!title) { showToast('请输入课程主题', 'i-warn'); return; }
   const isRecurring = document.getElementById('course-recurring').value === '1';
-  const _subject = document.getElementById('course-subject').value;
-  const _courseName = document.getElementById('course-course').value;
+  const mode = document.getElementById('course-mode').value;
   const baseCourse = {
     id: uid(),
     class: document.getElementById('course-class').value,
     title: title,
-    subject: _subject,
-    courseName: _courseName || '',
     date: document.getElementById('course-date').value || fmtLocalDate(new Date()),
     time: document.getElementById('course-time').value || '09:00',
     duration: parseInt(document.getElementById('course-duration').value) || 90,
@@ -5961,6 +6047,18 @@ function saveCourse() {
     note: document.getElementById('course-note').value.trim(),
     isRecurring: isRecurring
   };
+  if (mode === 'custom') {
+    const cType = document.getElementById('course-custom-type').value;
+    const cSubject = document.getElementById('course-custom-subject').value;
+    const cDesc = document.getElementById('course-custom-desc').value.trim();
+    baseCourse.customType = cType;
+    baseCourse.subject = cSubject || 'custom';
+    baseCourse.customDesc = cDesc;
+    baseCourse.isCustom = true;
+  } else {
+    baseCourse.subject = document.getElementById('course-subject').value;
+    baseCourse.courseName = document.getElementById('course-course').value || '';
+  }
   DB.courses.push(baseCourse);
   
   // Add recurring courses for 4 weeks
@@ -5980,7 +6078,12 @@ function saveCourse() {
   // 重置表单
   document.getElementById('course-title').value = '';
   document.getElementById('course-note').value = '';
+  document.getElementById('course-mode').value = 'normal';
+  document.getElementById('course-normal-fields').style.display = 'block';
+  document.getElementById('course-custom-fields').style.display = 'none';
   document.getElementById('course-subject').value = '';
+  document.getElementById('course-custom-name').value = '';
+  document.getElementById('course-custom-desc').value = '';
   onCourseSubjChange();
 }
 
