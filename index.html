@@ -959,6 +959,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <div class="tab-item" data-class="spark_l4" onclick="filterClass(this,'spark_l4')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L4</div>
       <div class="tab-item" data-class="spark_l5" onclick="filterClass(this,'spark_l5')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L5</div>
       <div class="tab-item" data-class="spark_l6" onclick="filterClass(this,'spark_l6')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L6</div>
+      <div class="tab-item" data-class="spark_l7" onclick="filterClass(this,'spark_l7')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L7</div>
+      <div class="tab-item" data-class="spark_l8" onclick="filterClass(this,'spark_l8')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L8</div>
+      <div class="tab-item" data-class="spark_l9" onclick="filterClass(this,'spark_l9')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L9</div>
     </div>
 
     <!-- View Toggle -->
@@ -1319,6 +1322,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <div class="tab-item" data-class="spark_l4" onclick="filterCrClass(this,'spark_l4')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L4</div>
         <div class="tab-item" data-class="spark_l5" onclick="filterCrClass(this,'spark_l5')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L5</div>
         <div class="tab-item" data-class="spark_l6" onclick="filterCrClass(this,'spark_l6')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L6</div>
+        <div class="tab-item" data-class="spark_l7" onclick="filterCrClass(this,'spark_l7')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L7</div>
+        <div class="tab-item" data-class="spark_l8" onclick="filterCrClass(this,'spark_l8')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L8</div>
+        <div class="tab-item" data-class="spark_l9" onclick="filterCrClass(this,'spark_l9')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L9</div>
       </div>
       <div class="cr-list" id="cr-list"></div>
     </div>
@@ -1410,6 +1416,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <option value="spark_l4">火花思维L4</option>
         <option value="spark_l5">火花思维L5</option>
         <option value="spark_l6">火花思维L6</option>
+        <option value="spark_l7">火花思维L7</option>
+        <option value="spark_l8">火花思维L8</option>
+        <option value="spark_l9">火花思维L9</option>
       </select>
     </div>
     <div class="form-group">
@@ -1427,6 +1436,7 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <option value="scratch">Scratch</option>
           <option value="python">Python</option>
           <option value="cpp">C++</option>
+          <option value="spark">火花思维</option>
         </select>
       </div>
       <div class="form-group" id="course-cat-wrap" style="display:none">
@@ -1734,6 +1744,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <option value="spark_l4">火花思维L4</option>
           <option value="spark_l5">火花思维L5</option>
           <option value="spark_l6">火花思维L6</option>
+        <option value="spark_l7">火花思维L7</option>
+        <option value="spark_l8">火花思维L8</option>
+        <option value="spark_l9">火花思维L9</option>
         </select>
       </div>
       <div class="form-group">
@@ -1963,7 +1976,10 @@ const CLASS_INFO = {
   spark_l3: { name:'火花思维L3', short:'火花L3', color:'#FF9800', icon:'i-star', iconClass:'' },
   spark_l4: { name:'火花思维L4', short:'火花L4', color:'#FF9800', icon:'i-star', iconClass:'' },
   spark_l5: { name:'火花思维L5', short:'火花L5', color:'#FF9800', icon:'i-star', iconClass:'' },
-  spark_l6: { name:'火花思维L6', short:'火花L6', color:'#FF9800', icon:'i-star', iconClass:'' }
+  spark_l6: { name:'火花思维L6', short:'火花L6', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l7: { name:'火花思维L7', short:'火花L7', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l8: { name:'火花思维L8', short:'火花L8', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l9: { name:'火花思维L9', short:'火花L9', color:'#FF9800', icon:'i-star', iconClass:'' }
 };
 
 const SUBJECT_INFO = {
@@ -2646,6 +2662,65 @@ const COURSE_CATALOG = {
           { name: '循环结构入门', lessons: ['for循环基础','while循环','do-while循环','循环嵌套','break与continue'] },
           { name: '数组与字符串', lessons: ['一维数组定义与遍历','数组查找与修改','字符数组','string类基础','字符串操作'] },
           { name: '函数入门', lessons: ['函数定义与调用','参数传递(值传递)','函数返回值','递归初步','变量作用域'] }
+        ]
+      }
+    }
+  },
+  spark: {
+    label: '火花思维',
+    categories: {
+      l1: {
+        label: 'L1阶段',
+        series: [
+          { name: 'L1课程大纲', lessons: ['多角度分类','拼图游戏','点线面','空间对应','部分与整体','生活中的比较','生活中的相同','数据收集整理','线游戏','图形对应','排队问题','间隔问题','找规律','对称','数独入门','观察物体','图形拼合','位置对应','路线规划','逻辑语言','变量推理','周期规律','加减法（6以内）','综合复习'] }
+        ]
+      },
+      l2: {
+        label: 'L2阶段',
+        series: [
+          { name: 'L2课程大纲', lessons: ['图形拼合','分配游戏','图形规律','重叠问题','对应思想','等量代换','分类与整理','位置与方向','生活中的比较','排队问题','找规律','对称','数独','枚举法','迷宫','图形变换','数形结合','搭配问题','假设法','间隔问题','加减法巧算','空间规划','等量代换进阶','综合推理'] }
+        ]
+      },
+      l3: {
+        label: 'L3阶段',
+        series: [
+          { name: 'L3课程大纲', lessons: ['七巧板','分配游戏','图形规律','重叠问题','认识时间/钱币','数形结合','数独','排队问题','单双数应用','间隔/年龄问题','还原问题','搭配问题','等式推算','数量关系','数字华容道','间隔与年龄','等量代换','二维排队','必胜策略','凑整法','语言分析','数字规律','等量代换进阶','综合复习'] }
+        ]
+      },
+      l4: {
+        label: 'L4阶段',
+        series: [
+          { name: 'L4课程大纲', lessons: ['拼板游戏','对称','七巧板','立体图形','看图大冒险','间隔问题','空间变换','面积','方格游戏','数独','数字谜','趣味巧解','经典推理','图形规律','智趣巧解','共边现象','加法大爆炸','数字谜进阶','空间变换进阶','大作战','小侦探','分分合合','做事有顺序','综合复习'] }
+        ]
+      },
+      l5: {
+        label: 'L5阶段',
+        series: [
+          { name: 'L5课程大纲', lessons: ['一笔画','加减法应用题','门萨启蒙','方格对应游戏','有序思考基础','折叠与镜像','合理安排','面积原理之容斥与植树','必胜策略','巧移轻重','排除游戏','骰子的世界','钱币启蒙进阶','推算型数独','门萨进阶','故事推理','生活点滴综合','四种基础模型','转化与探索游戏','百分的世界','变倍与分配','图形重叠','编程思维之倒推','图形的分割与拼合'] }
+        ]
+      },
+      l6: {
+        label: 'L6阶段',
+        series: [
+          { name: 'L6课程大纲', lessons: ['图形规律','巧求周长','加减法巧算','乘除法竖式','和差倍问题','年龄问题','线段图','周期问题','四则运算','鸡兔同笼','归一问题','质数与合数','因数倍数','进制与位值','间隔问题','盈亏问题','图示分析','圆与扇形','长方体与正方体','分配律与提取公因数','复杂周期','整数裂项','定义新运算','流程图'] }
+        ]
+      },
+      l7: {
+        label: 'L7阶段',
+        series: [
+          { name: 'L7课程大纲', lessons: ['整数巧算','真假判断','图形规律','秩序游乐园（加乘原理）','看图大冒险','统筹规划','极端分析','行程问题','和差倍进阶','最值问题','工程问题','年龄问题进阶','三角形','等积变形','格点面积','面积综合','图形变换','因数倍数','小数','定义新运算','化繁为简','间隔问题进阶','排列组合','同余与整除'] }
+        ]
+      },
+      l8: {
+        label: 'L8阶段',
+        series: [
+          { name: 'L8课程大纲', lessons: ['逻辑推理','分数计算与比较','组合计数','工程问题','分数加减法','行程问题进阶','分数乘除','长方体与正方体','面积综合','勾股定理','因数倍数进阶','分数应用题','浓度问题','公因数与公倍数','比例问题','几何变换','数列','方程与不等式','立体图形','平方数与立方数','定义新运算','经济问题','容斥原理','分割计数'] }
+        ]
+      },
+      l9: {
+        label: 'L9阶段',
+        series: [
+          { name: 'L9课程大纲', lessons: ['分数百分数综合','工程问题进阶','等高模型','牛吃草','行程问题综合','方程与方程组','风筝模型','蝴蝶模型','格点与面积','燕尾模型','浓度问题进阶','经济问题','利润问题','比例应用','圆与扇形综合','定义新运算','方程进阶','圆柱与圆锥','立体几何','构造与论证','复杂行程','数论综合','排列组合进阶','综合复习'] }
         ]
       }
     }
