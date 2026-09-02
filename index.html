@@ -159,8 +159,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .cal-day .cal-num { font-size:12px; text-align:left; line-height:1.2; }
 .cal-chip { font-size:9px; font-weight:700; line-height:1.5; border-radius:4px; padding:0 3px; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .cal-chip.c-scratch { background:var(--pink-light); color:var(--pink-dark); }
-.cal-chip.c-python { background:#E8F5E9; color:#2E7D32; }
-.cal-chip.c-cpp { background:var(--purple-light); color:var(--purple-dark); }
+  .cal-chip.c-python { background:#E8F5E9; color:#2E7D32; }
+  .cal-chip.c-cpp { background:var(--purple-light); color:var(--purple-dark); }
+  .cal-chip.c-spark { background:#FFF3E0; color:#E65100; }
 .cal-day.today .cal-chip { background:rgba(255,255,255,0.28); color:#fff; }
 .cal-chip.done { opacity:.55; text-decoration:line-through; }
 .cal-more { font-size:9px; color:var(--text-light); text-align:center; margin-top:1px; }
@@ -180,8 +181,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .sched-item .si-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
 .sched-item .si-top .si-class-tag { font-size:12px; font-weight:700; padding:3px 10px; border-radius:8px; }
 .sched-item .si-top .si-class-tag.scratch { background:var(--pink-light); color:var(--pink-dark); }
-.sched-item .si-top .si-class-tag.python { background:#E8F5E9; color:#2E7D32; }
-.sched-item .si-top .si-class-tag.cpp { background:var(--purple-light); color:var(--purple-dark); }
+  .sched-item .si-top .si-class-tag.python { background:#E8F5E9; color:#2E7D32; }
+  .sched-item .si-top .si-class-tag.cpp { background:var(--purple-light); color:var(--purple-dark); }
+  .sched-item .si-top .si-class-tag.spark { background:#FFF3E0; color:#E65100; }
 .sched-item .si-title { font-size:15px; font-weight:700; margin-bottom:4px; }
 .sched-item .si-meta { font-size:12px; color:var(--text-sub); display:flex; flex-wrap:wrap; gap:8px; }
 .sched-item .si-meta span { display:flex; align-items:center; gap:3px; }
@@ -951,6 +953,12 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <div class="tab-item" data-class="python_adv" onclick="filterClass(this,'python_adv')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python进阶</div>
       <div class="tab-item" data-class="cpp_basic" onclick="filterClass(this,'cpp_basic')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++基础</div>
       <div class="tab-item" data-class="cpp_adv" onclick="filterClass(this,'cpp_adv')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++进阶</div>
+      <div class="tab-item" data-class="spark_l1" onclick="filterClass(this,'spark_l1')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L1</div>
+      <div class="tab-item" data-class="spark_l2" onclick="filterClass(this,'spark_l2')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L2</div>
+      <div class="tab-item" data-class="spark_l3" onclick="filterClass(this,'spark_l3')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L3</div>
+      <div class="tab-item" data-class="spark_l4" onclick="filterClass(this,'spark_l4')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L4</div>
+      <div class="tab-item" data-class="spark_l5" onclick="filterClass(this,'spark_l5')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L5</div>
+      <div class="tab-item" data-class="spark_l6" onclick="filterClass(this,'spark_l6')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L6</div>
     </div>
 
     <!-- View Toggle -->
@@ -1305,6 +1313,12 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <div class="tab-item" data-class="python_adv" onclick="filterCrClass(this,'python_adv')"><svg class="ti-cat-icon" style="color:#4CAF50"><use href="#i-snake"/></svg>Python进阶</div>
         <div class="tab-item" data-class="cpp_basic" onclick="filterCrClass(this,'cpp_basic')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++基础</div>
         <div class="tab-item" data-class="cpp_adv" onclick="filterCrClass(this,'cpp_adv')"><svg class="ti-cat-icon ci-cpp"><use href="#i-cpp"/></svg>C++进阶</div>
+        <div class="tab-item" data-class="spark_l1" onclick="filterCrClass(this,'spark_l1')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L1</div>
+        <div class="tab-item" data-class="spark_l2" onclick="filterCrClass(this,'spark_l2')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L2</div>
+        <div class="tab-item" data-class="spark_l3" onclick="filterCrClass(this,'spark_l3')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L3</div>
+        <div class="tab-item" data-class="spark_l4" onclick="filterCrClass(this,'spark_l4')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L4</div>
+        <div class="tab-item" data-class="spark_l5" onclick="filterCrClass(this,'spark_l5')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L5</div>
+        <div class="tab-item" data-class="spark_l6" onclick="filterCrClass(this,'spark_l6')"><svg class="ti-cat-icon" style="color:#FF9800"><use href="#i-star"/></svg>火花L6</div>
       </div>
       <div class="cr-list" id="cr-list"></div>
     </div>
@@ -1390,6 +1404,12 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <option value="python_adv">Python进阶班</option>
         <option value="cpp_basic">C++基础班</option>
         <option value="cpp_adv">C++进阶班</option>
+        <option value="spark_l1">火花思维L1</option>
+        <option value="spark_l2">火花思维L2</option>
+        <option value="spark_l3">火花思维L3</option>
+        <option value="spark_l4">火花思维L4</option>
+        <option value="spark_l5">火花思维L5</option>
+        <option value="spark_l6">火花思维L6</option>
       </select>
     </div>
     <div class="form-group">
@@ -1707,7 +1727,13 @@ input:focus,select:focus,textarea:focus { outline:none; }
           <option value="python_basic">Python基础班</option>
           <option value="python_adv">Python进阶班</option>
           <option value="cpp_basic">C++基础班</option>
-        <option value="cpp_adv">C++进阶班</option>
+          <option value="cpp_adv">C++进阶班</option>
+          <option value="spark_l1">火花思维L1</option>
+          <option value="spark_l2">火花思维L2</option>
+          <option value="spark_l3">火花思维L3</option>
+          <option value="spark_l4">火花思维L4</option>
+          <option value="spark_l5">火花思维L5</option>
+          <option value="spark_l6">火花思维L6</option>
         </select>
       </div>
       <div class="form-group">
@@ -1931,7 +1957,13 @@ const CLASS_INFO = {
   python_basic: { name:'Python基础班', short:'Python基础', color:'#4CAF50', icon:'i-snake', iconClass:'' },
   python_adv: { name:'Python进阶班', short:'Python进阶', color:'#4CAF50', icon:'i-snake', iconClass:'' },
   cpp_basic: { name:'C++基础班', short:'C++基础', color:'#7B5FB8', icon:'i-cpp', iconClass:'ci-cpp' },
-  cpp_adv: { name:'C++进阶班', short:'C++进阶', color:'#7B5FB8', icon:'i-cpp', iconClass:'ci-cpp' }
+  cpp_adv: { name:'C++进阶班', short:'C++进阶', color:'#7B5FB8', icon:'i-cpp', iconClass:'ci-cpp' },
+  spark_l1: { name:'火花思维L1', short:'火花L1', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l2: { name:'火花思维L2', short:'火花L2', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l3: { name:'火花思维L3', short:'火花L3', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l4: { name:'火花思维L4', short:'火花L4', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l5: { name:'火花思维L5', short:'火花L5', color:'#FF9800', icon:'i-star', iconClass:'' },
+  spark_l6: { name:'火花思维L6', short:'火花L6', color:'#FF9800', icon:'i-star', iconClass:'' }
 };
 
 const SUBJECT_INFO = {
@@ -3797,7 +3829,7 @@ function renderScheduleList() {
 
     items.push({ date: c.date + (c.time || ''), html: `<div class="sched-item">
         <div class="si-top">
-          <span class="si-class-tag ${c.class.includes('scratch')?'scratch':(c.class.includes('python')?'python':'cpp')}"><svg class="icon-sm" style="display:inline;width:14px;height:14px"><use href="#${cls.icon}"/></use></svg> ${cls.short}</span>
+          <span class="si-class-tag ${c.class.includes('scratch')?'scratch':(c.class.includes('python')?'python':(c.class.includes('spark')?'spark':'cpp'))}"><svg class="icon-sm" style="display:inline;width:14px;height:14px"><use href="#${cls.icon}"/></use></svg> ${cls.short}</span>
           ${c.isCustom ? `<span style="font-size:10px;padding:2px 8px;border-radius:6px;background:var(--orange-light);color:var(--orange-dark);font-weight:600">${({exam:'考级',contest:'比赛',training:'集训',other:'活动'})[c.customType]||'自定义'}</span>` : ''}
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
@@ -3892,8 +3924,8 @@ function renderCalendar() {
     let inner = `<span class="cal-num">${d}</span>`;
     if (isHoliday) inner += `<span class="cal-chip c-holiday">🏖休</span>`;
     dayCourses.slice(0, 2).forEach(c => {
-      const key = String(c.class).includes('scratch') ? 'scratch' : (String(c.class).includes('python') ? 'python' : 'cpp');
-      const tag = { scratch:'Scr', python:'Py', cpp:'C++' }[key];
+      const key = String(c.class).includes('scratch') ? 'scratch' : (String(c.class).includes('python') ? 'python' : (String(c.class).includes('spark') ? 'spark' : 'cpp'));
+      const tag = { scratch:'Scr', python:'Py', cpp:'C++', spark:'火花' }[key];
       inner += `<span class="cal-chip c-${key} ${c.status==='completed'?'done':''}">${c.time || ''} ${c.courseName || tag}</span>`;
     });
     if (dayCourses.length > 2) inner += `<span class="cal-more">还有${dayCourses.length - 2}节</span>`;
@@ -3939,7 +3971,7 @@ function renderDayModal() {
       const studentCount = DB.students.filter(s => s.class === c.class).length;
       html += `<div class="sched-item">
         <div class="si-top">
-          <span class="si-class-tag ${c.class.includes('scratch')?'scratch':(c.class.includes('python')?'python':'cpp')}"><svg class="icon-sm" style="display:inline;width:14px;height:14px"><use href="#${cls.icon}"/></use></svg> ${cls.short}</span>
+          <span class="si-class-tag ${c.class.includes('scratch')?'scratch':(c.class.includes('python')?'python':(c.class.includes('spark')?'spark':'cpp'))}"><svg class="icon-sm" style="display:inline;width:14px;height:14px"><use href="#${cls.icon}"/></use></svg> ${cls.short}</span>
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
@@ -5015,7 +5047,7 @@ function saveAssign() {
   const cls = document.getElementById('assign-class').value;
   const title = document.getElementById('assign-title').value.trim();
   if (!title) { showToast('请输入作业标题', 'i-warn'); return; }
-  const subject = cls.includes('scratch') ? 'scratch' : (cls.includes('python') ? 'python' : 'cpp');
+  const subject = cls.includes('scratch') ? 'scratch' : (cls.includes('python') ? 'python' : (cls.includes('spark') ? 'spark' : 'cpp'));
   const dueDate = document.getElementById('assign-due').value || fmtLocalDate(new Date());
   const channel = document.getElementById('assign-channel').value;
   const students = DB.students.filter(s => s.class === cls);
