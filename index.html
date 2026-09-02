@@ -1507,6 +1507,13 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <label class="form-label">时长(分钟)</label>
         <input type="number" class="form-input" id="course-duration" value="90">
       </div>
+      <div class="form-group" id="spark-continuous-wrap" style="display:none">
+        <label class="form-label">连上选项</label>
+        <select class="form-select" id="spark-continuous" onchange="onSparkContinuousChange()">
+          <option value="0">单节(40分钟)</option>
+          <option value="1">连上两节(80分钟)</option>
+        </select>
+      </div>
       <div class="form-group">
         <label class="form-label">每周重复</label>
         <select class="form-select" id="course-recurring">
@@ -4075,7 +4082,7 @@ function renderHome() {
     todaySched.forEach(c => {
       const cls = CLASS_INFO[c.class];
       schedHtml += `<div class="schedule-card">
-        <div class="sc-time"><div class="sc-h">${c.time.split(':')[0]}:${c.time.split(':')[1]}</div><div class="sc-d">${c.duration}分钟</div></div>
+        <div class="sc-time"><div class="sc-h">${c.time.split(':')[0]}:${c.time.split(':')[1]}</div><div class="sc-d">${c.duration}分钟${c.isContinuous ? '（连上）' : ''}</div></div>
         <div class="sc-info"><div class="sc-class">${c.title}${c.isCustom ? ` <span style="font-size:9px;padding:1px 6px;border-radius:4px;background:var(--orange-light);color:var(--orange-dark);font-weight:600">${({exam:'考级',contest:'比赛',training:'集训',other:'活动'})[c.customType]||''}</span>` : ''}</div><div class="sc-detail">${cls.name} | 已报名${DB.students.filter(s=>s.class===c.class).length}人</div></div>
         <div class="sc-status ${c.status}">${c.status==='pending'?'待上课':'已完成'}</div>
       </div>`;
@@ -4164,7 +4171,7 @@ function renderScheduleList() {
         ${c.customDesc ? `<div class="si-course-name" style="color:var(--orange-dark)"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-info"/></use></svg> ${c.customDesc}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
-          <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟</span>
+          <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟${c.isContinuous ? '（连上）' : ''}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-people"/></use></svg> ${studentCount}人</span>
         </div>
         ${c.note ? `<div class="si-note"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-warn"/></use></svg> ${c.note}</div>` : ''}
@@ -4304,7 +4311,7 @@ function renderDayModal() {
         ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
-          <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟</span>
+          <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟${c.isContinuous ? '（连上）' : ''}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-people"/></use></svg> ${studentCount}人</span>
         </div>
         ${c.note ? `<div class="si-note"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-warn"/></use></svg> ${c.note}</div>` : ''}
@@ -6308,6 +6315,20 @@ function onCourseSubjChange() {
   seriesSel.disabled = true;
   courseSel.innerHTML = '<option value="">不选择课程</option>';
   courseSel.disabled = true;
+  // 火花思维连上选项
+  const sparkWrap = document.getElementById('spark-continuous-wrap');
+  const durInput = document.getElementById('course-duration');
+  const sparkCont = document.getElementById('spark-continuous');
+  if (subj === 'spark') {
+    sparkWrap.style.display = 'block';
+    sparkCont.value = '0';
+    durInput.value = 40;
+  } else {
+    sparkWrap.style.display = 'none';
+    sparkCont.value = '0';
+    if (durInput.value === '40' || durInput.value === '80') durInput.value = 90;
+  }
+
   if (subj && COURSE_CATALOG[subj]) {
     catWrap.style.display = 'block';
     catSel.innerHTML = '<option value="">请选择分类</option>';
@@ -6322,6 +6343,12 @@ function onCourseSubjChange() {
     catSel.innerHTML = '<option value="">请选择分类</option>';
     catSel.disabled = true;
   }
+}
+
+function onSparkContinuousChange() {
+  const cont = document.getElementById('spark-continuous').value;
+  const durInput = document.getElementById('course-duration');
+  durInput.value = cont === '1' ? 80 : 40;
 }
 
 function onCourseCatChange() {
@@ -6416,6 +6443,9 @@ function saveCourse() {
   } else {
     baseCourse.subject = document.getElementById('course-subject').value;
     baseCourse.courseName = document.getElementById('course-course').value || '';
+    if (baseCourse.subject === 'spark') {
+      baseCourse.isContinuous = document.getElementById('spark-continuous').value === '1';
+    }
   }
   DB.courses.push(baseCourse);
   
