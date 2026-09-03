@@ -2521,7 +2521,7 @@ const COURSE_CATALOG = {
           { name: '拼图赞祖国', lessons: ['拼图赞祖国'] },
           { name: '探索火星', lessons: ['探索火星'] },
           { name: '播种希望（简易版）', lessons: ['播种希望'] },
-          { name: '播种希望（进阶版）', lessons: ['播种希望'] },
+          { name: '播种希望（进阶版）', lessons: ['播种希望（进阶）'] },
           { name: '收纳小能手', lessons: ['收纳小能手'] },
           { name: '新年礼物', lessons: ['新年礼物'] },
           { name: '欢乐闹元宵', lessons: ['欢乐闹元宵'] },
@@ -2561,7 +2561,7 @@ const COURSE_CATALOG = {
           { name: '蓝色星球 - 画笔模块', lessons: ['创意七巧板','宝石矿工','沙漠变绿洲','画笔连线','糖饼印花','趣味填色画','颜色大挑战'] },
           { name: '蓝色星球 - 克隆与变量', lessons: ['光梦捕手','动物消消乐','果蔬达人','百步穿杨','豌豆保卫战（上）','豌豆保卫战（下）','飞行大师'] },
           { name: '蓝色星球 - 广播与声音', lessons: ['动听音乐','学海拾遗','幸运盲盒（上）','幸运盲盒（下）','生日贺卡（上）','生日贺卡（下）','音乐大师'] },
-          { name: '蓝色星球 - 综合应用创作', lessons: ['AR钢琴','几何跑酷','四季变换','打地鼠','温故知新'] },
+          { name: '蓝色星球 - 综合应用创作', lessons: ['AR钢琴','几何跑酷','四季变换','打地鼠','蓝色综合复习'] },
           { name: '米乐熊高阶', lessons: ['小猴子抓气球'] }
         ]
       },
@@ -5834,7 +5834,7 @@ function openSnippetSaveModal(kw) {
   document.getElementById('snip-title').value = kw || '';
   document.getElementById('snip-code').value = '';
   // 科目默认跟随当前筛选 tab
-  const subj = ['scratch','python','cpp'].includes(snipSubject) ? snipSubject : 'python';
+  const subj = ['scratch','python','cpp','spark'].includes(snipSubject) ? snipSubject : 'python';
   document.querySelectorAll('#snip-subj-selector .tag-option').forEach(o => o.classList.toggle('selected', o.dataset.s === subj));
   renderSaveSnipCats(subj);
   document.querySelectorAll('#snip-diff-selector .tag-option').forEach((el,i) => el.classList.toggle('selected', i===0));
