@@ -7293,6 +7293,7 @@ function lookupCourseInfo(record) {
   if (classId.startsWith('scratch')) subject = 'scratch';
   else if (classId.startsWith('python')) subject = 'python';
   else if (classId.startsWith('cpp')) subject = 'cpp';
+  else if (classId.startsWith('spark')) subject = 'spark';
 
   if (!subject || !content) return null;
 
