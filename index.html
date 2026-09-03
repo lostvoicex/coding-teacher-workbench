@@ -1719,8 +1719,22 @@ input:focus,select:focus,textarea:focus { outline:none; }
     <button class="modal-close" onclick="closeModal('modal-class-mgr')"><svg class="icon-sm"><use href="#i-close"/></use></button>
     <div class="modal-handle"></div>
     <div class="modal-title">班级管理</div>
-    <div style="font-size:11px;color:var(--text-sub);margin-bottom:12px;line-height:1.5">给每个班起独立名称（如「周六上午ScratchA班」），方便区分。留空即恢复默认名；班级的科目与初级/进阶结构不变。</div>
-    <div id="class-mgr-list" style="max-height:50vh;overflow-y:auto"></div>
+    <div style="font-size:11px;color:var(--text-sub);margin-bottom:12px;line-height:1.5">给每个班起独立名称（如「周六上午ScratchA班」），方便区分。留空即恢复默认名。也可新增自定义班级。</div>
+    <div id="class-mgr-list" style="max-height:40vh;overflow-y:auto"></div>
+    <div id="class-mgr-add" style="margin-top:12px;padding:10px 12px;background:var(--blue-light);border-radius:10px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px"><svg class="icon-sm" style="color:var(--blue)"><use href="#i-plus"/></svg> 新增自定义班级</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <input type="text" class="form-input" id="cls-new-name" placeholder="班级名称（如：考级集训A班）" style="flex:1;min-width:120px;font-size:13px">
+        <select class="form-select" id="cls-new-subject" style="width:auto;font-size:12px">
+          <option value="scratch">Scratch</option>
+          <option value="python">Python</option>
+          <option value="cpp">C++</option>
+          <option value="spark">火花思维</option>
+          <option value="other">其他</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="addCustomClass()"><svg class="icon-sm"><use href="#i-plus"/></svg> 添加</button>
+      </div>
+    </div>
     <button class="btn btn-primary btn-block" style="margin-top:12px" onclick="saveClassNames()"><svg class="icon-sm"><use href="#i-check"/></use></svg> 保存班级名称</button>
   </div>
 </div>
@@ -3293,7 +3307,7 @@ function loadData() {
 function ensureDBShape() {
   let changed = false;
   if (!DB || typeof DB !== 'object' || Array.isArray(DB)) { DB = {}; changed = true; }
-  const arrFields = ['courses','students','homework','snippets','templates','todos','achievements','reports','holidays','recycleBin','curriculums','classRecords'];
+  const arrFields = ['courses','students','homework','snippets','templates','todos','achievements','reports','holidays','recycleBin','curriculums','classRecords','customClasses'];
   arrFields.forEach(f => {
     if (!Array.isArray(DB[f])) { DB[f] = []; changed = true; }
   });
@@ -3349,6 +3363,7 @@ function migrateContentLib() {
   if (!DB.recycleBin) { DB.recycleBin = []; changed = true; }
   if (!DB.curriculums) { DB.curriculums = []; changed = true; }
   if (!DB.classRecords) { DB.classRecords = []; changed = true; }
+  if (!DB.customClasses) { DB.customClasses = []; changed = true; }
   if (changed) saveData();
 }
 
@@ -3406,11 +3421,26 @@ function saveData() {
   localStorage.setItem(STORE_KEY + 'db', JSON.stringify(DB));
 }
 
-// ===== 班级自定义命名（6个班端口与科目结构不变，仅改显示名）=====
+// ===== 班级自定义命名 + 自定义班级 =====
 const DEFAULT_CLASS_INFO = {};
 Object.keys(CLASS_INFO).forEach(k => { DEFAULT_CLASS_INFO[k] = { name: CLASS_INFO[k].name, short: CLASS_INFO[k].short }; });
 
+const SUBJECT_STYLE = {
+  scratch: { color:'#FF85A2', icon:'i-cat', iconClass:'ci-scratch' },
+  python: { color:'#4CAF50', icon:'i-snake', iconClass:'' },
+  cpp: { color:'#7B5FB8', icon:'i-cpp', iconClass:'ci-cpp' },
+  spark: { color:'#FF9800', icon:'i-star', iconClass:'' },
+  other: { color:'#607D8B', icon:'i-folder', iconClass:'' }
+};
+
 function applyClassNames() {
+  (DB.customClasses || []).forEach(cc => {
+    if (!CLASS_INFO[cc.id]) {
+      const style = SUBJECT_STYLE[cc.subject] || SUBJECT_STYLE.other;
+      CLASS_INFO[cc.id] = { name: cc.name, short: cc.name, color: style.color, icon: style.icon, iconClass: style.iconClass };
+      DEFAULT_CLASS_INFO[cc.id] = { name: cc.name, short: cc.name };
+    }
+  });
   Object.keys(CLASS_INFO).forEach(k => {
     const custom = (DB.classNames && DB.classNames[k]) || '';
     CLASS_INFO[k].name = custom || DEFAULT_CLASS_INFO[k].name;
@@ -3423,17 +3453,46 @@ function openClassManager() {
   document.getElementById('class-mgr-list').innerHTML = keys.map(k => {
     const info = CLASS_INFO[k];
     const cnt = DB.students.filter(s => s.class === k).length;
+    const isCustom = (DB.customClasses || []).some(cc => cc.id === k);
     return `<div class="card" style="margin-bottom:10px;padding:10px 12px">
       <div style="display:flex;align-items:center;gap:8px">
         <div class="hc-subject ${k.split('_')[0]}" style="width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg class="icon-sm ${info.iconClass}" style="${info.iconClass?'':'color:'+info.color}"><use href="#${info.icon}"/></svg></div>
         <div style="flex:1;min-width:0">
           <input type="text" class="form-input" id="cls-name-${k}" value="${String((DB.classNames && DB.classNames[k]) || '').replace(/"/g,'&quot;')}" placeholder="${DEFAULT_CLASS_INFO[k].name}" style="font-size:13px">
-          <div style="font-size:10px;color:var(--text-sub);margin-top:4px">默认「${DEFAULT_CLASS_INFO[k].name}」· 当前 ${cnt} 人</div>
+          <div style="font-size:10px;color:var(--text-sub);margin-top:4px">默认「${DEFAULT_CLASS_INFO[k].name}」· 当前 ${cnt} 人${isCustom?' · 自定义':''}</div>
         </div>
+        ${isCustom ? `<button class="ps-btn minus" style="flex:0 0 auto" onclick="deleteCustomClass('${k}')"><svg class="icon-sm"><use href="#i-trash"/></svg></button>` : ''}
       </div>
     </div>`;
   }).join('');
   openModal('modal-class-mgr');
+}
+
+function addCustomClass() {
+  const name = document.getElementById('cls-new-name').value.trim();
+  const subject = document.getElementById('cls-new-subject').value;
+  if (!name) { showToast('请输入班级名称', 'i-warn'); return; }
+  if (!DB.customClasses) DB.customClasses = [];
+  const id = 'custom_' + Date.now();
+  const style = SUBJECT_STYLE[subject] || SUBJECT_STYLE.other;
+  DB.customClasses.push({ id, name, subject });
+  CLASS_INFO[id] = { name, short: name, color: style.color, icon: style.icon, iconClass: style.iconClass };
+  DEFAULT_CLASS_INFO[id] = { name, short: name };
+  document.getElementById('cls-new-name').value = '';
+  openClassManager();
+  showToast('自定义班级已添加，记得保存');
+}
+
+function deleteCustomClass(id) {
+  const cnt = DB.students.filter(s => s.class === id).length;
+  if (cnt > 0) { showToast(`该班级还有${cnt}名学员，无法删除`, 'i-warn'); return; }
+  if (!confirm('确定删除这个自定义班级吗？')) return;
+  DB.customClasses = (DB.customClasses || []).filter(cc => cc.id !== id);
+  delete DB.classNames[id];
+  delete CLASS_INFO[id];
+  delete DEFAULT_CLASS_INFO[id];
+  openClassManager();
+  showToast('自定义班级已删除，记得保存');
 }
 
 function saveClassNames() {
@@ -3447,25 +3506,38 @@ function saveClassNames() {
   applyClassNames();
   refreshClassUI();
   closeModal('modal-class-mgr');
-  showToast('班级名称已保存');
+  showToast('班级设置已保存');
 }
 
 // 改名后刷新所有静态写死的班级 UI（下拉、筛选tab）并重渲染
 function refreshClassUI() {
-  ['stu-class', 'course-class', 'assign-class'].forEach(id => {
+  ['stu-class', 'course-class', 'assign-class', 'cr-class'].forEach(id => {
     const sel = document.getElementById(id);
     if (!sel) return;
     const cur = sel.value;
     sel.innerHTML = Object.keys(CLASS_INFO).map(k => `<option value="${k}">${CLASS_INFO[k].name}</option>`).join('');
     sel.value = cur && CLASS_INFO[cur] ? cur : Object.keys(CLASS_INFO)[0];
   });
-  document.querySelectorAll('#class-tabs .tab-item').forEach(t => {
-    const k = t.dataset.class;
-    if (k && k !== 'all' && CLASS_INFO[k]) {
-      const lastNode = t.lastChild;
-      if (lastNode && lastNode.nodeType === 3) lastNode.textContent = CLASS_INFO[k].short;
-    }
-  });
+  const tabsBar = document.getElementById('class-tabs');
+  if (tabsBar) {
+    const active = tabsBar.querySelector('.tab-item.active');
+    const activeClass = active ? active.dataset.class : 'all';
+    tabsBar.innerHTML = '<div class="tab-item' + (activeClass === 'all' ? ' active' : '') + '" data-class="all" onclick="filterClass(this,\'all\')">全部班级</div>' +
+      Object.keys(CLASS_INFO).map(k => {
+        const info = CLASS_INFO[k];
+        return `<div class="tab-item${activeClass === k ? ' active' : ''}" data-class="${k}" onclick="filterClass(this,'${k}')"><svg class="ti-cat-icon ${info.iconClass}" style="${info.iconClass?'':'color:'+info.color}"><use href="#${info.icon}"/></svg>${info.short}</div>`;
+      }).join('');
+  }
+  const crTabsBar = document.getElementById('cr-class-tabs');
+  if (crTabsBar) {
+    const active2 = crTabsBar.querySelector('.tab-item.active');
+    const activeClass2 = active2 ? active2.dataset.class : 'all';
+    crTabsBar.innerHTML = '<div class="tab-item' + (activeClass2 === 'all' ? ' active' : '') + '" data-class="all" onclick="filterCrClass(this,\'all\')">全部班级</div>' +
+      Object.keys(CLASS_INFO).map(k => {
+        const info = CLASS_INFO[k];
+        return `<div class="tab-item${activeClass2 === k ? ' active' : ''}" data-class="${k}" onclick="filterCrClass(this,'${k}')"><svg class="ti-cat-icon ${info.iconClass}" style="${info.iconClass?'':'color:'+info.color}"><use href="#${info.icon}"/></svg>${info.short}</div>`;
+      }).join('');
+  }
   renderStudents();
   renderSchedule();
   renderHomework();
@@ -4494,7 +4566,7 @@ function renderStudents() {
   });
   
   let html = '';
-  const classOrder = ['scratch_basic','scratch_adv','python_basic','python_adv','cpp_basic','cpp_adv','spark_l1','spark_l2','spark_l3','spark_l4','spark_l5','spark_l6','spark_l7','spark_l8','spark_l9'];
+  const classOrder = Object.keys(CLASS_INFO);
   
   classOrder.forEach(cls => {
     if (!groups[cls]) return;
@@ -7727,7 +7799,7 @@ function exportCSV() {
 function clearAllData() {
   if (!confirm('确定要清空所有数据吗？此操作不可撤销！\n\n建议先导出备份！')) return;
   if (!confirm('再次确认：真的要清空全部数据吗？')) return;
-  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'', hoursPerLesson:2 }, recycleBin:[], curriculums:[], classRecords:[], taughtCourses:{} };
+  DB = { courses:[], students:[], homework:[], snippets:[], templates:[], todos:[], achievements:[], reports:[], holidays:[], classNames:{}, settings:{ name:'编程老师工作台', icon:'', hoursPerLesson:2 }, recycleBin:[], curriculums:[], classRecords:[], taughtCourses:{}, customClasses:[] };
   saveData();
   showToast('数据已清空');
   setTimeout(() => location.reload(), 500);
