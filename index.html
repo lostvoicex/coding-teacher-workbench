@@ -6516,20 +6516,72 @@ function saveCourse() {
   }
   DB.courses.push(baseCourse);
   
-  // Add recurring courses for 4 weeks
+  // Add recurring courses with lesson progression
   if (isRecurring) {
-    for (let i = 1; i <= 3; i++) {
-      const d = new Date(baseCourse.date);
-      d.setDate(d.getDate() + i * 7);
-      DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
+    let recurringCount = 0;
+    if (mode === 'normal' && baseCourse.subject && baseCourse.courseName) {
+      const subj = baseCourse.subject;
+      const cat = document.getElementById('course-category').value;
+      const srName = document.getElementById('course-series').value;
+      let lessons = null;
+      if (subj && cat && srName && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
+        const sr = COURSE_CATALOG[subj].categories[cat].series.find(s => s.name === srName);
+        if (sr) lessons = sr.lessons;
+      }
+      if (lessons && lessons.length > 1) {
+        const currentIdx = lessons.indexOf(baseCourse.courseName);
+        for (let i = 1; i <= 3; i++) {
+          const nextIdx = currentIdx + i;
+          if (nextIdx < lessons.length) {
+            const d = new Date(baseCourse.date);
+            d.setDate(d.getDate() + i * 7);
+            const nextLesson = lessons[nextIdx];
+            const nextCourse = {...baseCourse, id: uid(), date: fmtLocalDate(d)};
+            nextCourse.courseName = nextLesson;
+            if (baseCourse.isContinuous && baseCourse.courseName2) {
+              const idx2 = lessons.indexOf(baseCourse.courseName2);
+              const nextIdx2 = idx2 + i;
+              if (nextIdx2 < lessons.length) {
+                nextCourse.courseName2 = lessons[nextIdx2];
+                nextCourse.title = nextLesson + ' + ' + lessons[nextIdx2];
+              } else {
+                nextCourse.courseName2 = '';
+                nextCourse.title = nextLesson;
+                nextCourse.isContinuous = false;
+                nextCourse.duration = 40;
+              }
+            } else {
+              nextCourse.title = nextLesson;
+            }
+            DB.courses.push(nextCourse);
+            recurringCount++;
+          }
+        }
+      } else {
+        for (let i = 1; i <= 3; i++) {
+          const d = new Date(baseCourse.date);
+          d.setDate(d.getDate() + i * 7);
+          DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
+          recurringCount++;
+        }
+      }
+    } else {
+      for (let i = 1; i <= 3; i++) {
+        const d = new Date(baseCourse.date);
+        d.setDate(d.getDate() + i * 7);
+        DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
+        recurringCount++;
+      }
     }
+    var _totalWeeks = 1 + recurringCount;
+    showToast('已添加课程（共' + _totalWeeks + '周，课程自动推进到下一课）');
   }
   
   saveData();
   closeModal('modal-course');
   renderSchedule();
   if (isHoliday(baseCourse.date)) showToast('注意：这天已标记放假 🏖', 'i-warn');
-  else showToast(isRecurring ? '已添加课程（含4周重复排课）' : '课程添加成功！');
+  else if (!isRecurring) showToast('课程添加成功！');
   // 重置表单
   document.getElementById('course-title').value = '';
   document.getElementById('course-note').value = '';
