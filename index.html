@@ -1791,7 +1791,7 @@ input:focus,select:focus,textarea:focus { outline:none; }
       <div class="form-group">
         <label class="form-label">总课时</label>
         <input type="number" class="form-input" id="stu-total" value="48">
-        <p style="font-size:10px;color:var(--text-sub);margin-top:4px">按每节课扣 ${hoursPerLesson()} 课时计，可上 ${Math.floor(48/hoursPerLesson())} 节课</p>
+        <p style="font-size:10px;color:var(--text-sub);margin-top:4px" id="stu-total-hint">按每节课扣 ${hoursPerLesson()} 课时计，可上 ${Math.floor(48/hoursPerLesson())} 节课</p>
       </div>
     </div>
     <div class="form-group">
@@ -4451,7 +4451,7 @@ function deleteCourse(id) {
     : '确定删除这节课吗？删除后可在回收站恢复。';
   if (!confirm(msg)) return;
   if (presentCount > 0) {
-    const hpl = (c.isContinuous || c.duration >= 80) ? hoursPerLesson() * 2 : hoursPerLesson();
+    const hpl = getCourseHours(c);
     Object.keys(att).forEach(sid => {
       if (att[sid] === 'present' || att[sid] === 'late') {
         const stu = DB.students.find(s => s.id === sid);
@@ -4489,7 +4489,7 @@ function openAttendance(id) {
   let html = `<div class="modal-title">考勤登记 - ${CLASS_INFO[c.class].short}</div>`;
   html += `<div style="font-size:12px;color:var(--text-sub);margin-bottom:4px">${c.title} | ${fmtDate(c.date)} ${c.time}</div>`;
   const _isCont = c.isContinuous || c.duration >= 80;
-  const _hp = _isCont ? hoursPerLesson() * 2 : hoursPerLesson();
+  const _hp = getCourseHours(c);
   html += `<div style="font-size:11px;color:var(--blue-dark);background:var(--blue-light);border-radius:8px;padding:6px 10px;margin-bottom:10px">💡 点「到/迟」自动扣 ${_hp} 课时${_isCont ? '（连上两节）' : ''}，再点一次或点「缺」自动退回</div>`;
   students.forEach(s => {
     const present = c.attendance && c.attendance[s.id] === 'present';
@@ -4517,6 +4517,24 @@ function hoursPerLesson() {
   return (typeof v === 'number' && v > 0) ? v : 2;
 }
 
+// 根据课程类型计算应扣课时：火花单节1课时，火花连上2课时，普通课程hoursPerLesson
+function getCourseHours(c) {
+  if (!c) return hoursPerLesson();
+  const isSpark = c.subject === 'spark' || (c.class && c.class.startsWith('spark_'));
+  if (isSpark) {
+    const isCont = c.isContinuous || c.duration >= 80;
+    return isCont ? 2 : 1;
+  }
+  return hoursPerLesson();
+}
+
+// 根据学员班级获取每节课课时（用于显示剩余节数）
+function getStudentHPL(s) {
+  if (!s || !s.class) return hoursPerLesson();
+  if (s.class.startsWith('spark_')) return 1;
+  return hoursPerLesson();
+}
+
 function setAttendance(courseId, studentId, status) {
   const c = DB.courses.find(c => c.id === courseId);
   if (!c) return;
@@ -4526,7 +4544,7 @@ function setAttendance(courseId, studentId, status) {
   const next = prev === status ? '' : status;
   c.attendance[studentId] = next;
   const isCont = c.isContinuous || c.duration >= 80;
-  const hp = isCont ? hoursPerLesson() * 2 : hoursPerLesson();
+  const hp = getCourseHours(c);
   const wasAttended = prev === 'present' || prev === 'late';
   const isAttended = next === 'present' || next === 'late';
   if (st) {
@@ -4600,7 +4618,7 @@ function renderStudents() {
         </div>
         <div class="stamina">
           <div class="stamina-bar"><div class="stamina-fill" style="width:${remainPct}%"></div></div>
-          <span class="stamina-text">剩${remainHrs}课时·${Math.floor(remainHrs/hoursPerLesson())}节课</span>
+          <span class="stamina-text">剩${remainHrs}课时·${Math.floor(remainHrs/getStudentHPL(s))}节课</span>
         </div>
       </div>`;
     });
@@ -4650,7 +4668,7 @@ function showStudentDetail(id) {
   </div>
   
   <div class="sd-section">
-    <div class="sd-section-title"><svg class="icon-sm" style="width:14px;height:14px;color:#4CAF50"><use href="#i-clock"/></use></svg> 剩余课时：${remainHrs}/${s.totalHours}（还可上 ${Math.floor(remainHrs/hoursPerLesson())} 节课）</div>
+    <div class="sd-section-title"><svg class="icon-sm" style="width:14px;height:14px;color:#4CAF50"><use href="#i-clock"/></use></svg> 剩余课时：${remainHrs}/${s.totalHours}（还可上 ${Math.floor(remainHrs/getStudentHPL(s))} 节课）</div>
     <div class="points-bar"><div class="points-bar-fill" style="width:${Math.round(remainHrs/s.totalHours*100)}%;background:linear-gradient(to right,#4CAF50,#8BC34A)"></div></div>
   </div>`;
   
@@ -5047,7 +5065,7 @@ function renderReportEditor() {
       <div class="re-stat"><div class="rs-val" style="color:#FFA000">${r.stats.excellentCount}</div><div class="rs-label">优秀作品</div></div>
       <div class="re-stat"><div class="rs-val">${r.stats.points}</div><div class="rs-label">积分·${r.stats.rank}</div></div>
     </div>
-    <div style="font-size:11px;color:var(--text-sub);margin-top:8px">剩余 ${r.stats.remainHours} 课时 · 约 ${Math.floor(r.stats.remainHours/hoursPerLesson())} 节课</div>
+    <div style="font-size:11px;color:var(--text-sub);margin-top:8px">剩余 ${r.stats.remainHours} 课时 · 约 ${Math.floor(r.stats.remainHours/getStudentHPL({class:r.subject}))} 节课</div>
   </div>
 
   <div class="re-section">
@@ -5363,7 +5381,7 @@ function renderPrintZone(r) {
       <div class="pz-stat"><b>${r.stats.excellentCount}</b><span>优秀作品</span></div>
       <div class="pz-stat"><b>${r.stats.points}</b><span>积分 · ${esc(r.stats.rank)}</span></div>
     </div>
-    <div class="pz-extra">剩余 ${r.stats.remainHours} 课时 · 约 ${Math.floor(r.stats.remainHours/hoursPerLesson())} 节课</div>
+    <div class="pz-extra">剩余 ${r.stats.remainHours} 课时 · 约 ${Math.floor(r.stats.remainHours/getStudentHPL({class:r.subject}))} 节课</div>
   </div>
   <div class="pz-sec"><div class="pz-sec-t">进步亮点</div><ul class="pz-list">${hlHtml}</ul></div>
   <div class="pz-sec"><div class="pz-sec-t">优秀作业</div><ul class="pz-list">${wkHtml}</ul></div>
