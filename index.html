@@ -1458,6 +1458,12 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <option value="">不选择课程</option>
       </select>
     </div>
+    <div class="form-group" id="course-select2-wrap" style="display:none">
+      <label class="form-label">第二节课（连上）</label>
+      <select class="form-select" id="course-course2" onchange="onCourseLessonChange()" disabled>
+        <option value="">不选择课程</option>
+      </select>
+    </div>
     </div>
     <div id="course-custom-fields" style="display:none">
       <div class="form-group">
@@ -4167,7 +4173,7 @@ function renderScheduleList() {
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
-        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
+        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}${c.courseName2 ? ' + ' + c.courseName2 : ''}</div>` : ''}
         ${c.customDesc ? `<div class="si-course-name" style="color:var(--orange-dark)"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-info"/></use></svg> ${c.customDesc}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
@@ -4308,7 +4314,7 @@ function renderDayModal() {
           <span class="sc-status ${statusCls}">${statusText}</span>
         </div>
         <div class="si-title">${c.title}</div>
-        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}</div>` : ''}
+        ${c.courseName ? `<div class="si-course-name"><svg class="icon-sm" style="width:12px;height:12px"><use href="#i-book"/></svg> ${c.courseName}${c.courseName2 ? ' + ' + c.courseName2 : ''}</div>` : ''}
         <div class="si-meta">
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-cal"/></use></svg> ${fmtDate(c.date)} ${c.time}</span>
           <span><svg class="icon-sm" style="width:13px;height:13px"><use href="#i-clock"/></use></svg> ${c.duration}分钟${c.isContinuous ? '（连上）' : ''}</span>
@@ -6327,6 +6333,8 @@ function onCourseSubjChange() {
     sparkWrap.style.display = 'none';
     sparkCont.value = '0';
     if (durInput.value === '40' || durInput.value === '80') durInput.value = 90;
+    const c2w = document.getElementById('course-select2-wrap');
+    if (c2w) c2w.style.display = 'none';
   }
 
   if (subj && COURSE_CATALOG[subj]) {
@@ -6348,7 +6356,16 @@ function onCourseSubjChange() {
 function onSparkContinuousChange() {
   const cont = document.getElementById('spark-continuous').value;
   const durInput = document.getElementById('course-duration');
+  const course2Wrap = document.getElementById('course-select2-wrap');
   durInput.value = cont === '1' ? 80 : 40;
+  if (cont === '1') {
+    course2Wrap.style.display = 'block';
+  } else {
+    course2Wrap.style.display = 'none';
+    const c2 = document.getElementById('course-course2');
+    if (c2) { c2.value = ''; c2.disabled = true; c2.innerHTML = '<option value="">不选择课程</option>'; }
+  }
+  onCourseLessonChange();
 }
 
 function onCourseCatChange() {
@@ -6384,6 +6401,8 @@ function onCourseSeriesChange() {
   const srName = document.getElementById('course-series').value;
   const courseWrap = document.getElementById('course-select-wrap');
   const courseSel = document.getElementById('course-course');
+  const course2Wrap = document.getElementById('course-select2-wrap');
+  const course2Sel = document.getElementById('course-course2');
   if (subj && cat && srName && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
     const sr = COURSE_CATALOG[subj].categories[cat].series.find(s => s.name === srName);
     if (sr) {
@@ -6395,19 +6414,38 @@ function onCourseSeriesChange() {
         courseSel.appendChild(opt);
       });
       courseSel.disabled = false;
+      if (course2Sel && course2Wrap.style.display !== 'none') {
+        course2Sel.innerHTML = '<option value="">不选择课程</option>';
+        sr.lessons.forEach(l => {
+          const opt = document.createElement('option');
+          opt.value = l; opt.textContent = l;
+          course2Sel.appendChild(opt);
+        });
+        course2Sel.disabled = false;
+      }
       return;
     }
   }
   courseWrap.style.display = 'none';
   courseSel.innerHTML = '<option value="">不选择课程</option>';
   courseSel.disabled = true;
+  if (course2Sel) {
+    course2Sel.innerHTML = '<option value="">不选择课程</option>';
+    course2Sel.disabled = true;
+  }
 }
 
 function onCourseLessonChange() {
-  const lesson = document.getElementById('course-course').value;
+  const lesson1 = document.getElementById('course-course').value;
+  const lesson2El = document.getElementById('course-course2');
+  const lesson2 = lesson2El && lesson2El.style.display !== 'none' ? (lesson2El.value || '') : '';
   const titleInput = document.getElementById('course-title');
-  if (lesson) {
-    titleInput.value = lesson;
+  if (lesson1 && lesson2) {
+    titleInput.value = lesson1 + ' + ' + lesson2;
+  } else if (lesson1) {
+    titleInput.value = lesson1;
+  } else if (lesson2) {
+    titleInput.value = lesson2;
   }
 }
 
@@ -6445,6 +6483,9 @@ function saveCourse() {
     baseCourse.courseName = document.getElementById('course-course').value || '';
     if (baseCourse.subject === 'spark') {
       baseCourse.isContinuous = document.getElementById('spark-continuous').value === '1';
+      if (baseCourse.isContinuous) {
+        baseCourse.courseName2 = document.getElementById('course-course2').value || '';
+      }
     }
   }
   DB.courses.push(baseCourse);
