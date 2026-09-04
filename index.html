@@ -206,6 +206,41 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .dm-holiday-banner .dmb-note { font-weight:400; font-size:12px; color:#E53935; }
 .si-class-tag.holiday { background:#FFEBEE; color:#E53935; }
 .btn-holiday { width:100%; padding:11px 0; border-radius:12px; border:1px dashed #EF9A9A; background:#fff; color:#E53935; font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; margin-top:8px; }
+/* ===== Week View ===== */
+.week-view { padding:12px 8px; }
+.week-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding:0 4px; }
+.week-head-left { display:flex; align-items:center; gap:8px; }
+.week-range { font-size:15px; font-weight:800; color:var(--purple-dark); min-width:140px; text-align:center; }
+.week-summary { font-size:12px; color:var(--text-sub); padding:6px 12px; margin-bottom:8px; background:var(--blue-light); border-radius:8px; font-weight:600; }
+.week-grid-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+.week-grid { min-width:560px; }
+.wk-header-row { display:grid; grid-template-columns:38px repeat(7,1fr); gap:0; margin-bottom:4px; }
+.wk-corner { border-right:1px solid var(--border); }
+.wk-body-row { display:grid; grid-template-columns:38px repeat(7,1fr); gap:0; }
+.week-day-header { text-align:center; padding:5px 2px; font-size:11px; font-weight:700; color:var(--text-sub); border-bottom:1px solid var(--border); }
+.week-day-header.today { color:#fff; background:linear-gradient(135deg,var(--purple),var(--blue)); border-radius:6px 6px 0 0; }
+.week-day-header .wdh-date { font-size:13px; font-weight:800; display:block; margin-bottom:1px; }
+.week-day-header .wdh-count { font-size:10px; opacity:.8; }
+.wk-time-col { border-right:1px solid var(--border); }
+.wk-time-slot { font-size:10px; color:var(--text-light); text-align:right; padding-right:4px; line-height:1; display:flex; align-items:flex-start; justify-content:flex-end; position:relative; }
+.wk-time-slot::after { content:''; position:absolute; right:0; left:0; top:0; border-top:1px solid rgba(0,0,0,.04); }
+.wk-day-col { position:relative; border-right:1px solid rgba(0,0,0,.06); cursor:pointer; }
+.wk-day-col.today { background:rgba(124,77,255,.04); }
+.wk-day-col:last-child { border-right:none; }
+.wk-hour-line { border-bottom:1px solid rgba(0,0,0,.04); }
+.wk-holiday-mark { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:24px; opacity:.3; }
+.week-event { position:absolute; left:2px; right:2px; border-radius:6px; padding:3px 5px; font-size:10px; cursor:pointer; overflow:hidden; transition:all .15s; box-shadow:0 1px 3px rgba(0,0,0,.12); z-index:1; }
+.week-event:active { transform:scale(0.95); }
+.week-event .we-time { font-size:9px; opacity:.8; font-weight:600; }
+.week-event .we-name { font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.week-event.e-scratch { background:var(--pink-light); color:var(--pink-dark); border-left:3px solid var(--pink); }
+.week-event.e-python { background:#E8F5E9; color:#2E7D32; border-left:3px solid #4CAF50; }
+.week-event.e-cpp { background:var(--purple-light); color:var(--purple-dark); border-left:3px solid var(--purple); }
+.week-event.e-spark { background:#FFF3E0; color:#E65100; border-left:3px solid #FF9800; }
+.week-event.e-other { background:#E3F2FD; color:#1565C0; border-left:3px solid #2196F3; }
+.week-event.e-done { opacity:.5; }
+.week-now-line { position:absolute; left:0; right:0; height:2px; background:#F44336; z-index:3; pointer-events:none; }
+.week-now-line::before { content:''; width:8px; height:8px; border-radius:50%; background:#F44336; position:absolute; left:-4px; top:-3px; }
 .btn-holiday:active { transform:scale(0.97); }
 
 /* Rank Badge */
@@ -969,9 +1004,10 @@ input:focus,select:focus,textarea:focus { outline:none; }
 
     <!-- View Toggle -->
     <div class="view-toggle">
-      <button class="active" id="btn-list-view" onclick="toggleView('list')">列表视图</button>
-      <button id="btn-cal-view" onclick="toggleView('calendar')">日历视图</button>
-    </div>
+ <button class="active" id="btn-list-view" onclick="toggleView('list')">列表</button>
+ <button id="btn-cal-view" onclick="toggleView('calendar')">月历</button>
+ <button id="btn-week-view" onclick="toggleView('week')">周课表</button>
+</div>
 
     <!-- Calendar View -->
     <div class="calendar" id="calendar-view" style="display:none">
@@ -993,6 +1029,22 @@ input:focus,select:focus,textarea:focus { outline:none; }
         <span><i style="background:var(--purple-light);border:1px solid var(--purple)"></i>C++</span>
         <span><i style="background:#FFEBEE;border:1px solid #EF5350"></i>放假</span>
         <span style="color:var(--text-light)">划线=已完成</span>
+      </div>
+    </div>
+
+    <!-- Week View -->
+    <div class="week-view" id="week-view" style="display:none">
+      <div class="week-head">
+        <div class="week-head-left">
+          <button class="cal-nav-btn" onclick="weekNav(-1)">‹</button>
+          <span class="week-range" id="week-range-label"></span>
+          <button class="cal-nav-btn" onclick="weekNav(1)">›</button>
+        </div>
+        <button class="cal-today-btn" onclick="weekGoToday()">今天</button>
+      </div>
+      <div class="week-summary" id="week-summary"></div>
+      <div class="week-grid-wrap">
+        <div class="week-grid" id="week-grid"></div>
       </div>
     </div>
 
@@ -4279,6 +4331,7 @@ let scheduleView = 'list';
 function renderSchedule() {
   renderScheduleList();
   if (scheduleView === 'calendar') renderCalendar();
+  if (scheduleView === 'week') renderWeekView();
 }
 
 function filterClass(el, cls) {
@@ -4291,16 +4344,21 @@ function filterClass(el, cls) {
 function toggleView(view) {
   scheduleView = view;
   document.querySelectorAll('.view-toggle button').forEach(b => b.classList.remove('active'));
+  document.getElementById('sched-list-view').style.display = 'none';
+  document.getElementById('calendar-view').style.display = 'none';
+  document.getElementById('week-view').style.display = 'none';
   if (view === 'list') {
     document.getElementById('btn-list-view').classList.add('active');
     document.getElementById('sched-list-view').style.display = 'block';
-    document.getElementById('calendar-view').style.display = 'none';
     renderScheduleList();
-  } else {
+  } else if (view === 'calendar') {
     document.getElementById('btn-cal-view').classList.add('active');
-    document.getElementById('sched-list-view').style.display = 'none';
     document.getElementById('calendar-view').style.display = 'block';
     renderCalendar();
+  } else {
+    document.getElementById('btn-week-view').classList.add('active');
+    document.getElementById('week-view').style.display = 'block';
+    renderWeekView();
   }
 }
 
@@ -4423,6 +4481,156 @@ function renderCalendar() {
     html += `<div class="cal-day ${isTodayCell?'today':''} ${isSel?'selected':''} ${isHoliday?'holiday':''}" onclick="openDayModal('${dateStr}')">${inner}</div>`;
   }
   document.getElementById('cal-grid').innerHTML = html;
+}
+
+// ===== Week View =====
+let weekRefDate = new Date();
+const WEEK_START_HOUR = 7;
+const WEEK_END_HOUR = 22;
+const WEEK_HOUR_PX = 52;
+const WEEK_DAY_NAMES = ['周日','周一','周二','周三','周四','周五','周六'];
+
+function getWeekStart(date) {
+  const d = new Date(date);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate() - d.getDay());
+  return d;
+}
+
+function weekNav(delta) {
+  weekRefDate.setDate(weekRefDate.getDate() + delta * 7);
+  renderWeekView();
+}
+
+function weekGoToday() {
+  weekRefDate = new Date();
+  renderWeekView();
+}
+
+function getSubjectKey(c) {
+  const cls = String(c.class || '');
+  if (cls.includes('scratch')) return 'scratch';
+  if (cls.includes('python')) return 'python';
+  if (cls.includes('spark')) return 'spark';
+  if (cls.includes('cpp') || cls.includes('c++')) return 'cpp';
+  return 'other';
+}
+
+function parseTimeToMinutes(timeStr) {
+  if (!timeStr) return 0;
+  const m = timeStr.match(/(\d{1,2}):(\d{2})/);
+  if (!m) return 0;
+  return parseInt(m[1]) * 60 + parseInt(m[2]);
+}
+
+function renderWeekView() {
+  const ws = getWeekStart(weekRefDate);
+  const we = new Date(ws);
+  we.setDate(we.getDate() + 6);
+  const todayStr = fmtLocalDate(new Date());
+
+  const rangeEl = document.getElementById('week-range-label');
+  if (rangeEl) {
+    const sm = String(ws.getMonth()+1).padStart(2,'0');
+    const sd = String(ws.getDate()).padStart(2,'0');
+    const em = String(we.getMonth()+1).padStart(2,'0');
+    const ed = String(we.getDate()).padStart(2,'0');
+    rangeEl.textContent = `${sm}月${sd}日 ~ ${em}月${ed}日`;
+  }
+
+  const courses = currentClassFilter === 'all' ? DB.courses : DB.courses.filter(c => c.class === currentClassFilter);
+  let totalCourses = 0;
+  let unattended = 0;
+  const days = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(ws);
+    d.setDate(d.getDate() + i);
+    const dateStr = fmtLocalDate(d);
+    const dayCourses = courses.filter(c => c.date === dateStr).sort((a,b) => (a.time||'').localeCompare(b.time||''));
+    totalCourses += dayCourses.length;
+    unattended += dayCourses.filter(c => c.status !== 'completed').length;
+    days.push({ dateStr, dayCourses, isToday: dateStr === todayStr, date: d });
+  }
+
+  const sumEl = document.getElementById('week-summary');
+  if (sumEl) sumEl.textContent = `本周共 ${totalCourses} 节课，${unattended > 0 ? `待上课 ${unattended} 节` : '全部已完成'}`;
+
+  const totalHours = WEEK_END_HOUR - WEEK_START_HOUR;
+  const gridHeight = totalHours * WEEK_HOUR_PX;
+
+  let html = '';
+  // Header row
+  html += '<div class="wk-header-row">';
+  html += '<div class="wk-corner"></div>';
+  for (let i = 0; i < 7; i++) {
+    const d = days[i].date;
+    const dow = d.getDay();
+    const dayName = WEEK_DAY_NAMES[dow];
+    const cnt = days[i].dayCourses.length;
+    const isToday = days[i].isToday;
+    html += `<div class="week-day-header ${isToday?'today':''}">
+      <span class="wdh-date">${d.getMonth()+1}/${d.getDate()}</span>
+      <span class="wdh-count">${dayName} ${cnt}节</span>
+    </div>`;
+  }
+  html += '</div>';
+
+  // Body row
+  html += '<div class="wk-body-row">';
+  // Time column
+  html += '<div class="wk-time-col" style="height:' + gridHeight + 'px">';
+  for (let h = 0; h < totalHours; h++) {
+    const hour = WEEK_START_HOUR + h;
+    html += `<div class="wk-time-slot" style="height:${WEEK_HOUR_PX}px">${String(hour).padStart(2,'0')}:00</div>`;
+  }
+  html += '</div>';
+
+  // Day columns
+  for (let i = 0; i < 7; i++) {
+    const day = days[i];
+    const isHoliday = (DB.holidays || []).some(h => h.date === day.dateStr);
+    html += `<div class="wk-day-col ${day.isToday?'today':''}" style="height:${gridHeight}px" onclick="openDayModal('${day.dateStr}')">`;
+    // Hour lines
+    for (let h = 0; h < totalHours; h++) {
+      html += `<div class="wk-hour-line" style="height:${WEEK_HOUR_PX}px"></div>`;
+    }
+    // Holiday mark
+    if (isHoliday) {
+      html += '<div class="wk-holiday-mark">🏖</div>';
+    }
+    // Events
+    day.dayCourses.forEach(c => {
+      const startMin = parseTimeToMinutes(c.time);
+      const duration = c.duration || 90;
+      const topPx = (startMin - WEEK_START_HOUR * 60) / 60 * WEEK_HOUR_PX;
+      const heightPx = Math.max(26, duration / 60 * WEEK_HOUR_PX - 2);
+      const subKey = getSubjectKey(c);
+      const cls = CLASS_INFO[c.class] || { short: '课程' };
+      const name = c.courseName || c.title || cls.short;
+      const name2 = c.courseName2 ? ' + ' + c.courseName2 : '';
+      const cont = c.isContinuous || duration >= 80 ? '（连上）' : '';
+      html += `<div class="week-event e-${subKey} ${c.status==='completed'?'e-done':''}"
+        style="top:${topPx}px;height:${heightPx}px;max-height:${heightPx}px"
+        onclick="event.stopPropagation();openDayModal('${day.dateStr}')">
+        <div class="we-time">${c.time || ''} · ${duration}分${cont}</div>
+        <div class="we-name">${name}${name2}</div>
+      </div>`;
+    });
+    // Now line
+    if (day.isToday) {
+      const now = new Date();
+      const nowMin = now.getHours() * 60 + now.getMinutes();
+      if (nowMin >= WEEK_START_HOUR * 60 && nowMin <= WEEK_END_HOUR * 60) {
+        const topPx = (nowMin - WEEK_START_HOUR * 60) / 60 * WEEK_HOUR_PX;
+        html += `<div class="week-now-line" style="top:${topPx}px"></div>`;
+      }
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+
+  const grid = document.getElementById('week-grid');
+  if (grid) grid.innerHTML = html;
 }
 
 function openDayModal(dateStr) {
