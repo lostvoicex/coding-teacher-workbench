@@ -1,0 +1,40 @@
+{
+  "name": "编程老师工作台",
+  "short_name": "编程工作台",
+  "description": "编程老师的教学管理工具，支持课程安排、学员管理、代码片段等功能",
+  "start_url": "/coding-teacher-workbench/workbench_pwa.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3EDFF",
+  "theme_color": "#9B7FD9",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='40' fill='%239B7FD9'/><text x='96' y='130' font-size='120' text-anchor='middle' fill='white'>🛠</text></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='100' fill='%239B7FD9'/><text x='256' y='350' font-size='300' text-anchor='middle' fill='white'>🛠</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "productivity"],
+  "shortcuts": [
+    {
+      "name": "今日课表",
+      "short_name": "课表",
+      "url": "/coding-teacher-workbench/workbench_pwa.html#schedule",
+      "icons": []
+    },
+    {
+      "name": "学员管理",
+      "short_name": "学员",
+      "url": "/coding-teacher-workbench/workbench_pwa.html#students",
+      "icons": []
+    }
+  ]
+}
