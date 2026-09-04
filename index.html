@@ -148,8 +148,9 @@ input:focus,select:focus,textarea:focus { outline:none; }
 
 /* Calendar View */
 .calendar { padding:12px; }
-.cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; margin-bottom:6px; }
-.cal-weekdays span { font-size:11px; color:var(--text-light); font-weight:600; }
+.cal-weekdays { display:grid; grid-template-columns:repeat(7,1fr); text-align:center; margin-bottom:6px; padding-bottom:6px; border-bottom:1px solid var(--border); }
+.cal-weekdays span { font-size:11px; color:var(--text-sub); font-weight:700; padding:2px 0; }
+.cal-weekdays span:first-child, .cal-weekdays span:last-child { color:var(--pink); }
 .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; }
 .cal-day { min-height:58px; display:flex; flex-direction:column; align-items:stretch; padding:3px 3px 4px; border-radius:10px; cursor:pointer; position:relative; transition:all .2s; background:rgba(255,255,255,0.55); border:1px solid var(--border); }
 .cal-day.empty { cursor:default; background:transparent; border-color:transparent; }
@@ -165,11 +166,13 @@ input:focus,select:focus,textarea:focus { outline:none; }
 .cal-day.today .cal-chip { background:rgba(255,255,255,0.28); color:#fff; }
 .cal-chip.done { opacity:.55; text-decoration:line-through; }
 .cal-more { font-size:9px; color:var(--text-light); text-align:center; margin-top:1px; }
-.cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
-.cal-head .cal-month { font-size:15px; font-weight:800; color:var(--purple-dark); }
-.cal-head button { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:4px 12px; font-size:12px; font-weight:700; color:var(--purple-dark); cursor:pointer; box-shadow:var(--shadow); }
-.cal-head .cal-today-btn { color:var(--blue-dark); }
-.cal-head button:active { transform:scale(0.92); }
+.cal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding:0 2px; }
+.cal-head-left { display:flex; align-items:center; gap:8px; }
+.cal-head .cal-month { font-size:17px; font-weight:800; color:var(--purple-dark); min-width:100px; text-align:center; }
+.cal-nav-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--border); background:var(--card-bg); font-size:18px; font-weight:700; color:var(--purple-dark); cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow); }
+.cal-nav-btn:active { transform:scale(0.9); }
+.cal-today-btn { background:var(--blue-light); border:1px solid var(--blue); border-radius:8px; padding:5px 14px; font-size:12px; font-weight:700; color:var(--blue-dark); cursor:pointer; }
+.cal-today-btn:active { transform:scale(0.92); }
 .cal-legend { display:flex; gap:10px; justify-content:center; margin-top:8px; font-size:10px; color:var(--text-sub); }
 .cal-legend span { display:inline-flex; align-items:center; gap:3px; }
 .cal-legend i { width:8px; height:8px; border-radius:2px; display:inline-block; }
@@ -973,13 +976,12 @@ input:focus,select:focus,textarea:focus { outline:none; }
     <!-- Calendar View -->
     <div class="calendar" id="calendar-view" style="display:none">
       <div class="cal-head">
-        <button onclick="calNav(-1)">‹ 上月</button>
-        <span class="cal-month" id="cal-month-label"></span>
-        <button onclick="calNav(1)">下月 ›</button>
-      </div>
-      <div class="cal-head" style="margin-bottom:6px">
-        <span style="font-size:11px;color:var(--text-sub)">点日期查看/添加当天课程</span>
-        <button class="cal-today-btn" onclick="calGoToday()">回到今天</button>
+        <div class="cal-head-left">
+          <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+          <span class="cal-month" id="cal-month-label"></span>
+          <button class="cal-nav-btn" onclick="calNav(1)">›</button>
+        </div>
+        <button class="cal-today-btn" onclick="calGoToday()">今天</button>
       </div>
       <div class="cal-weekdays">
         <span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span>
