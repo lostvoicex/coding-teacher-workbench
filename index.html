@@ -6693,46 +6693,93 @@ function saveCourse() {
       const subj = baseCourse.subject;
       const cat = document.getElementById('course-category').value;
       const srName = document.getElementById('course-series').value;
-      let lessons = null;
-      if (subj && cat && srName && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
-        const sr = COURSE_CATALOG[subj].categories[cat].series.find(s => s.name === srName);
-        if (sr) lessons = sr.lessons;
-      }
-      if (lessons && lessons.length > 1) {
-        const currentIdx = lessons.indexOf(baseCourse.courseName);
-        for (let i = 1; i <= 3; i++) {
-          const nextIdx = currentIdx + i;
-          if (nextIdx < lessons.length) {
+
+      if (subj === 'spark' && cat && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
+        // Spark: flatten all lessons across all series (专题) in this level
+        const catData = COURSE_CATALOG[subj].categories[cat];
+        let allLessons = [];
+        catData.series.forEach(sr => {
+          sr.lessons.forEach(l => allLessons.push({ lesson: l, seriesName: sr.name }));
+        });
+        const currentIdx = allLessons.findIndex(item => item.lesson === baseCourse.courseName);
+        if (currentIdx >= 0 && allLessons.length > 1) {
+          const step = baseCourse.isContinuous ? 2 : 1;
+          for (let i = 1; i <= 3; i++) {
+            const nextIdx1 = currentIdx + i * step;
+            if (nextIdx1 < allLessons.length) {
+              const d = new Date(baseCourse.date);
+              d.setDate(d.getDate() + i * 7);
+              const nextCourse = {...baseCourse, id: uid(), date: fmtLocalDate(d)};
+              nextCourse.courseName = allLessons[nextIdx1].lesson;
+              if (baseCourse.isContinuous) {
+                const nextIdx2 = nextIdx1 + 1;
+                if (nextIdx2 < allLessons.length) {
+                  nextCourse.courseName2 = allLessons[nextIdx2].lesson;
+                  nextCourse.title = allLessons[nextIdx1].lesson + ' + ' + allLessons[nextIdx2].lesson;
+                } else {
+                  nextCourse.courseName2 = '';
+                  nextCourse.title = allLessons[nextIdx1].lesson;
+                  nextCourse.isContinuous = false;
+                  nextCourse.duration = 40;
+                }
+              } else {
+                nextCourse.title = allLessons[nextIdx1].lesson;
+              }
+              DB.courses.push(nextCourse);
+              recurringCount++;
+            }
+          }
+        } else {
+          for (let i = 1; i <= 3; i++) {
             const d = new Date(baseCourse.date);
             d.setDate(d.getDate() + i * 7);
-            const nextLesson = lessons[nextIdx];
-            const nextCourse = {...baseCourse, id: uid(), date: fmtLocalDate(d)};
-            nextCourse.courseName = nextLesson;
-            if (baseCourse.isContinuous && baseCourse.courseName2) {
-              const idx2 = lessons.indexOf(baseCourse.courseName2);
-              const nextIdx2 = idx2 + i;
-              if (nextIdx2 < lessons.length) {
-                nextCourse.courseName2 = lessons[nextIdx2];
-                nextCourse.title = nextLesson + ' + ' + lessons[nextIdx2];
-              } else {
-                nextCourse.courseName2 = '';
-                nextCourse.title = nextLesson;
-                nextCourse.isContinuous = false;
-                nextCourse.duration = 40;
-              }
-            } else {
-              nextCourse.title = nextLesson;
-            }
-            DB.courses.push(nextCourse);
+            DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
             recurringCount++;
           }
         }
       } else {
-        for (let i = 1; i <= 3; i++) {
-          const d = new Date(baseCourse.date);
-          d.setDate(d.getDate() + i * 7);
-          DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
-          recurringCount++;
+        // Non-spark: single series progression (original logic)
+        let lessons = null;
+        if (subj && cat && srName && COURSE_CATALOG[subj] && COURSE_CATALOG[subj].categories[cat]) {
+          const sr = COURSE_CATALOG[subj].categories[cat].series.find(s => s.name === srName);
+          if (sr) lessons = sr.lessons;
+        }
+        if (lessons && lessons.length > 1) {
+          const currentIdx = lessons.indexOf(baseCourse.courseName);
+          for (let i = 1; i <= 3; i++) {
+            const nextIdx = currentIdx + i;
+            if (nextIdx < lessons.length) {
+              const d = new Date(baseCourse.date);
+              d.setDate(d.getDate() + i * 7);
+              const nextLesson = lessons[nextIdx];
+              const nextCourse = {...baseCourse, id: uid(), date: fmtLocalDate(d)};
+              nextCourse.courseName = nextLesson;
+              if (baseCourse.isContinuous && baseCourse.courseName2) {
+                const idx2 = lessons.indexOf(baseCourse.courseName2);
+                const nextIdx2 = idx2 + i;
+                if (nextIdx2 < lessons.length) {
+                  nextCourse.courseName2 = lessons[nextIdx2];
+                  nextCourse.title = nextLesson + ' + ' + lessons[nextIdx2];
+                } else {
+                  nextCourse.courseName2 = '';
+                  nextCourse.title = nextLesson;
+                  nextCourse.isContinuous = false;
+                  nextCourse.duration = 40;
+                }
+              } else {
+                nextCourse.title = nextLesson;
+              }
+              DB.courses.push(nextCourse);
+              recurringCount++;
+            }
+          }
+        } else {
+          for (let i = 1; i <= 3; i++) {
+            const d = new Date(baseCourse.date);
+            d.setDate(d.getDate() + i * 7);
+            DB.courses.push({...baseCourse, id: uid(), date: fmtLocalDate(d)});
+            recurringCount++;
+          }
         }
       }
     } else {
