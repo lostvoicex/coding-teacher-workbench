@@ -862,10 +862,10 @@ input:focus,select:focus,textarea:focus { outline:none; }
 
     <!-- Stats Row -->
     <div class="stats-row">
-      <div class="stat-card sc-purple">
+      <div class="stat-card sc-purple" style="cursor:pointer" onclick="showTodayHours()">
         <div class="sc-icon"><svg class="icon"><use href="#i-clock"/></svg></div>
         <div class="sc-val" id="stat-hours">0</div>
-        <div class="sc-label">今日课时</div>
+        <div class="sc-label">今日课时消耗</div>
       </div>
       <div class="stat-card sc-blue">
         <div class="sc-icon"><svg class="icon"><use href="#i-clipboard"/></svg></div>
@@ -1387,6 +1387,15 @@ input:focus,select:focus,textarea:focus { outline:none; }
 </nav>
 
 <!-- ===== Modals ===== -->
+<!-- Today Hours Detail Modal -->
+<div class="modal-overlay" id="modal-today-hours">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" onclick="closeModal('modal-today-hours')"><svg class="icon-sm"><use href="#i-close"/></svg></button>
+    <div class="modal-handle"></div>
+    <div id="today-hours-content"></div>
+  </div>
+</div>
+
 <!-- Student Detail Modal -->
 <div class="modal-overlay" id="modal-student">
   <div class="modal" style="position:relative">
@@ -4134,11 +4143,19 @@ function renderHome() {
   
   // Stats
   const todayCourses = DB.courses.filter(c => c.date === today);
-  const totalHours = todayCourses.reduce((s,c) => s + c.duration, 0) / 60;
+  let consumedHours = 0;
+  todayCourses.forEach(c => {
+    if (c.attendance) {
+      const hp = getCourseHours(c);
+      Object.values(c.attendance).forEach(st => {
+        if (st === 'present' || st === 'late') consumedHours += hp;
+      });
+    }
+  });
   const pendingHw = DB.homework.filter(h => h.status === 'pending' && h.submitted !== false).length;
   const totalStudents = DB.students.length;
   
-  document.getElementById('stat-hours').textContent = totalHours.toFixed(1);
+  document.getElementById('stat-hours').textContent = consumedHours;
   document.getElementById('stat-pending').textContent = pendingHw;
   document.getElementById('stat-students').textContent = totalStudents;
   
@@ -4177,6 +4194,67 @@ function renderHome() {
     hint.innerHTML = `<svg class="icon-sm" style="color:var(--blue-dark)"><use href="#i-save"/></use></svg> 数据已积累 ${totalRecords} 条，建议导出备份`;
     document.querySelector('.today-section').insertAdjacentElement('afterend', hint);
   }
+}
+
+function showTodayHours() {
+  const today = fmtLocalDate(new Date());
+  const todayCourses = DB.courses.filter(c => c.date === today);
+  let html = '<div class="modal-title">今日课时消耗</div>';
+  if (todayCourses.length === 0) {
+    html += '<div style="text-align:center;padding:30px 0;color:var(--text-sub)">今天没有排课</div>';
+    document.getElementById('today-hours-content').innerHTML = html;
+    openModal('modal-today-hours');
+    return;
+  }
+  let totalConsumed = 0;
+  let totalAttendees = 0;
+  todayCourses.forEach(c => {
+    const hp = getCourseHours(c);
+    const className = CLASS_INFO[c.class] ? CLASS_INFO[c.class].short : c.class;
+    const isCont = c.isContinuous || c.duration >= 80;
+    html += `<div class="card" style="margin-bottom:10px;padding:10px 12px">`;
+    html += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">`;
+    html += `<div class="hc-subject ${c.class.split('_')[0]}" style="width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex:0 0 auto"><svg class="icon-sm" style="color:#fff"><use href="#i-clock"/></svg></div>`;
+    html += `<div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13px">${c.title}</div>`;
+    html += `<div style="font-size:11px;color:var(--text-sub)">${className} · ${c.time} · ${c.duration}分钟${isCont ? '（连上）' : ''} · 每人扣${hp}课时</div></div></div>`;
+    const students = DB.students.filter(s => s.class === c.class);
+    if (c.attendance && Object.keys(c.attendance).length > 0) {
+      html += '<div style="display:flex;flex-wrap:wrap;gap:6px">';
+      let presentCount = 0, absentCount = 0, lateCount = 0;
+      students.forEach(s => {
+        const st = c.attendance[s.id] || '';
+        if (st === 'present') {
+          presentCount++;
+          totalAttendees++;
+          totalConsumed += hp;
+          html += `<span style="background:#E8F5E9;color:#2E7D32;font-size:11px;padding:3px 8px;border-radius:12px">${s.name} ✓</span>`;
+        } else if (st === 'late') {
+          lateCount++;
+          totalAttendees++;
+          totalConsumed += hp;
+          html += `<span style="background:#FFF3E0;color:#E65100;font-size:11px;padding:3px 8px;border-radius:12px">${s.name} 迟</span>`;
+        } else if (st === 'absent') {
+          absentCount++;
+          html += `<span style="background:#FFEBEE;color:#C62828;font-size:11px;padding:3px 8px;border-radius:12px">${s.name} ✗</span>`;
+        }
+      });
+      html += '</div>';
+      if (presentCount + lateCount + absentCount === 0) {
+        html += '<div style="font-size:11px;color:var(--text-sub);padding:4px 0">未登记考勤</div>';
+      } else {
+        html += `<div style="font-size:11px;color:var(--text-sub);margin-top:6px">到${presentCount} · 迟${lateCount} · 缺${absentCount} · 扣${(presentCount + lateCount) * hp}课时</div>`;
+      }
+    } else {
+      const studentCount = students.length;
+      html += `<div style="font-size:11px;color:var(--text-sub);padding:4px 0">未考勤 · 应到${studentCount}人</div>`;
+    }
+    html += '</div>';
+  });
+  html += `<div style="background:var(--purple-light);border-radius:10px;padding:10px 14px;text-align:center;margin-top:8px">`;
+  html += `<div style="font-size:24px;font-weight:800;color:var(--purple-dark)">${totalConsumed}</div>`;
+  html += `<div style="font-size:11px;color:var(--text-sub)">今日共消耗课时 · ${totalAttendees}人到课</div></div>`;
+  document.getElementById('today-hours-content').innerHTML = html;
+  openModal('modal-today-hours');
 }
 
 function handleTodayItem(type, id) {
